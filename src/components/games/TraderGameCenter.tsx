@@ -3,6 +3,10 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GamepadIcon } from "lucide-react";
 import PropChallenge from './PropChallenge';
+import KillZoneReflex from './KillZoneReflex';
+import NewsSentimentSniper from './NewsSentimentSniper';
+import TradeAnatomyBuilder from './TradeAnatomyBuilder';
+import GamePerformanceDashboard from './GamePerformanceDashboard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const TraderGameCenter = () => {
@@ -18,10 +22,14 @@ const TraderGameCenter = () => {
         <GamepadIcon className="h-8 w-8 text-muted-foreground" />
       </div>
       
+      <GamePerformanceDashboard />
+      
       <Tabs value={activeGame} onValueChange={setActiveGame} className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
           <TabsTrigger value="prop-challenge">⚔️ Prop Challenge</TabsTrigger>
           <TabsTrigger value="kill-zone">⏱️ Kill Zone</TabsTrigger>
+          <TabsTrigger value="news-sentiment">📰 News Sentiment</TabsTrigger>
+          <TabsTrigger value="trade-anatomy">📊 Trade Builder</TabsTrigger>
         </TabsList>
         
         <TabsContent value="prop-challenge">
@@ -43,7 +51,29 @@ const TraderGameCenter = () => {
               <CardTitle>⏱️ Kill Zone Reflex Game</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">Coming soon...</p>
+              <KillZoneReflex />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="news-sentiment">
+          <Card>
+            <CardHeader>
+              <CardTitle>📰 News Sentiment Sniper</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <NewsSentimentSniper />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="trade-anatomy">
+          <Card>
+            <CardHeader>
+              <CardTitle>📊 Trade Anatomy Builder</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <TradeAnatomyBuilder />
             </CardContent>
           </Card>
         </TabsContent>
