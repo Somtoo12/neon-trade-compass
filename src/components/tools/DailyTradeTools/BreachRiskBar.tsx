@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Progress } from '@/components/ui/progress';
+import { Shield, ShieldAlert, ShieldX } from 'lucide-react';
 
 const BreachRiskBar: React.FC = () => {
   const [startingBalance, setStartingBalance] = useState<number>(10000);
@@ -10,6 +12,7 @@ const BreachRiskBar: React.FC = () => {
   const [currentPL, setCurrentPL] = useState<number>(0);
   const [useTrailingBalance, setUseTrailingBalance] = useState<boolean>(false);
   const [previousBalance, setPreviousBalance] = useState<number>(0);
+  const [progressValue, setProgressValue] = useState<number>(0);
   
   // Load saved state from localStorage on component mount
   useEffect(() => {
@@ -71,6 +74,11 @@ const BreachRiskBar: React.FC = () => {
   
   const { dailyLossLimit, currentLoss, remainingLoss, riskPercentage } = calculateRisk();
   
+  // Update progress bar value
+  useEffect(() => {
+    setProgressValue(riskPercentage);
+  }, [riskPercentage]);
+  
   // Determine color based on risk level
   const getColorClass = () => {
     if (riskPercentage < 50) return 'bg-green-500';
@@ -102,6 +110,13 @@ const BreachRiskBar: React.FC = () => {
     return remainingLoss * 0.8;
   };
   
+  // Get risk status icon
+  const getRiskIcon = () => {
+    if (riskPercentage >= 80) return <ShieldX className="h-5 w-5 text-red-500" />;
+    if (riskPercentage >= 50) return <ShieldAlert className="h-5 w-5 text-yellow-500" />;
+    return <Shield className="h-5 w-5 text-green-500" />;
+  };
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -159,13 +174,24 @@ const BreachRiskBar: React.FC = () => {
       )}
       
       <div className="mt-4">
-        <Label className="block mb-1">Daily Loss Limit: ${dailyLossLimit.toFixed(2)}</Label>
-        <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-          <div 
-            className={`h-full ${getColorClass()} transition-all duration-500`}
-            style={{ width: `${riskPercentage}%` }}
-          />
+        <div className="flex justify-between mb-1">
+          <Label>
+            Daily Loss Limit: ${dailyLossLimit.toFixed(2)}
+          </Label>
+          <div className="flex items-center gap-1">
+            {getRiskIcon()}
+            <span className="text-sm font-medium">
+              {riskPercentage.toFixed(0)}% Used
+            </span>
+          </div>
         </div>
+        
+        <Progress 
+          value={progressValue} 
+          className="h-4" 
+          indicatorClassName={getColorClass()}
+          aria-label="Risk progress"
+        />
         
         <div className="mt-2 text-sm">
           <p className={riskPercentage >= 80 ? 'text-red-500 font-medium' : ''}>
