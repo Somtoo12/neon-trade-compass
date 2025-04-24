@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EventRow } from './calendar/EventRow';
 import { format } from 'date-fns';
 
-const API_KEY = 'YOUR_PUBLIC_FCSAPI_KEY';
+const API_KEY = import.meta.env.VITE_ECONOMIC_CALENDAR_API_KEY;
 
 const mockEvents = [
   {
@@ -134,12 +134,29 @@ const EconomicCalendar: React.FC = () => {
   const fetchCalendarData = async () => {
     setLoading(true);
     try {
-      setTimeout(() => {
+      if (!API_KEY) {
+        console.warn('Economic Calendar API key is not set');
         setEvents(mockEvents);
-        setLoading(false);
-      }, 1000);
+        return;
+      }
+
+      const response = await fetch(`https://economic-calendar-api.com/events?api_key=${API_KEY}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch economic events');
+      }
+
+      const data = await response.json();
+      setEvents(data.length > 0 ? data : mockEvents);
     } catch (error) {
       console.error('Error fetching economic calendar:', error);
+      setEvents(mockEvents);
+    } finally {
       setLoading(false);
     }
   };
