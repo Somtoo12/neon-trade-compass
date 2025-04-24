@@ -1,9 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowRight } from 'lucide-react';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowRight, Search } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { forexPairs } from '@/constants/currencyPairs';
 
 const ForexCalculator: React.FC = () => {
   const [pair, setPair] = useState('EUR/USD');
@@ -16,10 +17,24 @@ const ForexCalculator: React.FC = () => {
   const [pipValue, setPipValue] = useState(0);
   const [totalPnL, setTotalPnL] = useState(0);
   
-  const pairOptions = [
-    'EUR/USD', 'GBP/USD', 'USD/JPY', 'AUD/USD', 
-    'USD/CAD', 'NZD/USD', 'USD/CHF', 'EUR/GBP'
+  const allPairs = [
+    ...forexPairs.majors,
+    ...forexPairs.minors,
+    ...forexPairs.exotics
   ];
+  
+  const [searchTerm, setSearchTerm] = useState('');
+  const filteredPairs = {
+    majors: forexPairs.majors.filter(pair => 
+      pair.toLowerCase().includes(searchTerm.toLowerCase())
+    ),
+    minors: forexPairs.minors.filter(pair => 
+      pair.toLowerCase().includes(searchTerm.toLowerCase())
+    ),
+    exotics: forexPairs.exotics.filter(pair => 
+      pair.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  };
   
   const currencyOptions = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'NZD', 'CHF'];
   
@@ -49,7 +64,6 @@ const ForexCalculator: React.FC = () => {
       ? (exit - entry) / pipDecimal 
       : (exit - entry) / pipDecimal;
     
-    // Standard values - simplified for demo
     let singlePipValue = 0;
     if (pair.includes('JPY')) {
       singlePipValue = 1000 * lot / 100;
@@ -57,7 +71,6 @@ const ForexCalculator: React.FC = () => {
       singlePipValue = 10 * lot;
     }
     
-    // Convert pip value to account currency - simplified
     const pipValueInAccountCurrency = singlePipValue;
     
     setPipsResult(Math.round(pipDiff * 100) / 100);
@@ -74,16 +87,42 @@ const ForexCalculator: React.FC = () => {
           <div className="space-y-2">
             <label className="text-sm text-muted-foreground">Currency Pair</label>
             <Select 
-              defaultValue={pair} 
+              value={pair} 
               onValueChange={setPair}
             >
               <SelectTrigger className="bg-secondary/50 border-input/40 input-glow">
                 <SelectValue placeholder="Select pair" />
               </SelectTrigger>
-              <SelectContent className="bg-card border-input/40">
-                {pairOptions.map((option) => (
-                  <SelectItem key={option} value={option}>{option}</SelectItem>
-                ))}
+              <SelectContent className="bg-card border-input/40 max-h-[300px]">
+                <div className="flex items-center px-3 pb-2">
+                  <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+                  <Input
+                    placeholder="Search pairs..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="h-8"
+                  />
+                </div>
+                <ScrollArea className="h-[200px]">
+                  <SelectGroup>
+                    <SelectLabel>Major Pairs</SelectLabel>
+                    {filteredPairs.majors.map((option) => (
+                      <SelectItem key={option} value={option}>{option}</SelectItem>
+                    ))}
+                  </SelectGroup>
+                  <SelectGroup>
+                    <SelectLabel>Minor Pairs</SelectLabel>
+                    {filteredPairs.minors.map((option) => (
+                      <SelectItem key={option} value={option}>{option}</SelectItem>
+                    ))}
+                  </SelectGroup>
+                  <SelectGroup>
+                    <SelectLabel>Exotic Pairs</SelectLabel>
+                    {filteredPairs.exotics.map((option) => (
+                      <SelectItem key={option} value={option}>{option}</SelectItem>
+                    ))}
+                  </SelectGroup>
+                </ScrollArea>
               </SelectContent>
             </Select>
           </div>
@@ -126,16 +165,18 @@ const ForexCalculator: React.FC = () => {
           <div className="space-y-2">
             <label className="text-sm text-muted-foreground">Account Currency</label>
             <Select 
-              defaultValue={accountCurrency} 
+              value={accountCurrency} 
               onValueChange={setAccountCurrency}
             >
               <SelectTrigger className="bg-secondary/50 border-input/40 input-glow">
                 <SelectValue placeholder="Select currency" />
               </SelectTrigger>
               <SelectContent className="bg-card border-input/40">
-                {currencyOptions.map((option) => (
-                  <SelectItem key={option} value={option}>{option}</SelectItem>
-                ))}
+                <ScrollArea className="h-[200px]">
+                  {currencyOptions.map((option) => (
+                    <SelectItem key={option} value={option}>{option}</SelectItem>
+                  ))}
+                </ScrollArea>
               </SelectContent>
             </Select>
           </div>
