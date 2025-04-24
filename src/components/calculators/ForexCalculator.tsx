@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -17,23 +18,24 @@ const ForexCalculator: React.FC = () => {
   const [pipValue, setPipValue] = useState(0);
   const [totalPnL, setTotalPnL] = useState(0);
   
+  // Extract all pairs from the forexPairs object correctly
   const allPairs = [
-    ...forexPairs.majors,
-    ...forexPairs.minors,
-    ...forexPairs.exotics
+    ...(forexPairs.majors || []),
+    ...(forexPairs.minors || []),
+    ...(forexPairs.exotics || [])
   ];
   
   const [searchTerm, setSearchTerm] = useState('');
   const filteredPairs = {
-    majors: forexPairs.majors.filter(pair => 
+    majors: forexPairs.majors ? forexPairs.majors.filter(pair => 
       pair.toLowerCase().includes(searchTerm.toLowerCase())
-    ),
-    minors: forexPairs.minors.filter(pair => 
+    ) : [],
+    minors: forexPairs.minors ? forexPairs.minors.filter(pair => 
       pair.toLowerCase().includes(searchTerm.toLowerCase())
-    ),
-    exotics: forexPairs.exotics.filter(pair => 
+    ) : [],
+    exotics: forexPairs.exotics ? forexPairs.exotics.filter(pair => 
       pair.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    ) : []
   };
   
   const currencyOptions = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'NZD', 'CHF'];
@@ -104,24 +106,32 @@ const ForexCalculator: React.FC = () => {
                   />
                 </div>
                 <ScrollArea className="h-[200px]">
-                  <SelectGroup>
-                    <SelectLabel>Major Pairs</SelectLabel>
-                    {filteredPairs.majors.map((option) => (
-                      <SelectItem key={option} value={option}>{option}</SelectItem>
-                    ))}
-                  </SelectGroup>
-                  <SelectGroup>
-                    <SelectLabel>Minor Pairs</SelectLabel>
-                    {filteredPairs.minors.map((option) => (
-                      <SelectItem key={option} value={option}>{option}</SelectItem>
-                    ))}
-                  </SelectGroup>
-                  <SelectGroup>
-                    <SelectLabel>Exotic Pairs</SelectLabel>
-                    {filteredPairs.exotics.map((option) => (
-                      <SelectItem key={option} value={option}>{option}</SelectItem>
-                    ))}
-                  </SelectGroup>
+                  {filteredPairs.majors && filteredPairs.majors.length > 0 && (
+                    <SelectGroup>
+                      <SelectLabel>Major Pairs</SelectLabel>
+                      {filteredPairs.majors.map((option) => (
+                        <SelectItem key={option} value={option}>{option}</SelectItem>
+                      ))}
+                    </SelectGroup>
+                  )}
+                  
+                  {filteredPairs.minors && filteredPairs.minors.length > 0 && (
+                    <SelectGroup>
+                      <SelectLabel>Minor Pairs</SelectLabel>
+                      {filteredPairs.minors.map((option) => (
+                        <SelectItem key={option} value={option}>{option}</SelectItem>
+                      ))}
+                    </SelectGroup>
+                  )}
+                  
+                  {filteredPairs.exotics && filteredPairs.exotics.length > 0 && (
+                    <SelectGroup>
+                      <SelectLabel>Exotic Pairs</SelectLabel>
+                      {filteredPairs.exotics.map((option) => (
+                        <SelectItem key={option} value={option}>{option}</SelectItem>
+                      ))}
+                    </SelectGroup>
+                  )}
                 </ScrollArea>
               </SelectContent>
             </Select>
