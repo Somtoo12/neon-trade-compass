@@ -1,0 +1,322 @@
+
+// Prop Firm Comparison Data
+// This data powers PipCraft's ultimate Prop Firm Comparison section
+
+export interface PropFirm {
+  name: string;
+  logo: string;
+  website: string;
+  drawdown: string;
+  dailyLoss: string;
+  evaluation: string;
+  payout: string;
+  refund: string;
+  profitSplit: string;
+  scaling: string;
+  trial: string;
+  ranking: number;
+  tags: string[];
+}
+
+export const propFirms: PropFirm[] = [
+  {
+    name: "FXIFY",
+    logo: "https://fxify.com/favicon.ico",
+    website: "https://fxify.com",
+    drawdown: "10% trailing",
+    dailyLoss: "3% of previous day's balance",
+    evaluation: "1-Step",
+    payout: "7 Days",
+    refund: "✅",
+    profitSplit: "90%",
+    scaling: "✅",
+    trial: "✅",
+    ranking: 1,
+    tags: ["Top Rated", "Fast Payout", "1-Step", "Refundable"]
+  },
+  {
+    name: "FXIFY Futures",
+    logo: "https://fxify.com/futures-logo.svg",
+    website: "https://fxify.com/futures",
+    drawdown: "10% trailing",
+    dailyLoss: "3%",
+    evaluation: "1-Step",
+    payout: "7 Days",
+    refund: "✅",
+    profitSplit: "90%",
+    scaling: "✅",
+    trial: "✅",
+    ranking: 2,
+    tags: ["Futures", "Top Rated", "Fast Payout"]
+  },
+  {
+    name: "FTMO",
+    logo: "https://ftmo.com/favicon.ico",
+    website: "https://ftmo.com",
+    drawdown: "10% equity",
+    dailyLoss: "5%",
+    evaluation: "2-Step",
+    payout: "30 Days (first) / 14 Days after",
+    refund: "✅",
+    profitSplit: "80%",
+    scaling: "✅",
+    trial: "❌",
+    ranking: 3,
+    tags: ["Trusted", "Established", "2-Step"]
+  },
+  {
+    name: "FundedNext",
+    logo: "https://fundednext.com/wp-content/uploads/2022/04/fundednext-icon.png",
+    website: "https://fundednext.com",
+    drawdown: "10% trailing",
+    dailyLoss: "5%",
+    evaluation: "2-Step + Instant Models",
+    payout: "14 Days",
+    refund: "✅",
+    profitSplit: "80% (up to 90%)",
+    scaling: "✅",
+    trial: "✅",
+    ranking: 4,
+    tags: ["Scaling", "Instant", "Global"]
+  },
+  {
+    name: "True Forex Funds",
+    logo: "https://trueforexfunds.com/wp-content/uploads/2023/01/trueforex-icon-150x150.png",
+    website: "https://trueforexfunds.com",
+    drawdown: "10% equity",
+    dailyLoss: "5%",
+    evaluation: "2-Step",
+    payout: "14 Days",
+    refund: "✅",
+    profitSplit: "80–90%",
+    scaling: "✅",
+    trial: "❌",
+    ranking: 5,
+    tags: ["Fast Payout", "Refundable", "Growth"]
+  },
+  {
+    name: "E8 Funding",
+    logo: "https://e8funding.com/favicon.ico",
+    website: "https://e8funding.com",
+    drawdown: "8% static",
+    dailyLoss: "5%",
+    evaluation: "2-Step",
+    payout: "8 Days",
+    refund: "✅",
+    profitSplit: "80% (up to 90%)",
+    scaling: "✅",
+    trial: "❌",
+    ranking: 6,
+    tags: ["Innovative", "Clean UI", "Global"]
+  },
+  {
+    name: "The5ers",
+    logo: "https://the5ers.com/favicon.ico",
+    website: "https://the5ers.com",
+    drawdown: "6–12% depending on model",
+    dailyLoss: "N/A",
+    evaluation: "Instant & Evaluation",
+    payout: "10–14 Days",
+    refund: "❌",
+    profitSplit: "50–75%",
+    scaling: "✅",
+    trial: "❌",
+    ranking: 7,
+    tags: ["Conservative", "Instant Funding", "Risk-Averse"]
+  },
+  {
+    name: "MyFundedFX",
+    logo: "https://myfundedfx.com/favicon.ico",
+    website: "https://myfundedfx.com",
+    drawdown: "12% static",
+    dailyLoss: "5%",
+    evaluation: "2-Step + 1-Step",
+    payout: "7 Days",
+    refund: "✅",
+    profitSplit: "80%",
+    scaling: "✅",
+    trial: "✅",
+    ranking: 8,
+    tags: ["Flexible", "Fast Payout", "Growth"]
+  },
+  {
+    name: "Blue Guardian",
+    logo: "https://blueguardian.com/favicon.ico",
+    website: "https://blueguardian.com",
+    drawdown: "10% trailing",
+    dailyLoss: "5%",
+    evaluation: "2-Step",
+    payout: "14 Days",
+    refund: "✅",
+    profitSplit: "85%",
+    scaling: "✅",
+    trial: "❌",
+    ranking: 9,
+    tags: ["AI Tools", "Journal Features"]
+  },
+  {
+    name: "Bespoke Funding",
+    logo: "https://bespokefunding.io/favicon.ico",
+    website: "https://bespokefunding.io",
+    drawdown: "10% trailing",
+    dailyLoss: "5%",
+    evaluation: "2-Step",
+    payout: "14 Days",
+    refund: "✅",
+    profitSplit: "80%",
+    scaling: "✅",
+    trial: "❌",
+    ranking: 10,
+    tags: ["Refundable", "New Wave", "Trusted"]
+  },
+  {
+    name: "Smart Prop Trader",
+    logo: "https://smartproptrader.com/favicon.ico",
+    website: "https://smartproptrader.com",
+    drawdown: "10% equity",
+    dailyLoss: "4%",
+    evaluation: "2-Step",
+    payout: "14 Days",
+    refund: "✅",
+    profitSplit: "80%",
+    scaling: "✅",
+    trial: "✅",
+    ranking: 11,
+    tags: ["Emerging", "Simple Rules"]
+  },
+  {
+    name: "Fidelcrest",
+    logo: "https://fidelcrest.com/favicon.ico",
+    website: "https://fidelcrest.com",
+    drawdown: "10% equity",
+    dailyLoss: "5%",
+    evaluation: "2-Step",
+    payout: "14 Days",
+    refund: "❌",
+    profitSplit: "80%",
+    scaling: "✅",
+    trial: "✅",
+    ranking: 12,
+    tags: ["Europe-Based", "Scaling"]
+  },
+  {
+    name: "Alpha Capital Group",
+    logo: "https://alphacapitalgroup.uk/favicon.ico",
+    website: "https://alphacapitalgroup.uk",
+    drawdown: "10% static",
+    dailyLoss: "5%",
+    evaluation: "2-Step",
+    payout: "14 Days",
+    refund: "✅",
+    profitSplit: "80–85%",
+    scaling: "✅",
+    trial: "✅",
+    ranking: 13,
+    tags: ["UK-Based", "Fast Growth"]
+  },
+  {
+    name: "Apex Trader Funding",
+    logo: "https://apextraderfunding.com/favicon.ico",
+    website: "https://apextraderfunding.com",
+    drawdown: "Varies (futures model)",
+    dailyLoss: "Trailing Max (futures)",
+    evaluation: "1-Step",
+    payout: "10 Days",
+    refund: "❌",
+    profitSplit: "80–90%",
+    scaling: "✅",
+    trial: "✅",
+    ranking: 14,
+    tags: ["Futures", "Big Community"]
+  },
+  {
+    name: "TopTier Trader",
+    logo: "https://toptiertrader.com/favicon.ico",
+    website: "https://toptiertrader.com",
+    drawdown: "10% equity",
+    dailyLoss: "5%",
+    evaluation: "2-Step",
+    payout: "14 Days",
+    refund: "✅",
+    profitSplit: "80%",
+    scaling: "✅",
+    trial: "✅",
+    ranking: 15,
+    tags: ["Solid Reputation"]
+  },
+  {
+    name: "Traders Central",
+    logo: "https://traderscentral.com/favicon.ico",
+    website: "https://traderscentral.com",
+    drawdown: "10% equity",
+    dailyLoss: "5%",
+    evaluation: "1-Step & Instant",
+    payout: "7 Days",
+    refund: "❌",
+    profitSplit: "75–85%",
+    scaling: "✅",
+    trial: "✅",
+    ranking: 16,
+    tags: ["Crypto Payments", "Instant"]
+  },
+  {
+    name: "Lux Trading Firm",
+    logo: "https://luxtradingfirm.com/favicon.ico",
+    website: "https://luxtradingfirm.com",
+    drawdown: "4–10% depending on phase",
+    dailyLoss: "None (uses trailing method)",
+    evaluation: "Multi-Step",
+    payout: "Monthly",
+    refund: "❌",
+    profitSplit: "60–75%",
+    scaling: "✅",
+    trial: "✅",
+    ranking: 17,
+    tags: ["Professional", "Strict"]
+  },
+  {
+    name: "City Traders Imperium",
+    logo: "https://www.citytradersimperium.com/favicon.ico",
+    website: "https://www.citytradersimperium.com",
+    drawdown: "10% equity",
+    dailyLoss: "5%",
+    evaluation: "2-Step",
+    payout: "14 Days",
+    refund: "✅",
+    profitSplit: "70–85%",
+    scaling: "✅",
+    trial: "✅",
+    ranking: 18,
+    tags: ["London-Based", "Veteran"]
+  },
+  {
+    name: "NovaFunding",
+    logo: "https://novofinpro.com/favicon.ico",
+    website: "https://novofinpro.com",
+    drawdown: "10% static",
+    dailyLoss: "5%",
+    evaluation: "1-Step",
+    payout: "14 Days",
+    refund: "✅",
+    profitSplit: "80–90%",
+    scaling: "✅",
+    trial: "✅",
+    ranking: 19,
+    tags: ["Newcomer", "High Payout"]
+  },
+  {
+    name: "SurgeTrader",
+    logo: "https://surgetrader.com/favicon.ico",
+    website: "https://surgetrader.com",
+    drawdown: "4–10% depending on model",
+    dailyLoss: "5%",
+    evaluation: "1-Step",
+    payout: "10 Days",
+    refund: "❌",
+    profitSplit: "75–85%",
+    scaling: "✅",
+    trial: "✅",
+    ranking: 20,
+    tags: ["Fast Approval", "Simple Rules"]
+  }
+];

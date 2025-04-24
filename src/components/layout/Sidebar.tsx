@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BarChart, Book, Clock, Gauge, LineChart, PieChart, Scale } from 'lucide-react';
+import { BarChart, Book, Clock, Gauge, LineChart, PieChart, Scale, Trophy } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface SidebarProps {
@@ -24,6 +24,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection }) =>
     { id: 'currency-heatmap', label: 'Currency Heatmap', icon: <Gauge className="h-5 w-5" />, path: '/currency-heatmap' },
     { id: 'risk-management', label: 'Risk Management', icon: <Scale className="h-5 w-5" />, path: '/risk-management' },
     { id: 'trade-journal', label: 'Trade Journal', icon: <Book className="h-5 w-5" />, path: '/trade-journal' },
+    { id: 'prop-firm-comparison', label: '🏆 Prop Firm Comparison', icon: <Trophy className="h-5 w-5" />, path: '/prop-firm-comparison' },
   ];
 
   const handleNavClick = (section: string) => {
