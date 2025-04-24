@@ -9,6 +9,7 @@ import CurrencyHeatmap from '@/components/tools/CurrencyHeatmap';
 import RiskManagement from '@/components/tools/RiskManagement';
 import TradeJournal from '@/components/calculators/TradeJournal';
 import DailyTradeTools from '@/components/tools/DailyTradeTools';
+import TraderGameCenter from '@/components/games/TraderGameCenter';
 import { useNavigate } from 'react-router-dom';
 
 interface IndexProps {
@@ -40,6 +41,8 @@ const Index: React.FC<IndexProps> = ({ activeSection }) => {
         return <TradeJournal />;
       case 'daily-trade-tools':
         return <DailyTradeTools />;
+      case 'trader-games':
+        return <TraderGameCenter />;
       default:
         return <ForexCalculator />;
     }

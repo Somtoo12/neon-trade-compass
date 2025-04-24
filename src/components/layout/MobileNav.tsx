@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { BarChart, Book, Clock, Gauge, LineChart, Menu, PieChart, Scale, Compass, X } from 'lucide-react';
+import { BarChart, Book, Clock, Gauge, LineChart, Menu, PieChart, Scale, Compass, X, GamepadIcon } from 'lucide-react';
 import ThemeToggle from '../theme/ThemeToggle';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -29,6 +29,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
     { id: 'risk-management', label: 'Risk Management', icon: <Scale className="h-5 w-5" />, path: '/risk-management' },
     { id: 'trade-journal', label: 'Trade Journal', icon: <Book className="h-5 w-5" />, path: '/trade-journal' },
     { id: 'daily-trade-tools', label: '🧭 Daily Trade Tools', icon: <Compass className="h-5 w-5" />, path: '/daily-trade-tools' },
+    { id: 'trader-games', label: '🎮 Trader Game Center', icon: <GamepadIcon className="h-5 w-5" />, path: '/trader-games' },
   ];
 
   const handleNavClick = (section: string) => {
