@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -24,6 +23,7 @@ import FeatureGrid from '@/components/home/FeatureGrid';
 import LiveDataTicker from '@/components/home/LiveDataTicker';
 import MetricsWall from '@/components/home/MetricsWall';
 import AppHeader from '@/components/home/AppHeader';
+import FeatureMarquee from '@/components/home/FeatureMarquee';
 
 const HomePage: React.FC = () => {
   const isMobile = useIsMobile();
@@ -73,9 +73,6 @@ const HomePage: React.FC = () => {
         </div>
 
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
           className="relative z-10 text-center max-w-3xl mx-auto"
         >
           <div className="mb-4 flex justify-center">
@@ -134,11 +131,13 @@ const HomePage: React.FC = () => {
           </motion.div>
         </motion.div>
         
-        {/* Animated background elements */}
+        <div className="absolute bottom-24 left-0 right-0">
+          <FeatureMarquee />
+        </div>
+        
         <div className="absolute bottom-0 left-0 right-0 h-[150px] bg-gradient-to-t from-background to-transparent"></div>
       </div>
 
-      {/* Feature Grid */}
       <section id="features" className="py-16 md:py-24 px-4 relative">
         <div className="container max-w-7xl mx-auto">
           <motion.h2 
@@ -155,12 +154,10 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Live Data Stream */}
       <section className="py-8 overflow-hidden bg-gradient-to-r from-accent/10 via-accent/5 to-accent/10 border-y border-accent/20">
         <LiveDataTicker />
       </section>
 
-      {/* Metrics Wall */}
       <section className="py-16 md:py-24 px-4 relative">
         <div className="container max-w-7xl mx-auto">
           <motion.h2 
@@ -177,7 +174,6 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* CTA Banner */}
       <section className="relative py-16 md:py-20 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-r from-neon-purple/20 to-neon-blue/10 opacity-40"></div>

@@ -2,7 +2,18 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Calculator, GamepadIcon, BookOpen, Compass, Menu, X } from 'lucide-react';
+import { 
+  Calculator, 
+  GamepadIcon, 
+  BookOpen, 
+  Compass, 
+  Menu, 
+  X, 
+  Calendar,
+  Home,
+  MessageCircle,
+  Award
+} from 'lucide-react';
 import ThemeToggle from '@/components/theme/ThemeToggle';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -21,10 +32,14 @@ const AppHeader: React.FC = () => {
   }, []);
   
   const navItems = [
-    { label: 'Calculators', icon: <Calculator className="h-4 w-4" />, path: '/forex-calculator' },
+    { label: 'Home', icon: <Home className="h-4 w-4" />, path: '/' },
+    { label: 'Calculators', icon: <Calculator className="h-4 w-4" />, path: '/calculators' },
     { label: 'Journal', icon: <BookOpen className="h-4 w-4" />, path: '/trade-journal' },
-    { label: 'Daily Tools', icon: <Compass className="h-4 w-4" />, path: '/daily-trade-tools' },
-    { label: 'Games', icon: <GamepadIcon className="h-4 w-4" />, path: '/trader-games' }
+    { label: 'Games', icon: <GamepadIcon className="h-4 w-4" />, path: '/trader-games' },
+    { label: 'Calendar', icon: <Calendar className="h-4 w-4" />, path: '/daily-trade-tools' },
+    { label: 'Tools', icon: <Compass className="h-4 w-4" />, path: '/tools' },
+    { label: 'Promos', icon: <Award className="h-4 w-4" />, path: '/risk-management' },
+    { label: 'Chat', icon: <MessageCircle className="h-4 w-4" />, path: '#' },
   ];
   
   return (
@@ -54,12 +69,12 @@ const AppHeader: React.FC = () => {
             </div>
           ) : (
             <div className="flex items-center gap-6">
-              <nav className="flex gap-4">
+              <nav className="flex gap-2">
                 {navItems.map((item) => (
                   <Link 
                     key={item.label}
                     to={item.path}
-                    className="flex items-center gap-1.5 text-sm text-foreground/80 hover:text-primary transition-colors px-2 py-1 rounded-md hover:bg-primary/10"
+                    className="flex items-center gap-1.5 text-sm text-foreground/80 hover:text-primary transition-colors px-3 py-1.5 rounded-md hover:bg-primary/10"
                   >
                     {item.icon}
                     {item.label}
