@@ -1,10 +1,14 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GamepadIcon } from "lucide-react";
 import PropChallenge from './PropChallenge';
+import CandleMemoryGame from './CandleMemoryGame';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const TraderGameCenter = () => {
+  const [activeGame, setActiveGame] = useState('prop-challenge');
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -15,37 +19,48 @@ const TraderGameCenter = () => {
         <GamepadIcon className="h-8 w-8 text-muted-foreground" />
       </div>
       
-      <div className="grid gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              ⚔️ Prop Firm Challenge Simulator
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <PropChallenge />
-          </CardContent>
-        </Card>
+      <Tabs value={activeGame} onValueChange={setActiveGame}>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="prop-challenge">⚔️ Prop Challenge</TabsTrigger>
+          <TabsTrigger value="candle-memory">🧠 Candle Memory</TabsTrigger>
+          <TabsTrigger value="kill-zone" disabled>⏱️ Kill Zone</TabsTrigger>
+        </TabsList>
         
-        {/* We'll implement these next */}
-        <Card className="opacity-60">
-          <CardHeader>
-            <CardTitle>🧠 Candle Memory Game</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">Coming soon...</p>
-          </CardContent>
-        </Card>
-
-        <Card className="opacity-60">
-          <CardHeader>
-            <CardTitle>⏱️ Kill Zone Reflex Game</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">Coming soon...</p>
-          </CardContent>
-        </Card>
-      </div>
+        <TabsContent value="prop-challenge">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                ⚔️ Prop Firm Challenge Simulator
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PropChallenge />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="candle-memory">
+          <Card>
+            <CardHeader>
+              <CardTitle>🧠 Candle Memory Game</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CandleMemoryGame />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="kill-zone">
+          <Card>
+            <CardHeader>
+              <CardTitle>⏱️ Kill Zone Reflex Game</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">Coming soon...</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
