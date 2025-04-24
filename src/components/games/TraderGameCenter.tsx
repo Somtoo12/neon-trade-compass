@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { GamepadIcon } from "lucide-react";
+import { GamepadIcon, Sword, Clock, LightningBolt, ChartBar } from "lucide-react";
 import PropChallenge from './PropChallenge';
 import KillZoneReflex from './KillZoneReflex';
 import NewsSentimentSniper from './NewsSentimentSniper';
@@ -31,37 +30,41 @@ const TraderGameCenter = () => {
         onValueChange={setActiveGame} 
         className="w-full"
       >
-        <TabsList className={`grid w-full ${
-          isMobile 
-            ? 'grid-cols-2 gap-2' 
-            : 'grid-cols-4 gap-3'
-        } bg-secondary/30`}>
-          <TabsTrigger 
-            value="prop-challenge" 
-            className="flex items-center gap-2 text-xs md:text-sm py-2 hover:bg-secondary/50 data-[state=active]:bg-primary/20"
-          >
-            <span>⚔️</span> Prop Challenge
-          </TabsTrigger>
-          <TabsTrigger 
-            value="kill-zone" 
-            className="flex items-center gap-2 text-xs md:text-sm py-2 hover:bg-secondary/50 data-[state=active]:bg-primary/20"
-          >
-            <span>⏱️</span> Kill Zone
-          </TabsTrigger>
-          <TabsTrigger 
-            value="news-sentiment" 
-            className="flex items-center gap-2 text-xs md:text-sm py-2 hover:bg-secondary/50 data-[state=active]:bg-primary/20"
-          >
-            <span>📰</span> News Sentiment
-          </TabsTrigger>
-          <TabsTrigger 
-            value="trade-anatomy" 
-            className="flex items-center gap-2 text-xs md:text-sm py-2 hover:bg-secondary/50 data-[state=active]:bg-primary/20"
-          >
-            <span>📊</span> Trade Builder
-          </TabsTrigger>
-        </TabsList>
-        
+        <div className="relative w-full">
+          <TabsList className="w-full overflow-x-auto flex whitespace-nowrap scrollbar-none pb-1 gap-2 bg-secondary/30">
+            <TabsTrigger 
+              value="prop-challenge" 
+              className="flex items-center gap-2 px-4 py-2.5 min-w-[120px] hover:bg-secondary/50 data-[state=active]:bg-primary/20 data-[state=active]:shadow-glow transition-all duration-200"
+            >
+              <Sword className="w-[18px] h-[18px] md:w-5 md:h-5 shrink-0" />
+              <span className="text-xs md:text-sm font-medium truncate">Prop Challenge</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="kill-zone" 
+              className="flex items-center gap-2 px-4 py-2.5 min-w-[120px] hover:bg-secondary/50 data-[state=active]:bg-primary/20 data-[state=active]:shadow-glow transition-all duration-200"
+            >
+              <Clock className="w-[18px] h-[18px] md:w-5 md:h-5 shrink-0" />
+              <span className="text-xs md:text-sm font-medium truncate">Kill Zone</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="news-sentiment" 
+              className="flex items-center gap-2 px-4 py-2.5 min-w-[120px] hover:bg-secondary/50 data-[state=active]:bg-primary/20 data-[state=active]:shadow-glow transition-all duration-200"
+            >
+              <LightningBolt className="w-[18px] h-[18px] md:w-5 md:h-5 shrink-0" />
+              <span className="text-xs md:text-sm font-medium truncate">News Sentiment</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="trade-anatomy" 
+              className="flex items-center gap-2 px-4 py-2.5 min-w-[120px] hover:bg-secondary/50 data-[state=active]:bg-primary/20 data-[state=active]:shadow-glow transition-all duration-200"
+            >
+              <ChartBar className="w-[18px] h-[18px] md:w-5 md:h-5 shrink-0" />
+              <span className="text-xs md:text-sm font-medium truncate">Trade Builder</span>
+            </TabsTrigger>
+          </TabsList>
+          <div className="absolute left-0 top-0 bottom-1 w-8 bg-gradient-to-r from-background to-transparent pointer-events-none md:hidden" />
+          <div className="absolute right-0 top-0 bottom-1 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none md:hidden" />
+        </div>
+
         <TabsContent value="prop-challenge" className="mt-4">
           <Card className="border-secondary/30">
             <CardHeader className="p-3 md:p-6">

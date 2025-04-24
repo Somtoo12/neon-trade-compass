@@ -1,4 +1,3 @@
-
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -98,4 +97,14 @@ html {
     overflow-x: auto;
     white-space: nowrap;
   }
+}
+
+/* Custom scrollbar hiding for tab list */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }

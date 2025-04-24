@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -91,6 +90,9 @@ export default {
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 			},
+			boxShadow: {
+				'glow': '0 0 10px rgba(var(--primary), 0.3)',
+			}
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
