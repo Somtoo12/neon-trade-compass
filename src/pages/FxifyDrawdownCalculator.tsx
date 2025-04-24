@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/tooltip";
 import { toast } from '@/hooks/use-toast';
 
-// Define plan types
 interface Plan {
   id: string;
   name: string;
@@ -47,7 +46,7 @@ const plans: Plan[] = [
     dailyLossPercentage: 5,
     maxDrawdownPercentage: 5,
     maxDrawdownType: 'static',
-    lockingPercentage: 0 // Not applicable for static
+    lockingPercentage: 0
   },
   {
     id: 'instant-funding',
@@ -86,7 +85,6 @@ const FxifyDrawdownCalculator: React.FC = () => {
   
   const plan = plans.find(p => p.id === selectedPlan);
   
-  // Reset values when plan changes
   useEffect(() => {
     if (showResults) {
       setShowResults(false);
@@ -118,7 +116,6 @@ const FxifyDrawdownCalculator: React.FC = () => {
       return;
     }
 
-    // Validate that highest balance is at least equal to initial balance
     if (highest < init) {
       toast({
         title: "Invalid High Water Mark",
@@ -158,20 +155,16 @@ const FxifyDrawdownCalculator: React.FC = () => {
     const init = parseFloat(initialBalance) || 0;
     const highest = parseFloat(highestBalance) || 0;
     
-    // For static drawdown, always use initial balance
     if (plan.maxDrawdownType === 'static') {
       return init - calculateMaxDrawdown();
     }
     
-    // For trailing drawdown
     const profitPercentage = ((highest - init) / init) * 100;
     
-    // If profit percentage exceeds locking percentage, threshold is the initial balance
     if (profitPercentage >= plan.lockingPercentage) {
       return init;
     }
     
-    // Otherwise, threshold is highest balance minus max drawdown amount
     return highest - calculateMaxDrawdown();
   };
 
@@ -201,7 +194,6 @@ const FxifyDrawdownCalculator: React.FC = () => {
     const dailyThreshold = getDailyLossLimitThreshold();
     const maxThreshold = getMaxDrawdownThreshold();
     
-    // If within 20% of either threshold, show warning
     const dailyBuffer = calculateDailyLossLimit() * 0.2;
     const maxBuffer = calculateMaxDrawdown() * 0.2;
     
@@ -215,12 +207,24 @@ const FxifyDrawdownCalculator: React.FC = () => {
     return { status: 'safe', message: 'Account is within safe limits.' };
   };
 
+  const calculateBreachLevels = (): { dailyBreachAmount: number, maxBreachAmount: number } => {
+    if (!showResults) return { dailyBreachAmount: 0, maxBreachAmount: 0 };
+    
+    const current = parseFloat(currentBalance) || 0;
+    const dailyLimit = getDailyLossLimitThreshold();
+    const maxLimit = getMaxDrawdownThreshold();
+    
+    return {
+      dailyBreachAmount: Math.max(0, current - dailyLimit),
+      maxBreachAmount: Math.max(0, current - maxLimit)
+    };
+  };
+
   const getExampleScenarios = () => {
     if (!plan) return null;
     const init = parseFloat(initialBalance) || 10000;
     
     if (plan.maxDrawdownType === 'static') {
-      // Example for static drawdown
       return (
         <div className="space-y-4 mt-6">
           <h3 className="text-lg font-semibold">Static Drawdown Examples</h3>
@@ -240,7 +244,6 @@ const FxifyDrawdownCalculator: React.FC = () => {
       );
     }
 
-    // Examples for trailing drawdown
     return (
       <div className="space-y-4 mt-6">
         <h3 className="text-lg font-semibold">Trailing Drawdown Examples</h3>
@@ -256,7 +259,6 @@ const FxifyDrawdownCalculator: React.FC = () => {
 
         <div className="p-4 bg-background/40 rounded-lg border border-border/40">
           <h4 className="font-medium mb-2">Before Lock Scenario (Small Profit)</h4>
-          {/* Example of HWM at 3% profit */}
           {(() => {
             const profit = init * 0.03;
             const hwm = init + profit;
@@ -319,14 +321,12 @@ const FxifyDrawdownCalculator: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground py-8 px-4 md:px-6 relative">
-      {/* Background elements */}
       <div className="absolute inset-0 overflow-hidden -z-10">
         <div className="absolute top-20 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-float opacity-70" />
         <div className="absolute -bottom-20 left-20 w-80 h-80 bg-accent/10 rounded-full blur-3xl animate-float delay-1000 opacity-70" />
       </div>
 
       <div className="container mx-auto max-w-6xl">
-        {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
           <Link to="/calculators">
             <Button variant="outline" size="sm" className="flex items-center gap-2 neo-card sticky top-4">
@@ -365,7 +365,6 @@ const FxifyDrawdownCalculator: React.FC = () => {
           </CardHeader>
           
           <CardContent className="space-y-6">
-            {/* Plan Selection */}
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <Label htmlFor="plan-select" className="text-lg font-medium">Select Plan</Label>
@@ -401,7 +400,6 @@ const FxifyDrawdownCalculator: React.FC = () => {
               </Select>
             </div>
 
-            {/* Rule Summary */}
             {plan && (
               <div className="p-4 rounded-lg bg-accent/5 border border-accent/10 neo-card">
                 <h3 className="font-medium mb-2 text-accent">Plan Rules</h3>
@@ -421,7 +419,6 @@ const FxifyDrawdownCalculator: React.FC = () => {
               </div>
             )}
 
-            {/* Calculator Inputs */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="space-y-1.5">
@@ -547,11 +544,9 @@ const FxifyDrawdownCalculator: React.FC = () => {
                 </Button>
               </div>
               
-              {/* Results Section */}
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Drawdown Results</h3>
                 
-                {/* Daily Loss Limit */}
                 <div className="p-4 rounded-lg bg-background/50 backdrop-blur border border-border/40 space-y-2 neo-card">
                   <div className="flex items-center justify-between">
                     <Label className="text-muted-foreground flex items-center gap-1">
@@ -587,7 +582,6 @@ const FxifyDrawdownCalculator: React.FC = () => {
                   )}
                 </div>
                 
-                {/* Max Drawdown */}
                 <div className="p-4 rounded-lg bg-background/50 backdrop-blur border border-border/40 space-y-2 neo-card">
                   <div className="flex items-center justify-between">
                     <Label className="text-muted-foreground flex items-center gap-1">
@@ -630,7 +624,56 @@ const FxifyDrawdownCalculator: React.FC = () => {
                   )}
                 </div>
                 
-                {/* Breach Status */}
+                <div className="p-4 rounded-lg bg-background/50 backdrop-blur border border-border/40 space-y-4 neo-card">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-lg font-medium">Distance to Breach</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs neo-card border border-border/50">
+                          <p>Shows how much more you can lose before breaching each limit</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-muted-foreground">Daily Loss Limit:</Label>
+                      <div className={`text-xl font-bold ${
+                        calculateBreachLevels().dailyBreachAmount === 0 
+                          ? 'text-red-500' 
+                          : 'text-primary'
+                      }`}>
+                        {formatCurrency(calculateBreachLevels().dailyBreachAmount)}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {calculateBreachLevels().dailyBreachAmount === 0 
+                          ? "You have breached the daily loss limit" 
+                          : "remaining until daily breach"}
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label className="text-muted-foreground">Maximum Drawdown:</Label>
+                      <div className={`text-xl font-bold ${
+                        calculateBreachLevels().maxBreachAmount === 0 
+                          ? 'text-red-500' 
+                          : 'text-accent'
+                      }`}>
+                        {formatCurrency(calculateBreachLevels().maxBreachAmount)}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {calculateBreachLevels().maxBreachAmount === 0 
+                          ? "You have breached the maximum drawdown" 
+                          : "remaining until max drawdown breach"}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
                 {showResults && (
                   <div className={`p-4 rounded-lg ${
                     drawdownStatus.status === 'breach' 
@@ -663,7 +706,6 @@ const FxifyDrawdownCalculator: React.FC = () => {
               </div>
             </div>
             
-            {/* Example Scenarios */}
             {showResults && getExampleScenarios()}
           </CardContent>
         </Card>
