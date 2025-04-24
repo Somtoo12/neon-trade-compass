@@ -56,7 +56,8 @@ const HomePage: React.FC = () => {
           backgroundImage: 'radial-gradient(circle at 50% 50%, hsl(var(--background)) 0%, hsl(var(--background)) 80%)'
         }}
       >
-        <div className="absolute inset-0 overflow-hidden opacity-20">
+        {/* Background effects - lower opacity */}
+        <div className="absolute inset-0 overflow-hidden opacity-10">
           <div className="absolute w-full h-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-accent/20 via-transparent to-transparent"></div>
           {Array.from({ length: 20 }).map((_, i) => (
             <div 
@@ -76,7 +77,11 @@ const HomePage: React.FC = () => {
         <motion.div 
           className="relative z-10 text-center max-w-3xl mx-auto"
         >
-          <div className="mb-4 flex justify-center">
+          {/* Text protection lightbox */}
+          <div className="absolute inset-0 bg-background/40 backdrop-blur-sm rounded-3xl -m-8"></div>
+          
+          {/* Badge with enhanced visibility */}
+          <div className="relative mb-4 flex justify-center">
             <motion.div 
               animate={{ 
                 boxShadow: ['0 0 0px rgba(123,97,255,0)', '0 0 20px rgba(123,97,255,0.7)', '0 0 0px rgba(123,97,255,0)'] 
@@ -88,33 +93,39 @@ const HomePage: React.FC = () => {
               }}
               className="inline-block"
             >
-              <Badge className="text-xs md:text-sm bg-accent/20 text-accent hover:bg-accent/30">
+              <Badge className="text-xs md:text-sm bg-accent/20 text-accent hover:bg-accent/30 shadow-[0_2px_8px_rgba(0,0,0,0.25)] relative z-10">
                 BUILT FOR THE TRADERS OF THE FUTURE
               </Badge>
             </motion.div>
           </div>
 
+          {/* Main title with enhanced shadows */}
           <motion.h1 
-            className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 md:mb-6 font-poppins tracking-tight"
+            className="relative text-4xl md:text-6xl lg:text-7xl font-bold mb-4 md:mb-6 font-poppins tracking-tight z-10"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.4 }}
+            style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5), 0 0 30px rgba(123,97,255,0.5)' }}
           >
             <span className="bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent neon-glow">
               PipCraft
             </span>
           </motion.h1>
           
+          {/* Tagline with enhanced readability */}
           <motion.p 
-            className="text-lg md:text-2xl lg:text-3xl mb-6 md:mb-8 text-foreground/90 font-light"
+            className="relative text-lg md:text-2xl lg:text-3xl mb-6 md:mb-8 text-foreground/90 font-light z-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.7, delay: 0.6 }}
+            style={{ textShadow: '0 1px 4px rgba(0,0,0,0.7)' }}
           >
             Smarter Trading. Every Tool You'll Ever Need — Reimagined.
           </motion.p>
           
+          {/* CTA button */}
           <motion.div
+            className="relative z-10"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.8 }}
@@ -132,7 +143,8 @@ const HomePage: React.FC = () => {
           </motion.div>
         </motion.div>
         
-        <div className="absolute bottom-36 left-0 right-0">
+        {/* Visual elements pushed down and separated from text */}
+        <div className="absolute bottom-36 left-0 right-0 pt-16">
           <TradingVisual />
         </div>
         
