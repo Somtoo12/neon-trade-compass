@@ -3,12 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Plus, Camera } from 'lucide-react';
+import { Plus, Image } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import html2canvas from 'html2canvas';
 import ChecklistItem from './ChecklistItem';
+import ChecklistHistory, { HistoryItem } from './ChecklistHistory';
+import { format } from 'date-fns';
 
 interface ChecklistItem {
   id: string;
@@ -32,6 +34,7 @@ const TradingChecklist: React.FC = () => {
   const [notes, setNotes] = useState('');
   const [clearNotesOnReset, setClearNotesOnReset] = useState(true);
   const [lastReset, setLastReset] = useState<string | null>(null);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
   const { toast } = useToast();
 
   // Load data from localStorage
@@ -40,6 +43,7 @@ const TradingChecklist: React.FC = () => {
     const savedNotes = localStorage.getItem('tradingNotes');
     const savedClearNotesOnReset = localStorage.getItem('clearNotesOnReset');
     const savedLastReset = localStorage.getItem('lastChecklistReset');
+    const savedHistory = localStorage.getItem('tradingChecklistHistory');
 
     if (savedChecklist) {
       setChecklist(JSON.parse(savedChecklist));
@@ -56,6 +60,10 @@ const TradingChecklist: React.FC = () => {
       const now = new Date().toISOString();
       setLastReset(now);
       localStorage.setItem('lastChecklistReset', now);
+    }
+
+    if (savedHistory) {
+      setHistory(JSON.parse(savedHistory));
     }
   }, []);
 
@@ -74,6 +82,10 @@ const TradingChecklist: React.FC = () => {
     localStorage.setItem('clearNotesOnReset', JSON.stringify(clearNotesOnReset));
   }, [clearNotesOnReset]);
 
+  useEffect(() => {
+    localStorage.setItem('tradingChecklistHistory', JSON.stringify(history));
+  }, [history]);
+
   // Reset and time management functions
   const checkIfResetNeeded = (lastResetTime: string) => {
     const now = new Date();
@@ -89,7 +101,43 @@ const TradingChecklist: React.FC = () => {
                           estNow.getFullYear() !== estLastReset.getFullYear();
     
     if ((isPast5PM && lastResetBefore5PM) || isDifferentDay) {
+      // First, save the current checklist to history before resetting
+      saveChecklistToHistory();
+      // Then reset for new day
       resetChecklist();
+    }
+  };
+
+  const saveChecklistToHistory = () => {
+    // Only save if there's at least one checked item (meaning the checklist was used)
+    const hasActivity = checklist.some(item => item.checked) || notes.trim().length > 0;
+    if (!hasActivity) return;
+
+    const completionPercentage = Math.round(
+      (checklist.filter(item => item.checked).length / checklist.length) * 100
+    );
+
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+
+    // Check if we already have an entry for today
+    const existingEntryIndex = history.findIndex(item => item.date.startsWith(today));
+
+    const newHistoryItem: HistoryItem = {
+      date: new Date().toISOString(),
+      checklist: [...checklist],
+      notes: notes,
+      completionPercentage
+    };
+
+    if (existingEntryIndex >= 0) {
+      // Update today's entry
+      const updatedHistory = [...history];
+      updatedHistory[existingEntryIndex] = newHistoryItem;
+      setHistory(updatedHistory);
+    } else {
+      // Add new entry and limit to 7 days
+      const updatedHistory = [newHistoryItem, ...history].slice(0, 7);
+      setHistory(updatedHistory);
     }
   };
 
@@ -98,10 +146,13 @@ const TradingChecklist: React.FC = () => {
       const customItems = prev.filter(item => item.isCustom);
       return [...defaultItems, ...customItems.map(item => ({ ...item, checked: false }))];
     });
+    
     if (clearNotesOnReset) setNotes('');
+    
     const now = new Date().toISOString();
     setLastReset(now);
     localStorage.setItem('lastChecklistReset', now);
+    
     toast({
       title: "Trading checklist reset",
       description: "Your checklist has been reset for a new trading day.",
@@ -136,6 +187,15 @@ const TradingChecklist: React.FC = () => {
 
   const deleteCustomItem = (id: string) => {
     setChecklist(checklist.filter(item => item.id !== id));
+  };
+
+  // Manual save of today's checklist to history
+  const saveCurrentToHistory = () => {
+    saveChecklistToHistory();
+    toast({
+      title: "Checklist saved to history",
+      description: "Today's checklist has been added to your 7-day history."
+    });
   };
 
   // Screenshot functionality
@@ -216,7 +276,7 @@ const TradingChecklist: React.FC = () => {
       
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger className="flex items-center justify-between w-full py-2 text-sm font-medium hover:bg-secondary/50 rounded-md px-2">
-          <span>Daily Checklist Items</span>
+          <span>Today's Checklist</span>
           {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
         </CollapsibleTrigger>
         <CollapsibleContent>
@@ -255,21 +315,32 @@ const TradingChecklist: React.FC = () => {
                 />
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-wrap gap-2">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={exportScreenshot}
                   className="gap-2"
                 >
-                  <Camera className="h-4 w-4" />
+                  <Image className="h-4 w-4" />
                   Export Screenshot
+                </Button>
+                
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={saveCurrentToHistory}
+                  className="gap-2"
+                >
+                  Save Today's Progress
                 </Button>
               </div>
             </div>
           </div>
         </CollapsibleContent>
       </Collapsible>
+      
+      <ChecklistHistory historyItems={history} />
     </div>
   );
 };
