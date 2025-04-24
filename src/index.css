@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
 
 @tailwind base;
@@ -99,6 +100,26 @@
 
   .mobile-safe-top {
     @apply pt-safe;
+  }
+  
+  /* Economic calendar specific styles */
+  .economic-calendar .sticky {
+    @apply bg-card/90 backdrop-blur-md z-10;
+  }
+  
+  .economic-calendar img:hover {
+    @apply cursor-pointer scale-105 transition-transform;
+  }
+  
+  /* Mobile optimizations for Economic Calendar */
+  @media (max-width: 767px) {
+    .economic-calendar .sticky {
+      @apply -mx-4 px-4 py-3 border-b;
+    }
+    
+    .economic-calendar img {
+      @apply max-h-48 object-contain mx-auto;
+    }
   }
 }
 
