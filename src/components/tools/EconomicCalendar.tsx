@@ -1,29 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Search, X, ChevronDown, ExternalLink, Clock, Calendar } from 'lucide-react';
+import { Search, X, Calendar } from 'lucide-react';
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter, AlertDialogCancel } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EventRow } from './calendar/EventRow';
+import { format } from 'date-fns';
 
 // Your provided API key
 const API_KEY = 'YOUR_PUBLIC_FCSAPI_KEY';
@@ -224,7 +207,7 @@ const EconomicCalendar: React.FC = () => {
   };
 
   return (
-    <div className="economic-calendar">
+    <div className="economic-calendar space-y-4">
       
       {/* Reaction Modal */}
       <AlertDialog open={!!selectedReaction} onOpenChange={() => setSelectedReaction(null)}>
@@ -269,10 +252,10 @@ const EconomicCalendar: React.FC = () => {
         )}
       </AlertDialog>
 
-      <Card className="p-6 neo-card">
-        <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-            <h3 className="text-2xl font-semibold">Economic Calendar</h3>
+      <Card className="p-4">
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <h3 className="text-lg font-semibold">Economic Calendar</h3>
             <Button 
               variant="outline" 
               size="sm"
@@ -286,207 +269,116 @@ const EconomicCalendar: React.FC = () => {
           </div>
 
           {/* Sticky Controls */}
-          <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm p-4 -m-4 mb-4 space-y-4">
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input 
-                placeholder="Search event or currency..." 
-                className="pl-10 input-glow" 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              {searchQuery && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-2 top-2 h-5 w-5"
-                  onClick={() => setSearchQuery('')}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
-            
-            {/* Impact Filters */}
-            <div className="flex flex-wrap gap-2">
-              <Button 
-                variant={impactFilter === 'all' ? 'default' : 'outline'} 
-                size="sm"
-                onClick={() => setImpactFilter('all')}
-                className="text-xs"
-              >
-                All
-              </Button>
-              <Button 
-                variant={impactFilter === 'high' ? 'default' : 'outline'} 
-                size="sm"
-                onClick={() => setImpactFilter('high')}
-                className="text-xs"
-              >
-                🔴 High
-              </Button>
-              <Button 
-                variant={impactFilter === 'medium' ? 'default' : 'outline'} 
-                size="sm"
-                onClick={() => setImpactFilter('medium')}
-                className="text-xs"
-              >
-                🟠 Medium
-              </Button>
-              <Button 
-                variant={impactFilter === 'low' ? 'default' : 'outline'} 
-                size="sm"
-                onClick={() => setImpactFilter('low')}
-                className="text-xs"
-              >
-                🟢 Low
-              </Button>
-            </div>
-            
-            {/* Next High Impact Countdown */}
-            {nextHighImpactEvent && (
-              <div className="flex items-center gap-2 bg-accent/20 p-2 rounded-lg">
-                <Clock className="h-4 w-4 text-accent" />
-                <div className="text-sm">
-                  <span className="font-semibold">Next High-Impact Event: </span>
-                  <span>🔴 {nextHighImpactEvent.event} ({nextHighImpactEvent.currency}) in {getCountdown(nextHighImpactEvent.date)}</span>
-                </div>
+          <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm -mx-4 px-4 py-2 border-b">
+            <div className="space-y-4">
+              {/* Search */}
+              <div className="relative">
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input 
+                  placeholder="Search event or currency..." 
+                  className="pl-10" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                {searchQuery && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-2 top-2 h-5 w-5"
+                    onClick={() => setSearchQuery('')}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
               </div>
-            )}
-          </div>
-
-          {/* Timeline Heatmap */}
-          <div className="overflow-x-auto pb-2">
-            <div className="flex gap-4 min-w-max">
-              {events.map(event => (
-                <div 
-                  key={`timeline-${event.id}`} 
-                  className="flex items-center gap-2 px-3 py-1.5 border rounded-full whitespace-nowrap text-sm"
+              
+              {/* Impact Filters */}
+              <div className="flex flex-wrap gap-2">
+                <Button 
+                  variant={impactFilter === 'all' ? 'default' : 'outline'} 
+                  size="sm"
+                  onClick={() => setImpactFilter('all')}
+                  className="text-xs"
                 >
-                  {formatLocalTime(event.date)} {event.impact === 'high' ? '🔴' : event.impact === 'medium' ? '🟠' : '🟢'} {countryFlags[event.country] || ''} {event.event}
+                  All
+                </Button>
+                <Button 
+                  variant={impactFilter === 'high' ? 'default' : 'outline'} 
+                  size="sm"
+                  onClick={() => setImpactFilter('high')}
+                  className="text-xs"
+                >
+                  🔴 High
+                </Button>
+                <Button 
+                  variant={impactFilter === 'medium' ? 'default' : 'outline'} 
+                  size="sm"
+                  onClick={() => setImpactFilter('medium')}
+                  className="text-xs"
+                >
+                  🟠 Medium
+                </Button>
+                <Button 
+                  variant={impactFilter === 'low' ? 'default' : 'outline'} 
+                  size="sm"
+                  onClick={() => setImpactFilter('low')}
+                  className="text-xs"
+                >
+                  🟢 Low
+                </Button>
+              </div>
+
+              {/* Next High Impact Countdown */}
+              {nextHighImpactEvent && (
+                <div className="flex items-center gap-2 bg-accent/20 p-2 rounded-lg">
+                  <div className="text-sm">
+                    <span className="font-medium">Next High-Impact: </span>
+                    <span>🔴 {nextHighImpactEvent.event} ({nextHighImpactEvent.currency}) in {getCountdown(nextHighImpactEvent.date)}</span>
+                  </div>
                 </div>
-              ))}
+              )}
             </div>
           </div>
 
           {/* Events List */}
-          <div className="space-y-6">
+          <div className="space-y-px -mx-4">
             {loading ? (
-              // Loading skeleton
-              <div className="space-y-6">
+              <div className="space-y-px p-4">
                 {[1, 2, 3].map((i) => (
-                  <Card key={i} className="p-4">
-                    <div className="flex justify-between items-start">
-                      <div className="space-y-2 flex-1">
-                        <Skeleton className="h-6 w-24" />
-                        <Skeleton className="h-5 w-40" />
-                      </div>
-                      <Skeleton className="h-6 w-16 rounded-full" />
+                  <Skeleton key={i} className="h-12 w-full" />
+                ))}
+              </div>
+            ) : filteredEvents.length > 0 ? (
+              <div>
+                {Object.entries(
+                  filteredEvents.reduce((acc: Record<string, typeof filteredEvents>, event) => {
+                    const date = format(new Date(event.date), 'yyyy-MM-dd');
+                    acc[date] = [...(acc[date] || []), event];
+                    return acc;
+                  }, {})
+                ).map(([date, events]) => (
+                  <div key={date} className="border-b last:border-b-0">
+                    <div className="sticky top-[var(--header-height)] bg-muted/50 backdrop-blur-sm px-4 py-1 text-xs font-medium text-muted-foreground">
+                      📅 {format(new Date(date), 'EEEE, MMMM d')}
                     </div>
-                    <div className="mt-4 grid grid-cols-3 gap-2">
-                      <Skeleton className="h-16" />
-                      <Skeleton className="h-16" />
-                      <Skeleton className="h-16" />
-                    </div>
-                  </Card>
+                    {events.map((event) => (
+                      <EventRow
+                        key={event.id}
+                        event={event}
+                        countryFlags={countryFlags}
+                        userData={userData}
+                        onUpdateUserData={updateEventUserData}
+                        onViewReaction={setSelectedReaction}
+                        mockReactions={mockReactions}
+                      />
+                    ))}
+                  </div>
                 ))}
               </div>
             ) : (
-              filteredEvents.length > 0 ? (
-                filteredEvents.map(event => (
-                  <Card key={event.id} className="p-4 overflow-hidden glassmorphism">
-                    <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg font-medium">{formatLocalTime(event.date)}</span>
-                          <span className="text-lg">{countryFlags[event.country] || ''} {event.currency}</span>
-                        </div>
-                        <h4 className="text-lg font-medium">{event.event}</h4>
-                      </div>
-                      <div>
-                        {renderImpactBadge(event.impact)}
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-                      <div className="p-3 rounded-md bg-secondary/50">
-                        <div className="text-xs text-muted-foreground mb-1">Forecast</div>
-                        <div className="font-semibold">{event.forecast || 'N/A'}</div>
-                      </div>
-                      <div className="p-3 rounded-md bg-secondary/50">
-                        <div className="text-xs text-muted-foreground mb-1">Previous</div>
-                        <div className="font-semibold">{event.previous || 'N/A'}</div>
-                      </div>
-                      <div className="p-3 rounded-md bg-secondary/50">
-                        <div className="text-xs text-muted-foreground mb-1">Actual</div>
-                        <div className="font-semibold">{event.actual || 'Pending'}</div>
-                      </div>
-                    </div>
-                    
-                    {/* User Bias and Notes Section */}
-                    <div className="mt-4 border-t pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium">Your Bias:</label>
-                        <div className="flex items-center gap-2">
-                          <Button 
-                            variant={userData[event.id]?.bias === 'bullish' ? 'default' : 'outline'} 
-                            size="sm"
-                            onClick={() => updateEventUserData(event.id, 'bias', 'bullish')}
-                          >
-                            🔼 Bullish
-                          </Button>
-                          <Button 
-                            variant={userData[event.id]?.bias === 'bearish' ? 'default' : 'outline'} 
-                            size="sm"
-                            onClick={() => updateEventUserData(event.id, 'bias', 'bearish')}
-                          >
-                            🔽 Bearish
-                          </Button>
-                          <Button 
-                            variant={userData[event.id]?.bias === 'neutral' ? 'default' : 'outline'} 
-                            size="sm"
-                            onClick={() => updateEventUserData(event.id, 'bias', 'neutral')}
-                          >
-                            😐 Neutral
-                          </Button>
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <label htmlFor={`notes-${event.id}`} className="text-sm font-medium">Notes:</label>
-                        <Textarea 
-                          id={`notes-${event.id}`}
-                          placeholder="E.g., Expect spike if actual > forecast"
-                          value={userData[event.id]?.notes || ''}
-                          onChange={(e) => updateEventUserData(event.id, 'notes', e.target.value)}
-                          className="resize-none"
-                          rows={2}
-                        />
-                      </div>
-                    </div>
-                    
-                    {/* Previous Market Reaction */}
-                    {mockReactions[event.id] && (
-                      <div className="mt-4">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => setSelectedReaction(event.id)}
-                          className="w-full flex items-center justify-center gap-2 border-dashed"
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                          View Last Reaction
-                        </Button>
-                      </div>
-                    )}
-                  </Card>
-                ))
-              ) : (
-                <div className="text-center py-10">
-                  <p className="text-muted-foreground">No economic events match your search criteria.</p>
-                </div>
-              )
+              <div className="text-center py-10">
+                <p className="text-muted-foreground">No economic events match your search criteria.</p>
+              </div>
             )}
           </div>
         </div>
