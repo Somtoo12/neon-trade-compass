@@ -182,28 +182,28 @@ const ForexCalculator: React.FC = () => {
           </div>
         </div>
         
-        <div className="bg-black/40 rounded-xl p-6 border border-white/5 flex flex-col justify-center">
+        <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl p-6 border border-gray-300/50 flex flex-col justify-center shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-sm text-muted-foreground">Result</span>
-            <ArrowRight className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm text-gray-600">Result</span>
+            <ArrowRight className="h-4 w-4 text-gray-500" />
           </div>
           
           <div className="space-y-4">
             <div>
-              <h3 className="text-sm text-muted-foreground mb-1">Pips Gained/Lost</h3>
-              <p className={`text-2xl font-bold ${pipsResult >= 0 ? 'text-neon-green' : 'text-red-500'}`}>
+              <h3 className="text-sm text-gray-700 mb-1">Pips Gained/Lost</h3>
+              <p className={`text-2xl font-bold ${pipsResult >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {pipsResult >= 0 ? '+' : ''}{pipsResult.toFixed(1)}
               </p>
             </div>
             
             <div>
-              <h3 className="text-sm text-muted-foreground mb-1">Pip Value</h3>
-              <p className="text-xl font-medium">{pipValue.toFixed(2)} {accountCurrency}</p>
+              <h3 className="text-sm text-gray-700 mb-1">Pip Value</h3>
+              <p className="text-xl font-medium text-gray-800">{pipValue.toFixed(2)} {accountCurrency}</p>
             </div>
             
             <div>
-              <h3 className="text-sm text-muted-foreground mb-1">Total Profit/Loss</h3>
-              <p className={`text-3xl font-bold ${totalPnL >= 0 ? 'text-neon-green' : 'text-red-500'}`}>
+              <h3 className="text-sm text-gray-700 mb-1">Total Profit/Loss</h3>
+              <p className={`text-3xl font-bold ${totalPnL >= 0 ? 'text-green-700' : 'text-red-700'}`}>
                 {totalPnL >= 0 ? '+' : ''}{totalPnL.toFixed(2)} {accountCurrency}
               </p>
             </div>
