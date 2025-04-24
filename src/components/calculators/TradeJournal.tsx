@@ -459,37 +459,6 @@ const TradeJournal: React.FC = () => {
             </div>
             
             <div id="summaries-tab-content" className="space-y-6">
-              <div className="flex flex-wrap gap-4 justify-between text-sm">
-                <div>
-                  <span className="text-muted-foreground">Total Trades:</span>
-                  <span className="ml-2 font-medium">{performanceMetrics.total}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Win Rate:</span>
-                  <span className={`ml-2 font-medium ${parseFloat(performanceMetrics.winRate) > 50 ? 'text-green-500' : 'text-red-500'}`}>
-                    {performanceMetrics.winRate}%
-                  </span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Total Pips:</span>
-                  <span className={`ml-2 font-medium ${performanceMetrics.totalPips > 0 ? 'text-green-500' : performanceMetrics.totalPips < 0 ? 'text-red-500' : ''}`}>
-                    {performanceMetrics.totalPips > 0 ? '+' : ''}{performanceMetrics.totalPips}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Total P/L:</span>
-                  <span className={`ml-2 font-medium ${performanceMetrics.totalProfit > 0 ? 'text-green-500' : performanceMetrics.totalProfit < 0 ? 'text-red-500' : ''}`}>
-                    {performanceMetrics.totalProfit > 0 ? '+' : ''}${performanceMetrics.totalProfit.toFixed(2)} USD
-                  </span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Avg P/L per Trade:</span>
-                  <span className={`ml-2 font-medium ${parseFloat(performanceMetrics.avgProfit) > 0 ? 'text-green-500' : parseFloat(performanceMetrics.avgProfit) < 0 ? 'text-red-500' : ''}`}>
-                    ${performanceMetrics.avgProfit} USD
-                  </span>
-                </div>
-              </div>
-              
               <Card className="p-4 bg-gradient-to-r from-secondary/30 to-accent/20 border border-accent/30">
                 <div className="flex flex-wrap gap-4 justify-between text-sm">
                   <div>
