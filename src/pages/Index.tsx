@@ -1,4 +1,3 @@
-
 import React from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import ForexCalculator from '@/components/calculators/ForexCalculator';
@@ -8,6 +7,7 @@ import SessionClock from '@/components/tools/SessionClock';
 import CurrencyHeatmap from '@/components/tools/CurrencyHeatmap';
 import RiskManagement from '@/components/tools/RiskManagement';
 import TradeJournal from '@/components/calculators/TradeJournal';
+import PropFirmPromos from '@/components/promos/PropFirmPromos';
 import { useNavigate } from 'react-router-dom';
 
 interface IndexProps {
@@ -37,6 +37,8 @@ const Index: React.FC<IndexProps> = ({ activeSection }) => {
         return <RiskManagement />;
       case 'trade-journal':
         return <TradeJournal />;
+      case 'prop-firm-promos':
+        return <PropFirmPromos />;
       default:
         return <ForexCalculator />;
     }
@@ -44,18 +46,7 @@ const Index: React.FC<IndexProps> = ({ activeSection }) => {
 
   return (
     <AppLayout activeSection={activeSection} setActiveSection={setActiveSection}>
-      <div className="container mx-auto max-w-6xl px-4">
-        <div className="mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2 font-poppins bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
-            PipCraft Trading Tools
-          </h1>
-          <p className="text-sm md:text-base text-muted-foreground">
-            Smart tools to enhance your trading decisions. No noise. No API. Pure calculation.
-          </p>
-        </div>
-
-        {renderSection()}
-      </div>
+      {renderSection()}
     </AppLayout>
   );
 };
