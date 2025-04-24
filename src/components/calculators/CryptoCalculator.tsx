@@ -3,6 +3,7 @@ import React from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import ProfitEstimator from './ProfitEstimator';
 import CryptoLotSizeCalculator from './CryptoLotSizeCalculator';
+import { cryptoPairs } from '@/constants/currencyPairs';
 
 const CryptoCalculator: React.FC = () => {
   return (
