@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -37,7 +36,6 @@ const TradingChecklist: React.FC = () => {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const { toast } = useToast();
 
-  // Load data from localStorage
   useEffect(() => {
     const savedChecklist = localStorage.getItem('tradingChecklist');
     const savedNotes = localStorage.getItem('tradingNotes');
@@ -67,7 +65,6 @@ const TradingChecklist: React.FC = () => {
     }
   }, []);
 
-  // Save data to localStorage
   useEffect(() => {
     if (checklist.length > 0) {
       localStorage.setItem('tradingChecklist', JSON.stringify(checklist));
@@ -86,7 +83,6 @@ const TradingChecklist: React.FC = () => {
     localStorage.setItem('tradingChecklistHistory', JSON.stringify(history));
   }, [history]);
 
-  // Reset and time management functions
   const checkIfResetNeeded = (lastResetTime: string) => {
     const now = new Date();
     const lastReset = new Date(lastResetTime);
@@ -101,15 +97,12 @@ const TradingChecklist: React.FC = () => {
                           estNow.getFullYear() !== estLastReset.getFullYear();
     
     if ((isPast5PM && lastResetBefore5PM) || isDifferentDay) {
-      // First, save the current checklist to history before resetting
       saveChecklistToHistory();
-      // Then reset for new day
       resetChecklist();
     }
   };
 
   const saveChecklistToHistory = () => {
-    // Only save if there's at least one checked item (meaning the checklist was used)
     const hasActivity = checklist.some(item => item.checked) || notes.trim().length > 0;
     if (!hasActivity) return;
 
@@ -117,28 +110,16 @@ const TradingChecklist: React.FC = () => {
       (checklist.filter(item => item.checked).length / checklist.length) * 100
     );
 
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
-
-    // Check if we already have an entry for today
-    const existingEntryIndex = history.findIndex(item => item.date.startsWith(today));
-
     const newHistoryItem: HistoryItem = {
+      id: `checklist-${Date.now()}`,
       date: new Date().toISOString(),
       checklist: [...checklist],
       notes: notes,
       completionPercentage
     };
 
-    if (existingEntryIndex >= 0) {
-      // Update today's entry
-      const updatedHistory = [...history];
-      updatedHistory[existingEntryIndex] = newHistoryItem;
-      setHistory(updatedHistory);
-    } else {
-      // Add new entry and limit to 7 days
-      const updatedHistory = [newHistoryItem, ...history].slice(0, 7);
-      setHistory(updatedHistory);
-    }
+    const updatedHistory = [newHistoryItem, ...history].slice(0, 7 * 10);
+    setHistory(updatedHistory);
   };
 
   const resetChecklist = () => {
@@ -159,7 +140,6 @@ const TradingChecklist: React.FC = () => {
     });
   };
 
-  // Checklist item management
   const toggleItem = (id: string) => {
     setChecklist(checklist.map(item => 
       item.id === id ? { ...item, checked: !item.checked } : item
@@ -189,7 +169,25 @@ const TradingChecklist: React.FC = () => {
     setChecklist(checklist.filter(item => item.id !== id));
   };
 
-  // Manual save of today's checklist to history
+  const handleDeleteEntry = (entryId: string) => {
+    setHistory(prev => prev.filter(item => item.id !== entryId));
+    toast({
+      title: "Entry deleted",
+      description: "The checklist entry has been removed from history.",
+    });
+  };
+
+  const handleDeleteDayEntries = (date: string) => {
+    setHistory(prev => prev.filter(item => {
+      const itemDate = new Date(item.date).toLocaleDateString();
+      return itemDate !== date;
+    }));
+    toast({
+      title: "Day entries deleted",
+      description: "All checklist entries for the selected day have been removed.",
+    });
+  };
+
   const saveCurrentToHistory = () => {
     saveChecklistToHistory();
     toast({
@@ -198,7 +196,6 @@ const TradingChecklist: React.FC = () => {
     });
   };
 
-  // Screenshot functionality
   const exportScreenshot = async () => {
     const element = document.getElementById('trading-checklist-card');
     if (!element) return;
@@ -228,12 +225,10 @@ const TradingChecklist: React.FC = () => {
     }
   };
 
-  // Calculate completion percentage
   const completionPercentage = Math.round(
     (checklist.filter(item => item.checked).length / checklist.length) * 100
   );
 
-  // Format next reset time
   const formatNextReset = () => {
     const now = new Date();
     const estNow = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
@@ -340,7 +335,11 @@ const TradingChecklist: React.FC = () => {
         </CollapsibleContent>
       </Collapsible>
       
-      <ChecklistHistory historyItems={history} />
+      <ChecklistHistory 
+        historyItems={history} 
+        onDeleteEntry={handleDeleteEntry}
+        onDeleteDayEntries={handleDeleteDayEntries}
+      />
     </div>
   );
 };
