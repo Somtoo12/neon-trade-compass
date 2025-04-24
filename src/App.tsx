@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/hooks/use-theme";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import Calculators from "./pages/Calculators"; // Import the new page
 
 const queryClient = new QueryClient();
 
@@ -19,7 +20,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/calculators" element={<Navigate to="/" replace />} />
+            <Route path="/calculators" element={<Calculators />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

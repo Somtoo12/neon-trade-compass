@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -9,67 +10,70 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
 import { 
   CalendarIcon, CheckCircle2, Copy, Edit2, Trash2,
-  PieChart, BarChart3, Filter, Plus, Search, ChevronDown
+  PieChart, BarChart3, Filter, Plus, Search, ChevronDown,
+  FileDown, RefreshCw, Trash, AlertTriangle
 } from 'lucide-react';
-import { forexPairs as importedForexPairs, cryptoPairs } from "@/constants/currencyPairs";
+import { format } from "date-fns";
+import { forexPairs, cryptoPairs } from "@/constants/currencyPairs";
 import { BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, Legend, Cell, PieChart as RePieChart, Pie } from 'recharts';
+import { useTradeJournal, type Trade } from '@/hooks/useTradeJournal';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
-// Add additional pairs for indices, metals, etc.
+// Format forex pairs to match expected format - with null checks
+const formattedForexPairs = forexPairs && forexPairs.majors 
+  ? [
+      ...(forexPairs.majors?.map(pair => pair.replace('/', '')) || []),
+      ...(forexPairs.minors?.map(pair => pair.replace('/', '')) || []),
+      ...(forexPairs.exotics?.map(pair => pair.replace('/', '')) || [])
+    ]
+  : [];
+
+// Add additional pairs
 const indices = ['US30', 'NAS100', 'SPX500', 'UK100', 'GER40', 'JPN225'];
 const metals = ['XAUUSD', 'XAGUSD', 'XPTUSD', 'XPDUSD'];
 const energies = ['USOIL', 'UKOIL', 'NATGAS'];
-
-// Format forex pairs to match expected format - with null checks
-const forexPairs = [
-  ...(importedForexPairs && importedForexPairs.majors ? importedForexPairs.majors.map(pair => pair.replace('/', '')) : []),
-  ...(importedForexPairs && importedForexPairs.minors ? importedForexPairs.minors.map(pair => pair.replace('/', '')) : []),
-  ...(importedForexPairs && importedForexPairs.exotics ? importedForexPairs.exotics.map(pair => pair.replace('/', '')) : []),
-  ...metals,
-  ...indices,
-  ...energies
-];
 
 // Process crypto pairs to match format
 const formattedCryptoPairs = cryptoPairs ? cryptoPairs.map(pair => pair.replace('/', '')) : [];
 
 // Combine all pairs for the dropdown
-const allPairs = [...forexPairs, ...formattedCryptoPairs];
-
-// Type for trade data
-interface Trade {
-  id: string;
-  pair: string;
-  date: Date;
-  entryPrice: number;
-  stopLoss: number;
-  takeProfit: number;
-  lotSize: number;
-  pips: number;
-  profit: number;
-  direction: 'LONG' | 'SHORT';
-  notes: string;
-}
+const allPairs = [...formattedForexPairs, ...metals, ...indices, ...energies, ...formattedCryptoPairs];
 
 // Calculate profit based on pips and lot size
 const calculateProfit = (pips: number, lotSize: number): number => {
   return pips * lotSize * 10;
 };
 
-// Generate random ID for trades
-const generateId = (): string => {
-  return Math.random().toString(36).substring(2, 9);
-};
-
 // Format pairs to match expected format and handle custom pairs
 const formatPair = (pair: string) => pair.replace('/', '').toUpperCase();
 
 const TradeJournal: React.FC = () => {
-  const { toast } = useToast();
-  const [trades, setTrades] = useState<Trade[]>([]);
+  const {
+    trades,
+    filteredTrades,
+    startDate,
+    endDate,
+    setStartDate,
+    setEndDate,
+    performanceMetrics,
+    chartData,
+    addTrade,
+    updateTrade,
+    deleteTrade,
+    clearAllTrades,
+    exportTradesAsCsv
+  } = useTradeJournal();
   
   // Form state
   const [pair, setPair] = useState<string>("");
@@ -82,10 +86,9 @@ const TradeJournal: React.FC = () => {
   const [notes, setNotes] = useState<string>("");
   const [editingId, setEditingId] = useState<string | null>(null);
   
-  // Filter state
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  // UI state
   const [openCommandMenu, setOpenCommandMenu] = useState(false);
+  const [showClearDialog, setShowClearDialog] = useState(false);
 
   // Detect direction based on entry and take profit
   const direction = useMemo(() => {
@@ -95,7 +98,7 @@ const TradeJournal: React.FC = () => {
     return tp > entry ? 'LONG' : 'SHORT';
   }, [entryPrice, takeProfit]);
 
-  // Auto-calculate pips if entry, SL, and TP are provided
+  // Auto-calculate pips if entry and TP are provided
   useEffect(() => {
     if (entryPrice && takeProfit && !editingId) {
       const entry = parseFloat(entryPrice);
@@ -111,62 +114,18 @@ const TradeJournal: React.FC = () => {
     }
   }, [entryPrice, takeProfit, direction, editingId]);
 
-  // Filter trades by date range
-  const filteredTrades = useMemo(() => {
-    if (!startDate && !endDate) return trades;
-    
-    return trades.filter(trade => {
-      if (startDate && endDate) {
-        return trade.date >= startDate && trade.date <= endDate;
-      } else if (startDate) {
-        return trade.date >= startDate;
-      } else if (endDate) {
-        return trade.date <= endDate;
-      }
-      return true;
-    });
-  }, [trades, startDate, endDate]);
-
-  // Calculate performance metrics
-  const performanceMetrics = useMemo(() => {
-    const total = filteredTrades.length;
-    const wins = filteredTrades.filter(t => t.pips > 0).length;
-    const winRate = total > 0 ? (wins / total * 100).toFixed(1) : "0.0";
-    const totalPips = filteredTrades.reduce((sum, t) => sum + t.pips, 0);
-    const totalProfit = filteredTrades.reduce((sum, t) => sum + t.profit, 0);
-    const avgProfit = total > 0 ? (totalProfit / total).toFixed(2) : "0.00";
-    
-    return { total, winRate, totalPips, totalProfit, avgProfit };
-  }, [filteredTrades]);
-
-  // Chart data preparation
-  const chartData = useMemo(() => {
-    const pairData: Record<string, { pair: string; count: number; pips: number; profit: number }> = {};
-    
-    filteredTrades.forEach(trade => {
-      if (!pairData[trade.pair]) {
-        pairData[trade.pair] = { pair: trade.pair, count: 0, pips: 0, profit: 0 };
-      }
-      pairData[trade.pair].count += 1;
-      pairData[trade.pair].pips += trade.pips;
-      pairData[trade.pair].profit += trade.profit;
-    });
-    
-    return Object.values(pairData);
-  }, [filteredTrades]);
-
   // Wins vs Losses data for pie chart
   const winsLossesData = useMemo(() => {
-    const wins = filteredTrades.filter(t => t.pips > 0).length;
-    const losses = filteredTrades.filter(t => t.pips < 0).length;
-    const breakeven = filteredTrades.filter(t => t.pips === 0).length;
+    const wins = performanceMetrics.wins;
+    const losses = performanceMetrics.losses;
+    const breakeven = performanceMetrics.breakeven;
     
     return [
       { name: 'Wins', value: wins, color: '#10b981' },
       { name: 'Losses', value: losses, color: '#ef4444' },
       { name: 'Breakeven', value: breakeven, color: '#6b7280' }
-    ];
-  }, [filteredTrades]);
+    ].filter(item => item.value > 0); // Only show segments with values
+  }, [performanceMetrics]);
 
   // Reset form fields
   const resetForm = () => {
@@ -186,11 +145,6 @@ const TradeJournal: React.FC = () => {
     
     // Validate inputs
     if (!pair || !entryPrice || !stopLoss || !takeProfit || !lotSize || !pips) {
-      toast({
-        title: "Missing information",
-        description: "Please fill all required fields",
-        variant: "destructive"
-      });
       return;
     }
 
@@ -205,8 +159,8 @@ const TradeJournal: React.FC = () => {
     const profitAmount = calculateProfit(pipsNum, lotSizeNum);
     
     // Create or update trade
-    const tradeData: Trade = {
-      id: editingId || generateId(),
+    const tradeData = {
+      ...(editingId ? { id: editingId } : {}),
       pair,
       date,
       entryPrice: entryPriceNum,
@@ -217,24 +171,12 @@ const TradeJournal: React.FC = () => {
       profit: profitAmount,
       direction,
       notes
-    };
+    } as Trade;
 
     if (editingId) {
-      // Update existing trade
-      setTrades(prevTrades => 
-        prevTrades.map(trade => trade.id === editingId ? tradeData : trade)
-      );
-      toast({
-        title: "Trade updated",
-        description: `${pair} trade has been updated`
-      });
+      updateTrade(tradeData);
     } else {
-      // Add new trade
-      setTrades(prevTrades => [...prevTrades, tradeData]);
-      toast({
-        title: "Trade added",
-        description: `${pair} trade has been added to your journal`
-      });
+      addTrade(tradeData);
     }
     
     resetForm();
@@ -256,46 +198,28 @@ const TradeJournal: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Delete trade
-  const handleDelete = (id: string) => {
-    setTrades(prevTrades => prevTrades.filter(trade => trade.id !== id));
-    toast({
-      title: "Trade deleted",
-      description: "Trade has been removed from your journal"
-    });
-  };
-
   // Copy trade summary to clipboard
   const copyToClipboard = (trade: Trade) => {
     const emoji = trade.pips > 0 ? "🟢" : trade.pips < 0 ? "🔴" : "⚪";
-    const summary = `${trade.pair} • ${trade.direction} ${emoji} — ${format(trade.date, "yyyy-MM-dd")}\n` +
+    const summary = `${trade.pair} • ${trade.direction} ${emoji} — ${format(new Date(trade.date), "yyyy-MM-dd")}\n` +
       `📈 Entry: ${trade.entryPrice} | 🎯 TP: ${trade.takeProfit} | 🛑 SL: ${trade.stopLoss}\n` +
       `📊 ${trade.pips > 0 ? '+' : ''}${trade.pips} pips | ${trade.lotSize} lots | 💵 ${trade.profit > 0 ? '+' : ''}$${trade.profit.toFixed(2)}\n` +
       `📝 "${trade.notes}"`;
 
     navigator.clipboard.writeText(summary);
-    toast({
-      title: "Copied to clipboard",
-      description: "Trade summary has been copied to your clipboard"
-    });
   };
 
-  // Prepare predefined pairs with proper null checking
+  // Process all predefined pairs
   const predefinedPairs = useMemo(() => {
     return allPairs.map(formatPair);
   }, []);
 
   // Filtered pairs based on user input
-  const [filteredPairs, setFilteredPairs] = useState<string[]>(predefinedPairs || []);
+  const [filteredPairs, setFilteredPairs] = useState<string[]>(predefinedPairs);
   
   // Filter pairs based on user input
   const handlePairSearch = (searchTerm: string) => {
     const term = searchTerm.toUpperCase();
-    if (!predefinedPairs) {
-      setFilteredPairs([]);
-      return;
-    }
-    
     const filtered = predefinedPairs.filter(pair => 
       pair.includes(term)
     );
@@ -305,7 +229,29 @@ const TradeJournal: React.FC = () => {
   return (
     <Card className="p-6 neo-card">
       <div className="space-y-8">
-        <h3 className="text-2xl font-semibold">Trade Journal Tracker</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-2xl font-semibold">Trade Journal Tracker</h3>
+          <div className="flex gap-2">
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="gap-1" 
+              onClick={exportTradesAsCsv}
+              disabled={filteredTrades.length === 0}
+            >
+              <FileDown className="h-4 w-4" /> Export CSV
+            </Button>
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="gap-1 text-red-500 hover:text-red-600" 
+              onClick={() => setShowClearDialog(true)}
+              disabled={trades.length === 0}
+            >
+              <Trash className="h-4 w-4" /> Clear All
+            </Button>
+          </div>
+        </div>
         
         <Tabs defaultValue="entry" className="w-full">
           <TabsList className="grid grid-cols-4">
@@ -390,14 +336,13 @@ const TradeJournal: React.FC = () => {
                       <Calendar
                         mode="single"
                         selected={date}
-                        onSelect={(date) => date && setDate(date)}
+                        onSelect={(newDate) => newDate && setDate(newDate)}
                         className="p-3 pointer-events-auto"
                       />
                     </PopoverContent>
                   </Popover>
                 </div>
                 
-                {/* Rest of form fields */}
                 {/* Entry Price */}
                 <div className="space-y-2">
                   <Label>Entry Price</Label>
@@ -517,20 +462,379 @@ const TradeJournal: React.FC = () => {
             </form>
           </TabsContent>
           
-          {/* Other tabs */}
-          <TabsContent value="summary">
-            <div>Summary content will go here</div>
+          {/* Trade Summaries */}
+          <TabsContent value="summary" className="space-y-6">
+            <div className="flex flex-wrap items-center gap-4">
+              <h4 className="text-lg font-medium">Trade Summaries</h4>
+              
+              <div className="ml-auto flex gap-2">
+                {/* Date Filter */}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-2">
+                      <Filter className="h-4 w-4" /> 
+                      {startDate && endDate
+                        ? `${format(startDate, "MMM dd")} - ${format(endDate, "MMM dd")}`
+                        : "Filter Dates"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-4">
+                    <div className="space-y-4">
+                      <h4 className="text-sm font-medium">Filter by Date Range</h4>
+                      <div className="grid gap-2">
+                        <Label>Start Date</Label>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="outline" size="sm" className="w-full justify-start">
+                              {startDate ? format(startDate, "PPP") : "Select start date"}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar
+                              mode="single"
+                              selected={startDate}
+                              onSelect={setStartDate}
+                              className="p-3 pointer-events-auto"
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label>End Date</Label>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="outline" size="sm" className="w-full justify-start">
+                              {endDate ? format(endDate, "PPP") : "Select end date"}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar
+                              mode="single"
+                              selected={endDate}
+                              onSelect={setEndDate}
+                              className="p-3 pointer-events-auto"
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                      
+                      <div className="flex justify-between">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => {
+                            setStartDate(undefined);
+                            setEndDate(undefined);
+                          }}
+                        >
+                          Clear Filter
+                        </Button>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+            
+            {/* Performance Summary Box */}
+            {filteredTrades.length > 0 && (
+              <Card className="p-4 bg-gradient-to-r from-secondary/30 to-accent/20 border border-accent/30">
+                <div className="flex flex-wrap gap-4 justify-between text-sm">
+                  <div>
+                    <span className="text-muted-foreground">Total Trades:</span>
+                    <span className="ml-2 font-medium">{performanceMetrics.total}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Win Rate:</span>
+                    <span className={`ml-2 font-medium ${parseFloat(performanceMetrics.winRate) > 50 ? 'text-green-500' : 'text-red-500'}`}>
+                      {performanceMetrics.winRate}%
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Total Pips:</span>
+                    <span className={`ml-2 font-medium ${performanceMetrics.totalPips > 0 ? 'text-green-500' : performanceMetrics.totalPips < 0 ? 'text-red-500' : ''}`}>
+                      {performanceMetrics.totalPips > 0 ? '+' : ''}{performanceMetrics.totalPips}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Total P/L:</span>
+                    <span className={`ml-2 font-medium ${performanceMetrics.totalProfit > 0 ? 'text-green-500' : performanceMetrics.totalProfit < 0 ? 'text-red-500' : ''}`}>
+                      {performanceMetrics.totalProfit > 0 ? '+' : ''}${performanceMetrics.totalProfit.toFixed(2)} USD
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Avg P/L per Trade:</span>
+                    <span className={`ml-2 font-medium ${parseFloat(performanceMetrics.avgProfit) > 0 ? 'text-green-500' : parseFloat(performanceMetrics.avgProfit) < 0 ? 'text-red-500' : ''}`}>
+                      ${performanceMetrics.avgProfit} USD
+                    </span>
+                  </div>
+                </div>
+              </Card>
+            )}
+            
+            {/* Trade Summary Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {filteredTrades.length > 0 ? (
+                filteredTrades.map((trade) => (
+                  <Card 
+                    key={trade.id} 
+                    className={`p-4 relative overflow-hidden ${
+                      trade.pips > 0 
+                        ? 'border-green-500/30 bg-gradient-to-br from-green-950/20 to-transparent' 
+                        : trade.pips < 0 
+                          ? 'border-red-500/30 bg-gradient-to-br from-red-950/20 to-transparent' 
+                          : ''
+                    }`}
+                  >
+                    {/* Trade Heading */}
+                    <div className="flex items-center justify-between mb-2">
+                      <h5 className="text-base font-medium flex items-center gap-2">
+                        {trade.pair} • {trade.direction} {trade.pips > 0 ? '🔺' : trade.pips < 0 ? '🔻' : '▪️'} 
+                        <span className="text-xs text-muted-foreground">
+                          {format(new Date(trade.date), "yyyy-MM-dd")}
+                        </span>
+                      </h5>
+                      <div className="flex items-center space-x-2">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-8 w-8 p-0" 
+                          onClick={() => copyToClipboard(trade)}
+                        >
+                          <Copy className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-8 w-8 p-0" 
+                          onClick={() => handleEdit(trade)}
+                        >
+                          <Edit2 className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-8 w-8 p-0" 
+                          onClick={() => deleteTrade(trade.id)}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {/* Trade Details */}
+                    <div className="text-sm space-y-1">
+                      <p className="flex flex-wrap gap-2">
+                        <span>📈 Entry: {trade.entryPrice}</span>
+                        <span>|</span>
+                        <span>🎯 TP: {trade.takeProfit}</span>
+                        <span>|</span>
+                        <span>🛑 SL: {trade.stopLoss}</span>
+                      </p>
+                      <p className="flex flex-wrap gap-2">
+                        <span className={`${trade.pips > 0 ? 'text-green-500' : trade.pips < 0 ? 'text-red-500' : ''}`}>
+                          📊 {trade.pips > 0 ? '+' : ''}{trade.pips} pips
+                        </span>
+                        <span>|</span>
+                        <span>{trade.lotSize} lots</span>
+                        <span>|</span>
+                        <span className={`${trade.profit > 0 ? 'text-green-500' : trade.profit < 0 ? 'text-red-500' : ''}`}>
+                          💵 {trade.profit > 0 ? '+' : ''}${trade.profit.toFixed(2)}
+                        </span>
+                      </p>
+                      {trade.notes && (
+                        <p className="italic mt-2 text-muted-foreground">
+                          📝 "{trade.notes}"
+                        </p>
+                      )}
+                    </div>
+                  </Card>
+                ))
+              ) : (
+                <div className="col-span-2 text-center py-10 text-muted-foreground">
+                  No trades recorded yet. Add trades using the Trade Entry tab.
+                </div>
+              )}
+            </div>
           </TabsContent>
           
-          <TabsContent value="log">
-            <div>Log content will go here</div>
+          {/* Trade Log Table */}
+          <TabsContent value="log" className="space-y-6">
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Pair</TableHead>
+                    <TableHead>Direction</TableHead>
+                    <TableHead>Entry/TP/SL</TableHead>
+                    <TableHead>Pips</TableHead>
+                    <TableHead>Lot Size</TableHead>
+                    <TableHead>P/L ($)</TableHead>
+                    <TableHead>Notes</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredTrades.length > 0 ? (
+                    filteredTrades.map((trade) => (
+                      <TableRow key={trade.id}>
+                        <TableCell>{format(new Date(trade.date), "yyyy-MM-dd")}</TableCell>
+                        <TableCell>{trade.pair}</TableCell>
+                        <TableCell>{trade.direction}</TableCell>
+                        <TableCell className="text-xs">
+                          {trade.entryPrice} / {trade.takeProfit} / {trade.stopLoss}
+                        </TableCell>
+                        <TableCell className={`${trade.pips > 0 ? 'text-green-500' : trade.pips < 0 ? 'text-red-500' : ''}`}>
+                          {trade.pips > 0 ? '+' : ''}{trade.pips}
+                        </TableCell>
+                        <TableCell>{trade.lotSize}</TableCell>
+                        <TableCell className={`${trade.profit > 0 ? 'text-green-500' : trade.profit < 0 ? 'text-red-500' : ''}`}>
+                          {trade.profit > 0 ? '+' : ''}${trade.profit.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="max-w-[150px] truncate" title={trade.notes}>
+                          {trade.notes || "-"}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex space-x-1">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-7 w-7 p-0" 
+                              onClick={() => handleEdit(trade)}
+                            >
+                              <Edit2 className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-7 w-7 p-0" 
+                              onClick={() => deleteTrade(trade.id)}
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={9} className="text-center py-10 text-muted-foreground">
+                        No trades recorded yet. Add trades using the Trade Entry tab.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </TabsContent>
           
-          <TabsContent value="charts">
-            <div>Charts content will go here</div>
+          {/* Analytics/Charts */}
+          <TabsContent value="charts" className="space-y-6">
+            {filteredTrades.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Wins vs Losses Pie Chart */}
+                  <Card className="p-4">
+                    <h4 className="text-base font-medium mb-4 flex items-center">
+                      <PieChart className="h-4 w-4 mr-2" /> Win/Loss Ratio
+                    </h4>
+                    <div className="flex justify-center h-[250px]">
+                      <RePieChart width={250} height={250}>
+                        <Pie
+                          data={winsLossesData}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          label={({ name, value }) => `${name}: ${value}`}
+                        >
+                          {winsLossesData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <RechartsTooltip />
+                        <Legend />
+                      </RePieChart>
+                    </div>
+                  </Card>
+                  
+                  {/* Pairs Performance Bar Chart */}
+                  <Card className="p-4">
+                    <h4 className="text-base font-medium mb-4 flex items-center">
+                      <BarChart3 className="h-4 w-4 mr-2" /> Currency Pairs Performance (Pips)
+                    </h4>
+                    <div className="h-[250px] w-full overflow-x-auto">
+                      <BarChart
+                        width={Math.max(500, chartData.length * 50)}
+                        height={250}
+                        data={chartData}
+                        margin={{ top: 5, right: 30, left: 20, bottom: 50 }}
+                      >
+                        <XAxis 
+                          dataKey="pair" 
+                          angle={-45}
+                          textAnchor="end"
+                          height={60}
+                        />
+                        <YAxis />
+                        <RechartsTooltip />
+                        <Legend />
+                        <Bar 
+                          dataKey="pips" 
+                          name="Pips" 
+                          fill="#8884d8"
+                          radius={[4, 4, 0, 0]}
+                        >
+                          {chartData.map((entry, index) => (
+                            <Cell 
+                              key={`cell-${index}`} 
+                              fill={entry.pips > 0 ? '#10b981' : '#ef4444'} 
+                            />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </div>
+                  </Card>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-10 text-muted-foreground">
+                No trades recorded yet. Add trades using the Trade Entry tab to see analytics.
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Clear All Confirmation Dialog */}
+      <AlertDialog open={showClearDialog} onOpenChange={setShowClearDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-red-500" />
+                Clear all trades?
+              </div>
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This action will delete all your saved trades. This cannot be undone.
+              Are you sure you want to continue?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              className="bg-red-500 hover:bg-red-600"
+              onClick={clearAllTrades}
+            >
+              Delete All Trades
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 };
