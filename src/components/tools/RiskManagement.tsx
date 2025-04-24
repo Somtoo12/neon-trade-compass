@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -85,7 +84,7 @@ const RiskManagement: React.FC = () => {
   };
 
   return (
-    <Card className="neo-card p-6">
+    <Card className="p-6">
       <h2 className="text-xl font-semibold mb-4 font-poppins">Risk Management Tools</h2>
       
       <Tabs defaultValue="basic" className="w-full">
@@ -93,63 +92,6 @@ const RiskManagement: React.FC = () => {
           <TabsTrigger value="basic">Basic Risk Calculator</TabsTrigger>
           <TabsTrigger value="advanced">Advanced Position Sizing</TabsTrigger>
         </TabsList>
-        
-        <TabsContent value="basic">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm text-muted-foreground">Account Size</label>
-                <Input 
-                  type="number" 
-                  value={accountSize} 
-                  onChange={(e) => setAccountSize(e.target.value)}
-                  className="bg-secondary/50 border-input/40 input-glow"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <label className="text-sm text-muted-foreground">Risk Percentage per Trade (%)</label>
-                <Input 
-                  type="number" 
-                  step="0.1" 
-                  min="0.1" 
-                  max="5"
-                  value={riskPercentage} 
-                  onChange={(e) => setRiskPercentage(e.target.value)}
-                  className="bg-secondary/50 border-input/40 input-glow"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <label className="text-sm text-muted-foreground">Stop Loss in Pips</label>
-                <Input 
-                  type="number" 
-                  min="1"
-                  value={stopLossPips} 
-                  onChange={(e) => setStopLossPips(e.target.value)}
-                  className="bg-secondary/50 border-input/40 input-glow"
-                />
-              </div>
-            </div>
-            
-            <div className="bg-black/40 rounded-xl p-6 border border-white/5 flex flex-col justify-center">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-sm text-muted-foreground">Result</span>
-                <ArrowRight className="h-4 w-4 text-muted-foreground" />
-              </div>
-              
-              <div>
-                <h3 className="text-sm text-muted-foreground mb-2">Recommended Lot Size</h3>
-                <p className="text-3xl font-bold text-neon-blue">
-                  {recommendedLotSize.toFixed(2)} lots
-                </p>
-                <p className="text-xs text-muted-foreground mt-2">
-                  Risk amount: {(parseFloat(accountSize) * parseFloat(riskPercentage) / 100).toFixed(2)} USD
-                </p>
-              </div>
-            </div>
-          </div>
-        </TabsContent>
         
         <TabsContent value="advanced">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -228,29 +170,29 @@ const RiskManagement: React.FC = () => {
               </div>
             </div>
             
-            <div className="bg-black/40 rounded-xl p-6 border border-white/5 flex flex-col justify-center">
+            <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl p-6 border border-gray-300/50 flex flex-col justify-center shadow-sm">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-sm text-muted-foreground">Result</span>
-                <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm text-gray-600">Result</span>
+                <ArrowRight className="h-4 w-4 text-gray-500" />
               </div>
               
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-sm text-muted-foreground mb-1">Suggested Lot Size</h3>
-                  <p className="text-3xl font-bold text-neon-blue">{advLotSize.toFixed(2)} lots</p>
+                  <h3 className="text-sm text-gray-700 mb-1">Suggested Lot Size</h3>
+                  <p className="text-3xl font-bold text-primary">{advLotSize.toFixed(2)} lots</p>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h3 className="text-sm text-muted-foreground mb-1">Potential Loss</h3>
-                    <p className="text-xl font-bold text-red-500">
+                    <h3 className="text-sm text-gray-700 mb-1">Potential Loss</h3>
+                    <p className="text-xl font-bold text-red-600">
                       {potentialLoss.toFixed(2)} USD
                     </p>
                   </div>
                   
                   <div>
-                    <h3 className="text-sm text-muted-foreground mb-1">Potential Profit</h3>
-                    <p className="text-xl font-bold text-neon-green">
+                    <h3 className="text-sm text-gray-700 mb-1">Potential Profit</h3>
+                    <p className="text-xl font-bold text-green-700">
                       {potentialProfit.toFixed(2)} USD
                     </p>
                   </div>

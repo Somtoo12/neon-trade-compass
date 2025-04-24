@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Clock, Globe } from 'lucide-react';
@@ -32,7 +31,6 @@ const SessionClock: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
   
-  // Calculate time in a specific timezone
   const calculateLocalTime = (offset: number): {time: Date, hour: number} => {
     const utc = currentTime.getTime() + (currentTime.getTimezoneOffset() * 60000);
     const localTime = new Date(utc + (3600000 * offset));
@@ -42,7 +40,6 @@ const SessionClock: React.FC = () => {
     };
   };
   
-  // Format time with seconds
   const formatTime = (date: Date): string => {
     return date.toLocaleTimeString('en-US', { 
       hour12: true,
@@ -52,7 +49,6 @@ const SessionClock: React.FC = () => {
     });
   };
 
-  // Format date
   const formatDate = (date: Date): string => {
     return date.toLocaleDateString('en-US', {
       weekday: 'long',
@@ -62,12 +58,10 @@ const SessionClock: React.FC = () => {
     });
   };
 
-  // Get current timezone
   const getCurrentTimezone = (): string => {
     return Intl.DateTimeFormat().resolvedOptions().timeZone;
   };
   
-  // Check if session is active
   useEffect(() => {
     const active: string[] = [];
     
@@ -82,26 +76,24 @@ const SessionClock: React.FC = () => {
   }, [currentTime]);
   
   return (
-    <Card className="neo-card p-6 bg-black/40">
+    <Card className="p-6">
       <div className="space-y-8">
-        {/* Local Time Section */}
-        <div className="text-center space-y-2">
-          <div className="flex items-center justify-center gap-2 text-muted-foreground mb-4">
+        <div className="text-center space-y-2 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl p-6 border border-gray-300/50 shadow-sm">
+          <div className="flex items-center justify-center gap-2 text-gray-600 mb-4">
             <Globe className="h-5 w-5" />
             <span>Your Local Time</span>
           </div>
-          <div className="text-4xl font-bold font-mono tracking-wider text-primary">
+          <div className="text-4xl font-bold font-mono tracking-wider text-gray-800">
             {formatTime(currentTime)}
           </div>
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-gray-700">
             {formatDate(currentTime)}
           </div>
-          <div className="text-xs text-muted-foreground/70">
+          <div className="text-xs text-gray-600">
             Timezone: {getCurrentTimezone()}
           </div>
         </div>
 
-        {/* Market Sessions Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {marketSessions.map((session) => {
             const { time } = calculateLocalTime(session.offset);
@@ -110,29 +102,27 @@ const SessionClock: React.FC = () => {
             return (
               <div 
                 key={session.name}
-                className={`relative p-4 rounded-lg ${
-                  isActive 
-                    ? 'bg-primary/5 border border-primary/20' 
-                    : 'bg-black/20 border border-white/5'
+                className={`relative p-4 rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 border border-gray-300/50 shadow-sm ${
+                  isActive ? 'border-primary/20' : ''
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground">{session.code}</span>
-                    <span className="font-medium">{session.name}</span>
+                    <span className="text-xs text-gray-600">{session.code}</span>
+                    <span className="font-medium text-gray-800">{session.name}</span>
                   </div>
                   {isActive && (
-                    <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">
+                    <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
                       ACTIVE
                     </span>
                   )}
                 </div>
                 
-                <div className="text-2xl font-mono tracking-wider mb-2">
+                <div className="text-2xl font-mono tracking-wider mb-2 text-gray-800">
                   {formatTime(time)}
                 </div>
                 
-                <div className="text-xs text-muted-foreground flex items-center gap-2">
+                <div className="text-xs text-gray-600 flex items-center gap-2">
                   <span>{session.marketCode}</span>
                   <span>•</span>
                   <span>
@@ -144,24 +134,23 @@ const SessionClock: React.FC = () => {
           })}
         </div>
 
-        {/* Trading Hours Information */}
-        <div className="mt-6 p-4 rounded-lg bg-black/20 border border-white/5">
-          <h3 className="text-sm font-medium mb-3">Trading Hours (Local Market Time)</h3>
-          <div className="space-y-2 text-sm text-muted-foreground">
+        <div className="mt-6 p-4 rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 border border-gray-300/50 shadow-sm">
+          <h3 className="text-sm font-medium mb-3 text-gray-800">Trading Hours (Local Market Time)</h3>
+          <div className="space-y-2 text-sm text-gray-700">
             <div className="flex gap-2">
-              <span className="text-xs">US</span>
+              <span className="text-xs text-gray-600">US</span>
               New York (NYSE): 9:30 AM - 4:00 PM ET, Mon-Fri
             </div>
             <div className="flex gap-2">
-              <span className="text-xs">GB</span>
+              <span className="text-xs text-gray-600">GB</span>
               London (LSE): 8:00 AM - 4:30 PM GMT, Mon-Fri
             </div>
             <div className="flex gap-2">
-              <span className="text-xs">JP</span>
+              <span className="text-xs text-gray-600">JP</span>
               Tokyo (TSE): 9:00 AM - 3:00 PM JST, Mon-Fri
             </div>
             <div className="flex gap-2">
-              <span className="text-xs">AU</span>
+              <span className="text-xs text-gray-600">AU</span>
               Sydney (ASX): 10:00 AM - 4:00 PM AEST, Mon-Fri
             </div>
           </div>
