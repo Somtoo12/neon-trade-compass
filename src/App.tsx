@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/hooks/use-theme";
 import Home from "./pages/Home";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import PropFirmCalculator from "./pages/PropFirmCalculator";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/calculators" element={<Index />} />
+            <Route path="/prop-firm-calculator" element={<PropFirmCalculator />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
