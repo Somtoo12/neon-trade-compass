@@ -18,7 +18,7 @@ import {
   ChevronDown, Info
 } from 'lucide-react';
 import { forexPairs as importedForexPairs, cryptoPairs } from "@/constants/currencyPairs";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, Cell, PieChart as RePieChart, Pie } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, Legend, Cell, PieChart as RePieChart, Pie } from 'recharts';
 
 // Add additional pairs for indices, metals, etc.
 const indices = ['US30', 'NAS100', 'SPX500', 'UK100', 'GER40', 'JPN225'];
@@ -27,14 +27,14 @@ const energies = ['USOIL', 'UKOIL', 'NATGAS'];
 
 // Format forex pairs to match expected format
 const forexPairs = [
-  ...Object.values(importedForexPairs).flat().map(pair => pair.replace('/', '')),
+  ...(importedForexPairs ? Object.values(importedForexPairs).flat().map(pair => pair.replace('/', '')) : []),
   ...metals,
   ...indices,
   ...energies
 ];
 
 // Process crypto pairs to match format
-const formattedCryptoPairs = cryptoPairs.map(pair => pair.replace('/', ''));
+const formattedCryptoPairs = cryptoPairs ? cryptoPairs.map(pair => pair.replace('/', '')) : [];
 
 // Combine all pairs for the dropdown
 const allPairs = [...forexPairs, ...formattedCryptoPairs];
@@ -312,9 +312,9 @@ const TradeJournal: React.FC = () => {
                       <Command>
                         <CommandInput placeholder="Search pairs..." className="h-9" />
                         <CommandEmpty>No pairs found.</CommandEmpty>
-                        {allPairs && allPairs.length > 0 && (
-                          <CommandGroup className="max-h-[200px] overflow-auto">
-                            {allPairs.map((item) => (
+                        <CommandGroup className="max-h-[200px] overflow-auto">
+                          {Array.isArray(allPairs) && allPairs.length > 0 ? (
+                            allPairs.map((item) => (
                               <CommandItem
                                 key={item}
                                 value={item}
@@ -326,9 +326,16 @@ const TradeJournal: React.FC = () => {
                                 {item}
                                 {item === pair && <CheckCircle2 className="ml-auto h-4 w-4" />}
                               </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        )}
+                            ))
+                          ) : (
+                            <CommandItem value="EURUSD" onSelect={() => {
+                              setPair("EURUSD");
+                              setOpenCommandMenu(false);
+                            }}>
+                              EURUSD
+                            </CommandItem>
+                          )}
+                        </CommandGroup>
                       </Command>
                     </PopoverContent>
                   </Popover>
@@ -771,7 +778,7 @@ const TradeJournal: React.FC = () => {
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Pie>
-                        <Tooltip />
+                        <RechartsTooltip />
                         <Legend />
                       </RePieChart>
                     </div>
@@ -791,7 +798,7 @@ const TradeJournal: React.FC = () => {
                       >
                         <XAxis dataKey="pair" angle={-45} textAnchor="end" height={70} />
                         <YAxis />
-                        <Tooltip formatter={(value, name) => [`${value}`, name === 'pips' ? 'Pips' : 'Trades']} />
+                        <RechartsTooltip formatter={(value, name) => [`${value}`, name === 'pips' ? 'Pips' : 'Trades']} />
                         <Legend />
                         <Bar dataKey="pips" name="Total Pips" fill="#8884d8">
                           {chartData.map((entry, index) => (
