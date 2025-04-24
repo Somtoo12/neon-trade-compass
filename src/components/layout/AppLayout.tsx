@@ -21,11 +21,14 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
-      {!isMobile && <ThemeToggle />}
+      {/* Desktop theme toggle */}
+      {!isMobile && <div className="absolute top-4 right-4 z-10"><ThemeToggle /></div>}
+
       {isMobile ? (
         <div className="flex flex-col flex-1 overflow-hidden">
+          {/* Sticky mobile navigation */}
           <MobileNav activeSection={activeSection} setActiveSection={setActiveSection} />
-          <main className="flex-1 overflow-y-auto p-4">
+          <main className="flex-1 overflow-y-auto p-3 md:p-4 pt-20">
             {children}
           </main>
         </div>

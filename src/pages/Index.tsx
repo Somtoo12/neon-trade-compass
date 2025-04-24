@@ -50,12 +50,12 @@ const Index: React.FC<IndexProps> = ({ activeSection }) => {
 
   return (
     <AppLayout activeSection={activeSection} setActiveSection={setActiveSection}>
-      <div className="container mx-auto max-w-6xl px-4">
-        <div className="mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2 font-poppins bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
+      <div className="container mx-auto max-w-6xl px-2 sm:px-4">
+        <div className="mb-4 md:mb-6">
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-1 md:mb-2 font-poppins bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
             PipCraft Trading Tools
           </h1>
-          <p className="text-sm md:text-base text-muted-foreground">
+          <p className="text-xs md:text-sm text-muted-foreground">
             Smart tools to enhance your trading decisions. No noise. No API. Pure calculation.
           </p>
         </div>

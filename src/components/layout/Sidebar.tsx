@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BarChart, Book, Clock, Gauge, LineChart, PieChart, Scale, Compass, GamepadIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -37,7 +38,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection }) =>
   };
 
   return (
-    <div className="w-64 h-screen sticky top-0 glassmorphism overflow-y-auto p-4">
+    <div className="w-64 lg:w-72 h-screen sticky top-0 glassmorphism overflow-y-auto p-4 border-r border-border/30">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-center font-poppins bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
           PipCraft
@@ -48,13 +49,13 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection }) =>
       </div>
       
       <nav>
-        <ul className="space-y-2">
+        <ul className="space-y-1.5">
           {navItems.map((item) => (
             <li key={item.id}>
               <Link
                 to={item.path}
                 onClick={() => handleNavClick(item.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-300 ${
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-300 ${
                   activeSection === item.id
                     ? 'bg-accent/20 text-accent neon-border neon-purple-glow'
                     : 'hover:bg-secondary text-foreground/80 hover:text-foreground'
@@ -62,7 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection }) =>
                 aria-selected={activeSection === item.id}
               >
                 {item.icon}
-                <span>{item.label}</span>
+                <span className="text-sm">{item.label}</span>
               </Link>
             </li>
           ))}
