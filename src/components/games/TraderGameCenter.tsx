@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GamepadIcon } from "lucide-react";
 import PropChallenge from './PropChallenge';
-import CandleMemoryGame from './CandleMemoryGame';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const TraderGameCenter = () => {
@@ -19,11 +18,10 @@ const TraderGameCenter = () => {
         <GamepadIcon className="h-8 w-8 text-muted-foreground" />
       </div>
       
-      <Tabs value={activeGame} onValueChange={setActiveGame}>
-        <TabsList className="grid w-full grid-cols-3">
+      <Tabs value={activeGame} onValueChange={setActiveGame} className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="prop-challenge">⚔️ Prop Challenge</TabsTrigger>
-          <TabsTrigger value="candle-memory">🧠 Candle Memory</TabsTrigger>
-          <TabsTrigger value="kill-zone" disabled>⏱️ Kill Zone</TabsTrigger>
+          <TabsTrigger value="kill-zone">⏱️ Kill Zone</TabsTrigger>
         </TabsList>
         
         <TabsContent value="prop-challenge">
@@ -35,17 +33,6 @@ const TraderGameCenter = () => {
             </CardHeader>
             <CardContent>
               <PropChallenge />
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="candle-memory">
-          <Card>
-            <CardHeader>
-              <CardTitle>🧠 Candle Memory Game</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CandleMemoryGame />
             </CardContent>
           </Card>
         </TabsContent>
