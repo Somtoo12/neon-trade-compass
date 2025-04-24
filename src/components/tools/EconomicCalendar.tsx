@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EventRow } from './calendar/EventRow';
 import { format } from 'date-fns';
 
-const API_KEY = import.meta.env.VITE_ECONOMIC_CALENDAR_API_KEY;
+const API_KEY = 'w9lfRZ7QZMH8BLPuDNbGdRK7';
 
 const mockEvents = [
   {
@@ -134,13 +134,7 @@ const EconomicCalendar: React.FC = () => {
   const fetchCalendarData = async () => {
     setLoading(true);
     try {
-      if (!API_KEY) {
-        console.warn('Economic Calendar API key is not set');
-        setEvents(mockEvents);
-        return;
-      }
-
-      const response = await fetch(`https://economic-calendar-api.com/events?api_key=${API_KEY}`, {
+      const response = await fetch(`https://fcsapi.com/api-v3/forex/economy?access_key=${API_KEY}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -152,7 +146,19 @@ const EconomicCalendar: React.FC = () => {
       }
 
       const data = await response.json();
-      setEvents(data.length > 0 ? data : mockEvents);
+      const formattedEvents = data?.response ? data.response.map((event: any) => ({
+        id: event.id,
+        date: new Date(event.date).toISOString(),
+        country: event.country,
+        currency: event.currency,
+        event: event.title,
+        impact: event.impact.toLowerCase(),
+        forecast: event.forecast,
+        previous: event.previous,
+        actual: event.actual
+      })) : [];
+
+      setEvents(formattedEvents.length > 0 ? formattedEvents : mockEvents);
     } catch (error) {
       console.error('Error fetching economic calendar:', error);
       setEvents(mockEvents);
