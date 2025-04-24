@@ -35,12 +35,12 @@ const Index: React.FC = () => {
 
   return (
     <AppLayout activeSection={activeSection} setActiveSection={setActiveSection}>
-      <div className="container mx-auto max-w-6xl">
+      <div className="container mx-auto max-w-6xl px-4">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2 font-poppins bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
+          <h1 className="text-2xl md:text-3xl font-bold mb-2 font-poppins bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
             PipCraft Trading Tools
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm md:text-base text-muted-foreground">
             Smart tools to enhance your trading decisions. No noise. No API. Pure calculation.
           </p>
         </div>

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Sidebar from './Sidebar';
 import MobileNav from './MobileNav';
@@ -24,7 +25,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       {isMobile ? (
         <div className="flex flex-col flex-1 overflow-hidden">
           <MobileNav activeSection={activeSection} setActiveSection={setActiveSection} />
-          <main className="flex-1 overflow-y-auto">
+          <main className="flex-1 overflow-y-auto p-4">
             {children}
           </main>
         </div>

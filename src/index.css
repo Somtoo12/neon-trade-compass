@@ -54,15 +54,21 @@
 
   * {
     @apply border-border transition-colors duration-300;
+    -webkit-tap-highlight-color: transparent;
   }
   
   html, body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-x-hidden;
     font-family: 'Inter', sans-serif;
   }
   
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Poppins', sans-serif;
+  }
+
+  input, select, textarea {
+    @apply text-base md:text-sm;
+    font-size: 16px !important;
   }
 }
 
@@ -85,6 +91,14 @@
   
   .input-glow:focus {
     @apply ring-2 ring-neon-purple shadow-[0_0_15px_rgba(123,97,255,0.3)];
+  }
+
+  .mobile-safe-bottom {
+    @apply pb-safe;
+  }
+
+  .mobile-safe-top {
+    @apply pt-safe;
   }
 }
 
