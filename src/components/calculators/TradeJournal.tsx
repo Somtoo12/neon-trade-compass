@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -282,7 +283,7 @@ const TradeJournal: React.FC = () => {
   // Process all predefined pairs
   const predefinedPairs = useMemo(() => {
     const fPairs = forexPairs.map(formatPair);
-    const cPairs = cryptoPairs.map(formatPair);
+    const cPairs = cryptoPairs ? cryptoPairs.map(formatPair) : [];
     return [...fPairs, ...cPairs];
   }, []);
 
@@ -820,4 +821,28 @@ const TradeJournal: React.FC = () => {
                         width={500}
                         height={250}
                         data={chartData}
-                        margin={{ top: 5, right: 30, left
+                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <XAxis dataKey="pair" />
+                        <YAxis />
+                        <RechartsTooltip />
+                        <Legend />
+                        <Bar dataKey="pips" name="Pips" fill="#8884d8" />
+                      </BarChart>
+                    </div>
+                  </Card>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-10 text-muted-foreground">
+                No trade data available for analysis. Add trades using the Trade Entry tab.
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
+      </div>
+    </Card>
+  );
+};
+
+export default TradeJournal;
