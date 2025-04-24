@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Search, X, ChevronDown, ExternalLink, Clock, Calendar } from 'lucide-react';
 import { Card } from "@/components/ui/card";
@@ -25,6 +24,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+
+// Your provided API key
+const API_KEY = 'YOUR_PUBLIC_FCSAPI_KEY';
 
 // Mock data for initial rendering before API fetch
 const mockEvents = [
@@ -143,8 +145,6 @@ const getCountdown = (futureTime: string) => {
 };
 
 const EconomicCalendar: React.FC = () => {
-  const [apiKey, setApiKey] = useState<string | null>(localStorage.getItem('fcs_api_key'));
-  const [showApiKeyModal, setShowApiKeyModal] = useState(!apiKey);
   const [events, setEvents] = useState(mockEvents);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -157,12 +157,10 @@ const EconomicCalendar: React.FC = () => {
   
   // Function to fetch economic calendar data
   const fetchCalendarData = async () => {
-    if (!apiKey) return;
-    
     setLoading(true);
     try {
       // In a real implementation, we would fetch from the actual API endpoint
-      // const response = await fetch(`https://fcsapi.com/api-v3/forex/economy_cal?access_key=${apiKey}`);
+      // const response = await fetch(`https://fcsapi.com/api-v3/forex/economy_cal?access_key=${API_KEY}`);
       // const data = await response.json();
       
       // For now, we'll simulate an API response with our mock data
@@ -175,15 +173,7 @@ const EconomicCalendar: React.FC = () => {
       setLoading(false);
     }
   };
-  
-  // Save API key and initiate first fetch
-  const saveApiKey = (key: string) => {
-    localStorage.setItem('fcs_api_key', key);
-    setApiKey(key);
-    setShowApiKeyModal(false);
-    fetchCalendarData();
-  };
-  
+
   // Update user data for an event
   const updateEventUserData = (eventId: string, field: 'bias' | 'notes', value: string | BiasType) => {
     const updatedData = {
@@ -197,7 +187,12 @@ const EconomicCalendar: React.FC = () => {
     setUserData(updatedData);
     localStorage.setItem('event_user_data', JSON.stringify(updatedData));
   };
-  
+
+  // Initial fetch when component mounts
+  useEffect(() => {
+    fetchCalendarData();
+  }, []);
+
   // Filter events based on search and impact
   const filteredEvents = events.filter(event => {
     const matchesSearch = searchQuery === '' || 
@@ -213,13 +208,6 @@ const EconomicCalendar: React.FC = () => {
   const nextHighImpactEvent = events.find(event => 
     event.impact === 'high' && new Date(event.date).getTime() > Date.now()
   );
-
-  // Initial fetch when component mounts and apiKey exists
-  useEffect(() => {
-    if (apiKey) {
-      fetchCalendarData();
-    }
-  }, [apiKey]);
   
   // Render impact badge with appropriate color
   const renderImpactBadge = (impact: string) => {
@@ -237,37 +225,6 @@ const EconomicCalendar: React.FC = () => {
 
   return (
     <div className="economic-calendar">
-      {/* API Key Modal */}
-      <Dialog open={showApiKeyModal} onOpenChange={setShowApiKeyModal}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>FCSAPI Access Key Required</DialogTitle>
-            <DialogDescription>
-              Enter your FCSAPI Access Key to enable the economic calendar.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex items-center space-x-2 py-4">
-            <div className="grid flex-1 gap-2">
-              <Input
-                id="apikey"
-                type="text" 
-                placeholder="Your FCSAPI Access Key"
-                onChange={(e) => setApiKey(e.target.value)}
-                className="input-glow"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button 
-              className="border border-neon-purple shadow-[0_0_10px_rgba(123,97,255,0.4)]"
-              onClick={() => apiKey && saveApiKey(apiKey)}
-              disabled={!apiKey}
-            >
-              Save & Continue
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
       
       {/* Reaction Modal */}
       <AlertDialog open={!!selectedReaction} onOpenChange={() => setSelectedReaction(null)}>
