@@ -55,19 +55,19 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
       {isOpen && (
         <div className="fixed inset-0 z-40 bg-background/95 backdrop-blur-sm pt-16">
           <nav className="container px-4 py-6">
-            <ul className="space-y-3">
+            <ul className="space-y-4"> {/* Increased space between nav items */}
               {navItems.map((item) => (
                 <li key={item.id}>
                   <button
                     onClick={() => handleNavClick(item.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-4 rounded-lg transition-all duration-300 ${
+                    className={`w-full flex items-center gap-4 px-4 py-4 rounded-lg transition-all duration-300 text-left ${
                       activeSection === item.id
                         ? 'bg-accent/20 text-accent border border-accent/30'
                         : 'hover:bg-secondary text-foreground/80 hover:text-foreground'
                     }`}
                   >
                     {item.icon}
-                    <span className="text-base">{item.label}</span>
+                    <span className="text-base ml-3">{item.label}</span> {/* Added margin to separate icon and text */}
                   </button>
                 </li>
               ))}
@@ -84,3 +84,4 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
 };
 
 export default MobileNav;
+
