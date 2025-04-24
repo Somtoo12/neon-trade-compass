@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { GamepadIcon, Sword, Clock, LightningBolt, ChartBar } from "lucide-react";
+import { GamepadIcon, Sword, Clock, Zap, ChartBar } from "lucide-react";
 import PropChallenge from './PropChallenge';
 import KillZoneReflex from './KillZoneReflex';
 import NewsSentimentSniper from './NewsSentimentSniper';
@@ -50,7 +50,7 @@ const TraderGameCenter = () => {
               value="news-sentiment" 
               className="flex items-center gap-2 px-4 py-2.5 min-w-[120px] hover:bg-secondary/50 data-[state=active]:bg-primary/20 data-[state=active]:shadow-glow transition-all duration-200"
             >
-              <LightningBolt className="w-[18px] h-[18px] md:w-5 md:h-5 shrink-0" />
+              <Zap className="w-[18px] h-[18px] md:w-5 md:h-5 shrink-0" />
               <span className="text-xs md:text-sm font-medium truncate">News Sentiment</span>
             </TabsTrigger>
             <TabsTrigger 
