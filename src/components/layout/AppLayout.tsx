@@ -21,7 +21,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
-      {!isMobile && <ThemeToggle className="absolute top-4 right-4 z-10" />}
+      {!isMobile && <ThemeToggle />} {/* Removed the className here which was causing the error */}
       {isMobile ? (
         <div className="flex flex-col flex-1 overflow-hidden">
           <MobileNav activeSection={activeSection} setActiveSection={setActiveSection} />
