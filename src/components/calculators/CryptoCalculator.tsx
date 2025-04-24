@@ -1,5 +1,10 @@
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { ArrowRight } from 'lucide-react';
 import CryptoLotSizeCalculator from './CryptoLotSizeCalculator';
 
 const CryptoCalculator: React.FC = () => {
