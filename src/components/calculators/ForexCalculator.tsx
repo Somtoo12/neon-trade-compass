@@ -182,28 +182,28 @@ const ForexCalculator: React.FC = () => {
           </div>
         </div>
         
-        <div className="dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-800 light:bg-[#FFFFFF] rounded-xl p-6 border dark:border-gray-800/50 light:border-gray-200/80 flex flex-col justify-center dark:shadow-[0_4px_15px_rgba(0,0,0,0.3)] light:shadow-[0_2px_15px_rgba(0,0,0,0.08)]">
+        <div className="bg-black/40 backdrop-blur-md dark:border-white/5 light:bg-[#FFFFFF] rounded-xl p-6 border light:border-gray-200/80 flex flex-col justify-center dark:shadow-[0_4px_15px_rgba(0,0,0,0.5)] light:shadow-[0_2px_15px_rgba(0,0,0,0.08)]">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-sm text-gray-600">Result</span>
-            <ArrowRight className="h-4 w-4 text-gray-500" />
+            <span className="text-sm dark:text-gray-400 light:text-gray-600">Result</span>
+            <ArrowRight className="h-4 w-4 dark:text-gray-400 light:text-gray-500" />
           </div>
           
           <div className="space-y-4">
             <div>
-              <h3 className="text-sm text-gray-700 mb-1">Pips Gained/Lost</h3>
-              <p className={`text-2xl font-bold ${pipsResult >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <h3 className="text-sm dark:text-gray-400 light:text-gray-700 mb-1">Pips Gained/Lost</h3>
+              <p className={`text-2xl font-bold ${pipsResult >= 0 ? 'text-[#00ff94]' : 'text-red-500'}`}>
                 {pipsResult >= 0 ? '+' : ''}{pipsResult.toFixed(1)}
               </p>
             </div>
             
             <div>
-              <h3 className="text-sm text-gray-700 mb-1">Pip Value</h3>
-              <p className="text-xl font-medium text-gray-800">{pipValue.toFixed(2)} {accountCurrency}</p>
+              <h3 className="text-sm dark:text-gray-400 light:text-gray-700 mb-1">Pip Value</h3>
+              <p className="text-xl font-medium dark:text-gray-300 light:text-gray-800">{pipValue.toFixed(2)} {accountCurrency}</p>
             </div>
             
             <div>
-              <h3 className="text-sm text-gray-700 mb-1">Total Profit/Loss</h3>
-              <p className={`text-3xl font-bold ${totalPnL >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+              <h3 className="text-sm dark:text-gray-400 light:text-gray-700 mb-1">Total Profit/Loss</h3>
+              <p className={`text-3xl font-bold ${totalPnL >= 0 ? 'text-[#00ff94]' : 'text-red-500'}`}>
                 {totalPnL >= 0 ? '+' : ''}{totalPnL.toFixed(2)} {accountCurrency}
               </p>
             </div>

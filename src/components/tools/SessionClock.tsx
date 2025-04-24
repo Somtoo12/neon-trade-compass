@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Clock, Globe } from 'lucide-react';
@@ -79,18 +78,18 @@ const SessionClock: React.FC = () => {
   return (
     <Card className="p-6">
       <div className="space-y-8">
-        <div className="text-center space-y-2 dark:bg-gradient-to-br dark:from-gray-100 dark:to-gray-200 light:bg-[#FFFFFF] rounded-xl p-6 border dark:border-gray-300/50 light:border-gray-200/80 dark:shadow-sm light:shadow-[0_2px_15px_rgba(0,0,0,0.08)]">
-          <div className="flex items-center justify-center gap-2 text-gray-600 mb-4">
+        <div className="text-center space-y-2 bg-black/40 backdrop-blur-md dark:border-white/5 light:bg-[#FFFFFF] rounded-xl p-6 border light:border-gray-200/80 dark:shadow-[0_4px_15px_rgba(0,0,0,0.5)] light:shadow-[0_2px_15px_rgba(0,0,0,0.08)]">
+          <div className="flex items-center justify-center gap-2 dark:text-gray-400 light:text-gray-600 mb-4">
             <Globe className="h-5 w-5" />
             <span>Your Local Time</span>
           </div>
-          <div className="text-4xl font-bold font-mono tracking-wider text-gray-800">
+          <div className="text-4xl font-bold font-mono tracking-wider dark:text-[#00ff94] light:text-gray-800">
             {formatTime(currentTime)}
           </div>
-          <div className="text-sm text-gray-700">
+          <div className="text-sm dark:text-gray-400 light:text-gray-700">
             {formatDate(currentTime)}
           </div>
-          <div className="text-xs text-gray-600">
+          <div className="text-xs dark:text-gray-500 light:text-gray-600">
             Timezone: {getCurrentTimezone()}
           </div>
         </div>
@@ -135,9 +134,9 @@ const SessionClock: React.FC = () => {
           })}
         </div>
 
-        <div className="mt-6 p-4 rounded-lg dark:bg-gradient-to-br dark:from-gray-100 dark:to-gray-200 light:bg-[#FFFFFF] border dark:border-gray-300/50 light:border-gray-200/80 dark:shadow-sm light:shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
-          <h3 className="text-sm font-medium mb-3 text-gray-800">Trading Hours (Local Market Time)</h3>
-          <div className="space-y-2 text-sm text-gray-700">
+        <div className="mt-6 p-4 bg-black/40 backdrop-blur-md dark:border-white/5 light:bg-[#FFFFFF] rounded-lg border light:border-gray-200/80 dark:shadow-[0_4px_15px_rgba(0,0,0,0.5)] light:shadow-[0_2px_15px_rgba(0,0,0,0.08)]">
+          <h3 className="text-sm font-medium mb-3 dark:text-gray-300 light:text-gray-800">Trading Hours (Local Market Time)</h3>
+          <div className="space-y-2 text-sm dark:text-gray-400 light:text-gray-700">
             <div className="flex gap-2">
               <span className="text-xs text-gray-600">US</span>
               New York (NYSE): 9:30 AM - 4:00 PM ET, Mon-Fri
