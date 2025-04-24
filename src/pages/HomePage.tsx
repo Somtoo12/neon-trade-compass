@@ -25,6 +25,7 @@ import MetricsWall from '@/components/home/MetricsWall';
 import AppHeader from '@/components/home/AppHeader';
 import FeatureMarquee from '@/components/home/FeatureMarquee';
 import TradingVisual from '@/components/home/TradingVisual';
+import BookmarkButtons from '@/components/home/BookmarkButtons';
 
 const HomePage: React.FC = () => {
   const isMobile = useIsMobile();
@@ -174,6 +175,8 @@ const HomePage: React.FC = () => {
       <section className="py-8 overflow-hidden bg-gradient-to-r from-accent/10 via-accent/5 to-accent/10 border-y border-accent/20">
         <LiveDataTicker />
       </section>
+
+      <BookmarkButtons />
 
       <section className="py-16 md:py-24 px-4 relative">
         <div className="container max-w-7xl mx-auto">
