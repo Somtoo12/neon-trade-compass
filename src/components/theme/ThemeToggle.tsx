@@ -3,11 +3,7 @@ import { Moon, Sun } from 'lucide-react';
 import { useTheme } from '@/hooks/use-theme';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-interface ThemeToggleProps {
-  className?: string;
-}
-
-const ThemeToggle = ({ className = '' }: ThemeToggleProps) => {
+const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
   const isMobile = useIsMobile();
 
@@ -21,7 +17,7 @@ const ThemeToggle = ({ className = '' }: ThemeToggleProps) => {
           ? 'bg-secondary hover:bg-secondary/80 text-primary' 
           : 'bg-white hover:bg-gray-100 text-gray-800 shadow-md'
         }
-        ${isMobile && !className ? '' : className || 'fixed top-4 right-4 z-50'}
+        ${isMobile ? '' : 'fixed top-4 right-4 z-50'}
       `}
       aria-label="Toggle theme"
     >
