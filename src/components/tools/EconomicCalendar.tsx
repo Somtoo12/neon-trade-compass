@@ -1,13 +1,14 @@
+
 import React, { useState, useEffect } from 'react';
 import { Search, X, Calendar } from 'lucide-react';
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EventRow } from './calendar/EventRow';
 import { format } from 'date-fns';
 import { useToast } from "@/hooks/use-toast";
+import { formatEventTime, isUpcoming, isPast, getCountdown } from '@/lib/dateUtils';
 
 const API_KEY = 'w9lfRZ7QZMH8BLPuDNbGdRK7';
 
@@ -30,8 +31,20 @@ interface EventUserData {
   notes: string;
 }
 
+interface EconomicEvent {
+  id: string;
+  date: string;
+  country: string;
+  currency: string;
+  event: string;
+  impact: string;
+  forecast: string;
+  previous: string;
+  actual: string | null;
+}
+
 const EconomicCalendar: React.FC = () => {
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<EconomicEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [impactFilter, setImpactFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');

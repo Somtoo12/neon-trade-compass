@@ -1,5 +1,5 @@
 
-import { format, isToday, isTomorrow, isWithinInterval, addHours } from 'date-fns';
+import { format, isToday, isTomorrow, isWithinInterval, addHours, formatDistance } from 'date-fns';
 
 export const formatEventTime = (dateStr: string) => {
   const date = new Date(dateStr);
@@ -20,4 +20,15 @@ export const isUpcoming = (dateStr: string) => {
 
 export const isPast = (dateStr: string) => {
   return new Date(dateStr) < new Date();
+};
+
+export const getCountdown = (dateStr: string) => {
+  const eventDate = new Date(dateStr);
+  const now = new Date();
+  
+  if (eventDate <= now) {
+    return 'Just happened';
+  }
+  
+  return formatDistance(eventDate, now, { addSuffix: false });
 };
