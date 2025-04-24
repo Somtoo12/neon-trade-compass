@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { BarChart, Clock, Gauge, LineChart, Menu, PieChart, Scale, X } from 'lucide-react';
+import { BarChart, Book, Clock, Gauge, LineChart, Menu, PieChart, Scale, X } from 'lucide-react';
 import ThemeToggle from '../theme/ThemeToggle';
 
 interface MobileNavProps {
@@ -23,6 +24,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
     { id: 'session-clock', label: 'Session Clock', icon: <Clock className="h-5 w-5" /> },
     { id: 'currency-heatmap', label: 'Currency Heatmap', icon: <Gauge className="h-5 w-5" /> },
     { id: 'risk-management', label: 'Risk Management', icon: <Scale className="h-5 w-5" /> },
+    { id: 'trade-journal', label: 'Trade Journal', icon: <Book className="h-5 w-5" /> },
   ];
 
   const handleNavClick = (section: string) => {
