@@ -25,15 +25,22 @@ const TradeJournal = () => {
   const [open, setOpen] = useState(false);
   const [allPairs, setAllPairs] = useState<string[]>([]);
   
-  // Initialize the pairs in useEffect to ensure it runs in client-side only
+  // Initialize the pairs when the component mounts
   useEffect(() => {
-    // Create a safe array combining all pairs
-    const majors = Array.isArray(forexPairs.majors) ? forexPairs.majors : [];
-    const minors = Array.isArray(forexPairs.minors) ? forexPairs.minors : [];
-    const exotics = Array.isArray(forexPairs.exotics) ? forexPairs.exotics : [];
-    const crypto = Array.isArray(cryptoPairs) ? cryptoPairs : [];
-    
-    setAllPairs([...majors, ...minors, ...exotics, ...crypto]);
+    try {
+      // Safely handle the arrays with defaults if they're undefined
+      const majors = Array.isArray(forexPairs.majors) ? forexPairs.majors : [];
+      const minors = Array.isArray(forexPairs.minors) ? forexPairs.minors : [];
+      const exotics = Array.isArray(forexPairs.exotics) ? forexPairs.exotics : [];
+      const crypto = Array.isArray(cryptoPairs) ? cryptoPairs : [];
+      
+      // Set the consolidated array ensuring it's never undefined
+      setAllPairs([...majors, ...minors, ...exotics, ...crypto]);
+    } catch (error) {
+      console.error("Error setting currency pairs:", error);
+      // Ensure we at least have an empty array
+      setAllPairs([]);
+    }
   }, []);
 
   const direction = React.useMemo(() => {
@@ -117,8 +124,8 @@ const TradeJournal = () => {
                 <Command>
                   <CommandInput placeholder="Search pair..." className="h-9" />
                   <CommandEmpty>No pair found.</CommandEmpty>
-                  {/* Only render items if we have data */}
-                  {allPairs && allPairs.length > 0 && (
+                  {/* Ensure we only render the CommandGroup and items if allPairs is available */}
+                  {Array.isArray(allPairs) && allPairs.length > 0 ? (
                     <CommandGroup className="max-h-[200px] overflow-y-auto">
                       {allPairs.map((p) => (
                         <CommandItem
@@ -133,6 +140,8 @@ const TradeJournal = () => {
                         </CommandItem>
                       ))}
                     </CommandGroup>
+                  ) : (
+                    <div className="p-2 text-sm text-center">Loading pairs...</div>
                   )}
                 </Command>
               </PopoverContent>
