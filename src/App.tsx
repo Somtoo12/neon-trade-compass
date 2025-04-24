@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,7 +15,6 @@ import ForexCalculator from "@/components/calculators/ForexCalculator";
 import CryptoCalculator from "@/components/calculators/CryptoCalculator";
 import FuturesCalculator from "@/components/calculators/FuturesCalculator";
 import TradeJournal from "@/components/calculators/TradeJournal";
-import PropFirmPromos from "./pages/PropFirmPromos";
 
 const queryClient = new QueryClient();
 
@@ -35,7 +35,6 @@ const App = () => (
             <Route path="/risk-management" element={<Index activeSection="risk-management" />} />
             <Route path="/trade-journal" element={<Index activeSection="trade-journal" />} />
             <Route path="/calculators" element={<Calculators />} />
-            <Route path="/prop-firm-promos" element={<Index activeSection="prop-firm-promos" />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
