@@ -7,6 +7,7 @@ import FuturesCalculator from '@/components/calculators/FuturesCalculator';
 import SessionClock from '@/components/tools/SessionClock';
 import CurrencyHeatmap from '@/components/tools/CurrencyHeatmap';
 import RiskManagement from '@/components/tools/RiskManagement';
+import MarketCalendar from '@/components/tools/MarketCalendar';
 
 const Index: React.FC = () => {
   const [activeSection, setActiveSection] = useState('forex-calculator');
@@ -25,6 +26,8 @@ const Index: React.FC = () => {
         return <CurrencyHeatmap />;
       case 'risk-management':
         return <RiskManagement />;
+      case 'market-calendar':
+        return <MarketCalendar />;
       default:
         return <ForexCalculator />;
     }
