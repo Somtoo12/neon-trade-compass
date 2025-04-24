@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,6 +8,7 @@ import { ThemeProvider } from "@/hooks/use-theme";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Calculators from "./pages/Calculators";
+import HomePage from "./pages/HomePage";
 import SessionClock from "@/components/tools/SessionClock";
 import CurrencyHeatmap from "@/components/tools/CurrencyHeatmap";
 import RiskManagement from "@/components/tools/RiskManagement";
@@ -26,7 +28,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Navigate to="/forex-calculator" />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="/forex-calculator" element={<Index activeSection="forex-calculator" />} />
             <Route path="/crypto-calculator" element={<Index activeSection="crypto-calculator" />} />
             <Route path="/futures-calculator" element={<Index activeSection="futures-calculator" />} />
