@@ -15,8 +15,8 @@ const TraderGameCenter = () => {
   const isMobile = useIsMobile();
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-6 p-4">
+      <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="text-xl md:text-2xl font-bold tracking-tight">Trader Game Center</h2>
           <p className="text-xs md:text-sm text-muted-foreground">Level up your trading mind. Play to stay sharp.</p>
@@ -26,16 +26,44 @@ const TraderGameCenter = () => {
       
       <GamePerformanceDashboard />
       
-      <Tabs value={activeGame} onValueChange={setActiveGame} className="w-full">
-        <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2 gap-1' : 'md:grid-cols-4'}`}>
-          <TabsTrigger value="prop-challenge" className="text-xs md:text-sm py-2">⚔️ Prop Challenge</TabsTrigger>
-          <TabsTrigger value="kill-zone" className="text-xs md:text-sm py-2">⏱️ Kill Zone</TabsTrigger>
-          <TabsTrigger value="news-sentiment" className="text-xs md:text-sm py-2">📰 News Sentiment</TabsTrigger>
-          <TabsTrigger value="trade-anatomy" className="text-xs md:text-sm py-2">📊 Trade Builder</TabsTrigger>
+      <Tabs 
+        value={activeGame} 
+        onValueChange={setActiveGame} 
+        className="w-full"
+      >
+        <TabsList className={`grid w-full ${
+          isMobile 
+            ? 'grid-cols-2 gap-2' 
+            : 'grid-cols-4 gap-3'
+        } bg-secondary/30`}>
+          <TabsTrigger 
+            value="prop-challenge" 
+            className="flex items-center gap-2 text-xs md:text-sm py-2 hover:bg-secondary/50 data-[state=active]:bg-primary/20"
+          >
+            <span>⚔️</span> Prop Challenge
+          </TabsTrigger>
+          <TabsTrigger 
+            value="kill-zone" 
+            className="flex items-center gap-2 text-xs md:text-sm py-2 hover:bg-secondary/50 data-[state=active]:bg-primary/20"
+          >
+            <span>⏱️</span> Kill Zone
+          </TabsTrigger>
+          <TabsTrigger 
+            value="news-sentiment" 
+            className="flex items-center gap-2 text-xs md:text-sm py-2 hover:bg-secondary/50 data-[state=active]:bg-primary/20"
+          >
+            <span>📰</span> News Sentiment
+          </TabsTrigger>
+          <TabsTrigger 
+            value="trade-anatomy" 
+            className="flex items-center gap-2 text-xs md:text-sm py-2 hover:bg-secondary/50 data-[state=active]:bg-primary/20"
+          >
+            <span>📊</span> Trade Builder
+          </TabsTrigger>
         </TabsList>
         
-        <TabsContent value="prop-challenge">
-          <Card>
+        <TabsContent value="prop-challenge" className="mt-4">
+          <Card className="border-secondary/30">
             <CardHeader className="p-3 md:p-6">
               <CardTitle className="text-base md:text-lg flex items-center gap-2">
                 ⚔️ Prop Firm Challenge Simulator
@@ -47,8 +75,8 @@ const TraderGameCenter = () => {
           </Card>
         </TabsContent>
         
-        <TabsContent value="kill-zone">
-          <Card>
+        <TabsContent value="kill-zone" className="mt-4">
+          <Card className="border-secondary/30">
             <CardHeader className="p-3 md:p-6">
               <CardTitle className="text-base md:text-lg">⏱️ Kill Zone Reflex Game</CardTitle>
             </CardHeader>
@@ -58,8 +86,8 @@ const TraderGameCenter = () => {
           </Card>
         </TabsContent>
         
-        <TabsContent value="news-sentiment">
-          <Card>
+        <TabsContent value="news-sentiment" className="mt-4">
+          <Card className="border-secondary/30">
             <CardHeader className="p-3 md:p-6">
               <CardTitle className="text-base md:text-lg">📰 News Sentiment Sniper</CardTitle>
             </CardHeader>
@@ -69,8 +97,8 @@ const TraderGameCenter = () => {
           </Card>
         </TabsContent>
         
-        <TabsContent value="trade-anatomy">
-          <Card>
+        <TabsContent value="trade-anatomy" className="mt-4">
+          <Card className="border-secondary/30">
             <CardHeader className="p-3 md:p-6">
               <CardTitle className="text-base md:text-lg">📊 Trade Anatomy Builder</CardTitle>
             </CardHeader>
