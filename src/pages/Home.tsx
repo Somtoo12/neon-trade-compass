@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowRight, Sparkles, Zap, Activity, CircleDot } from "lucide-react";
@@ -7,22 +6,22 @@ import { Link } from "react-router-dom";
 const features = [
   {
     title: "Forex Pip Calculator",
-    description: "Supports 100+ pairs with live pip calculations.",
+    description: "Supports 100+ currency pairs with live pip calculations. Handles Standard, Mini, and Micro lots with precise margin calculations.",
     icon: <Sparkles className="h-6 w-6 text-primary" />,
   },
   {
     title: "Crypto Profit & Lot Size Calculator",
-    description: "Includes MT4/MT5 logic with accurate crypto contracts.",
+    description: "Advanced MT4/MT5 logic with accurate crypto contracts. Supports major cryptocurrencies with real-time lot size optimization.",
     icon: <Zap className="h-6 w-6 text-primary" />,
   },
   {
     title: "Futures Tick Calculator",
-    description: "Micro/Mini toggle with correct tick values.",
+    description: "Full suite of futures contracts including ES, NQ, CL, GC with Micro/Mini/Full size options. Real-time tick values and margin requirements.",
     icon: <Activity className="h-6 w-6 text-primary" />,
   },
   {
     title: "Trading Session Clock",
-    description: "Live session tracker with glowing active indicators.",
+    description: "Live session tracker covering NY, London, Tokyo, and Sydney. Features active session indicators and upcoming market events.",
     icon: <CircleDot className="h-6 w-6 text-primary" />,
   },
 ];
