@@ -18,7 +18,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems: NavItem[] = [
-    { id: 'forex-calculator', label: 'Forex Pip Calculator', icon: <BarChart className="h-5 w-5" /> },
+    { id: 'forex-calculator', label: 'Forex Calculator', icon: <BarChart className="h-5 w-5" /> },
     { id: 'crypto-calculator', label: 'Crypto Calculator', icon: <LineChart className="h-5 w-5" /> },
     { id: 'futures-calculator', label: 'Futures Calculator', icon: <PieChart className="h-5 w-5" /> },
     { id: 'session-clock', label: 'Session Clock', icon: <Clock className="h-5 w-5" /> },
@@ -34,18 +34,19 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
 
   return (
     <>
-      <div className="sticky top-0 z-50 glassmorphism border-b border-border/40 shadow-lg">
+      <div className="fixed top-0 left-0 right-0 z-50 glassmorphism border-b border-border/40 shadow-lg">
         <div className="flex items-center justify-between p-4">
           <h1 className="text-xl font-bold font-poppins bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
             PipCraft
           </h1>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <ThemeToggle />
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-1.5 rounded-lg bg-secondary"
+              className="p-2 rounded-lg bg-secondary"
+              aria-label="Toggle navigation menu"
             >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
@@ -59,14 +60,14 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
                 <li key={item.id}>
                   <button
                     onClick={() => handleNavClick(item.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 ${
+                    className={`w-full flex items-center gap-3 px-4 py-4 rounded-lg transition-all duration-300 ${
                       activeSection === item.id
                         ? 'bg-accent/20 text-accent border border-accent/30'
                         : 'hover:bg-secondary text-foreground/80 hover:text-foreground'
                     }`}
                   >
                     {item.icon}
-                    <span>{item.label}</span>
+                    <span className="text-base">{item.label}</span>
                   </button>
                 </li>
               ))}
@@ -75,7 +76,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
         </div>
       )}
 
-      <div className="p-4 bg-background overflow-y-auto">
+      <div className="pt-16 pb-4 bg-background overflow-y-auto">
         {/* Content will be injected by the AppLayout component */}
       </div>
     </>

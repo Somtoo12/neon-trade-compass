@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
 
 @tailwind base;
@@ -70,6 +71,10 @@
     @apply text-base md:text-sm;
     font-size: 16px !important;
   }
+
+  button {
+    @apply touch-manipulation;
+  }
 }
 
 @layer components {
@@ -99,6 +104,37 @@
 
   .mobile-safe-top {
     @apply pt-safe;
+  }
+  
+  /* Mobile-specific improvements */
+  .mobile-card {
+    @apply p-3 rounded-lg;
+  }
+  
+  .mobile-input {
+    @apply h-12 text-base;
+  }
+  
+  .mobile-button {
+    @apply h-12 px-4 text-base;
+  }
+  
+  .mobile-nav-button {
+    @apply py-3 px-4 text-base font-medium;
+  }
+  
+  @media (max-width: 640px) {
+    .mobile-container {
+      @apply px-3 py-2;
+    }
+    
+    .mobile-scrollable {
+      @apply -mx-3 px-3 overflow-x-auto flex pb-2 gap-2 snap-x snap-mandatory;
+    }
+    
+    .mobile-scrollable > * {
+      @apply snap-start flex-shrink-0;
+    }
   }
 }
 
