@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -182,7 +183,7 @@ const ForexCalculator: React.FC = () => {
           </div>
         </div>
         
-        <div className="bg-white/10 dark:bg-gradient-to-br dark:from-gray-100 dark:to-gray-200 rounded-xl p-6 border border-gray-300/30 dark:border-gray-300/50 flex flex-col justify-center shadow-sm dark:shadow-sm light:bg-white light:shadow-md light:border-gray-200">
+        <div className="dark:bg-gradient-to-br dark:from-gray-100 dark:to-gray-200 light:bg-[#FFFFFF] rounded-xl p-6 border dark:border-gray-300/50 light:border-gray-200/80 flex flex-col justify-center dark:shadow-sm light:shadow-[0_2px_15px_rgba(0,0,0,0.08)]">
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm text-gray-600">Result</span>
             <ArrowRight className="h-4 w-4 text-gray-500" />

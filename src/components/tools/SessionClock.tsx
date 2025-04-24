@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Clock, Globe } from 'lucide-react';
@@ -78,7 +79,7 @@ const SessionClock: React.FC = () => {
   return (
     <Card className="p-6">
       <div className="space-y-8">
-        <div className="text-center space-y-2 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl p-6 border border-gray-300/50 shadow-sm">
+        <div className="text-center space-y-2 dark:bg-gradient-to-br dark:from-gray-100 dark:to-gray-200 light:bg-[#FFFFFF] rounded-xl p-6 border dark:border-gray-300/50 light:border-gray-200/80 dark:shadow-sm light:shadow-[0_2px_15px_rgba(0,0,0,0.08)]">
           <div className="flex items-center justify-center gap-2 text-gray-600 mb-4">
             <Globe className="h-5 w-5" />
             <span>Your Local Time</span>
@@ -102,7 +103,7 @@ const SessionClock: React.FC = () => {
             return (
               <div 
                 key={session.name}
-                className={`relative p-4 rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 border border-gray-300/50 shadow-sm ${
+                className={`relative p-4 rounded-lg dark:bg-gradient-to-br dark:from-gray-100 dark:to-gray-200 light:bg-[#FFFFFF] border dark:border-gray-300/50 light:border-gray-200/80 dark:shadow-sm light:shadow-[0_2px_10px_rgba(0,0,0,0.05)] ${
                   isActive ? 'border-primary/20' : ''
                 }`}
               >
@@ -134,7 +135,7 @@ const SessionClock: React.FC = () => {
           })}
         </div>
 
-        <div className="mt-6 p-4 rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 border border-gray-300/50 shadow-sm">
+        <div className="mt-6 p-4 rounded-lg dark:bg-gradient-to-br dark:from-gray-100 dark:to-gray-200 light:bg-[#FFFFFF] border dark:border-gray-300/50 light:border-gray-200/80 dark:shadow-sm light:shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
           <h3 className="text-sm font-medium mb-3 text-gray-800">Trading Hours (Local Market Time)</h3>
           <div className="space-y-2 text-sm text-gray-700">
             <div className="flex gap-2">
