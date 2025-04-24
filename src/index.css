@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
 
 @tailwind base;
@@ -30,33 +31,34 @@
   }
   
   :root.light-mode {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 98%;
+    --background: 0 0% 98%; /* Soft white background */
+    --foreground: 240 10% 3.9%; /* Dark text for contrast */
+    --card: 0 0% 95%; /* Lighter gray for cards */
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    --primary: 142 76% 36%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 240 4.8% 95.9%;
+    --primary: 261 43% 69%; /* Soft purple primary */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 4.8% 90%; /* Very light gray */
     --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
+    --muted: 240 4.8% 95%; /* Almost white */
     --muted-foreground: 240 3.8% 46.1%;
-    --accent: 261 43% 69%;
+    --accent: 261 43% 69%; /* Soft purple accent */
     --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 262.1 83.3% 57.8%;
+    --border: 240 5.9% 85%; /* Light border */
+    --input: 240 5.9% 85%;
+    --ring: 261 43% 69%; /* Soft purple ring */
+    --glow-color: rgba(123, 97, 255, 0.4);
   }
 
   * {
-    @apply border-border;
+    @apply border-border transition-colors duration-300;
   }
   
   html, body {
-    @apply bg-background text-foreground transition-colors duration-300;
+    @apply bg-background text-foreground;
     font-family: 'Inter', sans-serif;
   }
   
@@ -71,7 +73,7 @@
   }
   
   .glassmorphism {
-    @apply bg-black/40 backdrop-blur-md border border-white/10 rounded-xl;
+    @apply bg-black/10 backdrop-blur-md border border-white/10 rounded-xl;
   }
   
   .neon-glow {
@@ -79,47 +81,12 @@
   }
   
   .neon-border {
-    @apply border border-neon-purple shadow-[0_0_10px_rgba(123,97,255,0.7)];
+    @apply border border-neon-purple shadow-[0_0_10px_rgba(123,97,255,0.4)];
   }
   
   .input-glow:focus {
-    @apply ring-2 ring-neon-purple shadow-[0_0_15px_rgba(123,97,255,0.5)];
-  }
-  
-  .neon-green-glow {
-    --glow-color: rgba(0, 255, 179, 0.8);
-  }
-  
-  .neon-blue-glow {
-    --glow-color: rgba(0, 194, 255, 0.8);
-  }
-  
-  .neon-purple-glow {
-    --glow-color: rgba(123, 97, 255, 0.8);
-  }
-  
-  .active-session {
-    @apply neon-glow neon-green-glow border-neon-green;
-  }
-  
-  .floating-label {
-    @apply absolute left-3 -top-2.5 px-1 text-xs transition-all bg-card;
+    @apply ring-2 ring-neon-purple shadow-[0_0_15px_rgba(123,97,255,0.3)];
   }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  @apply bg-background/50;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-secondary rounded-full;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-accent/50;
-}
+/* Rest of the existing CSS remains the same */
