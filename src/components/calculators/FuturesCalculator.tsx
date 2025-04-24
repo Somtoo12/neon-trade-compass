@@ -1,10 +1,13 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowRight, Search } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 import { useContractFilter } from '@/hooks/useContractFilter';
+import { futuresContracts } from '@/constants/currencyPairs';
 
 const FuturesCalculator: React.FC = () => {
   const { searchTerm, setSearchTerm, groupedContracts } = useContractFilter();
@@ -19,7 +22,7 @@ const FuturesCalculator: React.FC = () => {
   
   const handleSymbolChange = (newSymbol: string) => {
     setSymbol(newSymbol);
-    const contract = futuresContracts[newSymbol];
+    const contract = futuresContracts[newSymbol as keyof typeof futuresContracts];
     if (contract) {
       const availableTypes = Object.keys(contract);
       if (!availableTypes.includes(contractType)) {
@@ -29,7 +32,7 @@ const FuturesCalculator: React.FC = () => {
   };
   
   const getSelectedContract = () => {
-    const contract = futuresContracts[symbol]?.[contractType];
+    const contract = futuresContracts[symbol as keyof typeof futuresContracts]?.[contractType];
     if (!contract) return null;
     return contract;
   };
@@ -50,12 +53,25 @@ const FuturesCalculator: React.FC = () => {
     }
     
     const contract = getSelectedContract();
+    if (!contract) {
+      setTicksGained(0);
+      setTickValue(0);
+      setTotalPnL(0);
+      return;
+    }
+    
     const diff = exit - entry;
     const ticks = diff / contract.tickSize;
     
     setTicksGained(Math.round(ticks * 100) / 100);
     setTickValue(contract.tickValue);
     setTotalPnL(Math.round(ticks * contract.tickValue * 100) / 100);
+  };
+  
+  const selectedContract = getSelectedContract() || {
+    contractSize: 0,
+    tickSize: 0,
+    symbol: '',
   };
 
   return (
@@ -88,7 +104,7 @@ const FuturesCalculator: React.FC = () => {
                     <SelectLabel>Indices</SelectLabel>
                     {Object.entries(groupedContracts.indices).map(([sym, contract]) => (
                       <SelectItem key={sym} value={sym}>
-                        {sym} - {Object.values(contract)[0].name}
+                        {sym} - {Object.values(contract as Record<string, any>)[0].name}
                       </SelectItem>
                     ))}
                   </SelectGroup>
@@ -96,7 +112,7 @@ const FuturesCalculator: React.FC = () => {
                     <SelectLabel>Commodities</SelectLabel>
                     {Object.entries(groupedContracts.commodities).map(([sym, contract]) => (
                       <SelectItem key={sym} value={sym}>
-                        {sym} - {Object.values(contract)[0].name}
+                        {sym} - {Object.values(contract as Record<string, any>)[0].name}
                       </SelectItem>
                     ))}
                   </SelectGroup>
@@ -104,7 +120,7 @@ const FuturesCalculator: React.FC = () => {
                     <SelectLabel>Bonds</SelectLabel>
                     {Object.entries(groupedContracts.bonds).map(([sym, contract]) => (
                       <SelectItem key={sym} value={sym}>
-                        {sym} - {Object.values(contract)[0].name}
+                        {sym} - {Object.values(contract as Record<string, any>)[0].name}
                       </SelectItem>
                     ))}
                   </SelectGroup>
@@ -123,7 +139,7 @@ const FuturesCalculator: React.FC = () => {
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
               <SelectContent className="bg-card border-input/40">
-                {Object.keys(futuresContracts[symbol] || {}).map((type) => (
+                {Object.keys(futuresContracts[symbol as keyof typeof futuresContracts] || {}).map((type) => (
                   <SelectItem key={type} value={type}>{type}</SelectItem>
                 ))}
               </SelectContent>
