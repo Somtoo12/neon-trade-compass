@@ -8,6 +8,7 @@ import SessionClock from '@/components/tools/SessionClock';
 import CurrencyHeatmap from '@/components/tools/CurrencyHeatmap';
 import RiskManagement from '@/components/tools/RiskManagement';
 import TradeJournal from '@/components/calculators/TradeJournal';
+import DailyTradeTools from '@/components/tools/DailyTradeTools';
 import { useNavigate } from 'react-router-dom';
 
 interface IndexProps {
@@ -37,6 +38,8 @@ const Index: React.FC<IndexProps> = ({ activeSection }) => {
         return <RiskManagement />;
       case 'trade-journal':
         return <TradeJournal />;
+      case 'daily-trade-tools':
+        return <DailyTradeTools />;
       default:
         return <ForexCalculator />;
     }

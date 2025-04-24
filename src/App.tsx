@@ -34,6 +34,7 @@ const App = () => (
             <Route path="/currency-heatmap" element={<Index activeSection="currency-heatmap" />} />
             <Route path="/risk-management" element={<Index activeSection="risk-management" />} />
             <Route path="/trade-journal" element={<Index activeSection="trade-journal" />} />
+            <Route path="/daily-trade-tools" element={<Index activeSection="daily-trade-tools" />} />
             <Route path="/calculators" element={<Calculators />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
