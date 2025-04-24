@@ -1,8 +1,8 @@
-
 import React, { useEffect, useState } from 'react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { BellRing } from 'lucide-react';
 
 interface TimeBlock {
   name: string;
@@ -16,9 +16,9 @@ const KillZonesClock: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [enableAlerts, setEnableAlerts] = useState(false);
   const [hasShownAlert, setHasShownAlert] = useState(false);
+  const [notificationsPermission, setNotificationsPermission] = useState<NotificationPermission>('default');
   const { toast } = useToast();
   
-  // Define market sessions (all times in GMT)
   const timeBlocks: TimeBlock[] = [
     { name: 'Asia Session', start: 0, end: 7, color: 'bg-indigo-500', description: 'Lower volatility, ranging conditions' },
     { name: 'London Open', start: 7, end: 10, color: 'bg-blue-500', description: 'High volume, directional moves' },
@@ -29,43 +29,102 @@ const KillZonesClock: React.FC = () => {
     { name: 'Overnight', start: 22, end: 24, color: 'bg-gray-500', description: 'Low volume, consolidation' },
   ];
   
-  // Load saved state from localStorage on component mount
   useEffect(() => {
     const savedEnableAlerts = localStorage.getItem('killZonesEnableAlerts');
     if (savedEnableAlerts) setEnableAlerts(savedEnableAlerts === 'true');
+    
+    if ('Notification' in window) {
+      setNotificationsPermission(Notification.permission);
+    }
   }, []);
   
-  // Save to localStorage whenever these values change
   useEffect(() => {
     localStorage.setItem('killZonesEnableAlerts', enableAlerts.toString());
   }, [enableAlerts]);
   
-  // Update current time every minute
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-      checkForSessionAlerts();
-    }, 60000);
+  const requestNotificationPermission = async () => {
+    if (!('Notification' in window)) {
+      toast({
+        title: "Notifications Not Supported",
+        description: "Your browser doesn't support notifications. Please use a modern browser.",
+      });
+      return;
+    }
+
+    try {
+      const permission = await Notification.requestPermission();
+      setNotificationsPermission(permission);
+      
+      if (permission === 'granted') {
+        toast({
+          title: "Notifications Enabled",
+          description: "You'll be notified before important trading sessions.",
+        });
+      } else {
+        toast({
+          title: "Notifications Disabled",
+          description: "Enable browser notifications to receive session alerts while multitasking.",
+        });
+      }
+    } catch (error) {
+      console.error('Error requesting notification permission:', error);
+    }
+  };
+
+  const sendNotification = (title: string, body: string) => {
+    if (notificationsPermission === 'granted' && enableAlerts) {
+      new Notification(title, {
+        body,
+        icon: '/favicon.ico',
+      });
+    } else {
+      toast({
+        title,
+        description: body,
+      });
+    }
+  };
+
+  const checkForSessionAlerts = () => {
+    if (!enableAlerts) return;
     
-    // Initial check for alerts
-    checkForSessionAlerts();
+    const currentGmtHour = getCurrentGmtHour();
     
-    return () => clearInterval(timer);
-  }, [enableAlerts, hasShownAlert]);
+    timeBlocks.forEach(block => {
+      const minutesBeforeSession = ((block.start - currentGmtHour) * 60);
+      
+      if (minutesBeforeSession > 0 && minutesBeforeSession <= 5 && !hasShownAlert) {
+        sendNotification(
+          "Trading Session Alert",
+          `${block.name} begins in 5 minutes - ${block.description}`
+        );
+        setHasShownAlert(true);
+        
+        setTimeout(() => {
+          setHasShownAlert(false);
+        }, 6 * 60 * 1000);
+      }
+      
+      if (Math.abs(minutesBeforeSession) < 1 && !hasShownAlert) {
+        sendNotification(
+          "Session Started",
+          `${block.name} has begun - ${block.description}`
+        );
+        setHasShownAlert(true);
+      }
+    });
+  };
   
-  // Convert GMT hours to local time
   const convertGmtToLocal = (gmtHours: number) => {
     const date = new Date();
     date.setUTCHours(gmtHours, 0, 0, 0);
     return date.getHours() + (date.getMinutes() / 60);
   };
   
-  // Get current hour in GMT
   const getCurrentGmtHour = () => {
     return currentTime.getUTCHours() + (currentTime.getUTCMinutes() / 60);
   };
   
-  // Check which session is currently active
   const getCurrentSession = () => {
     const currentGmtHour = getCurrentGmtHour();
     
@@ -75,38 +134,10 @@ const KillZonesClock: React.FC = () => {
       }
     }
     
-    return timeBlocks[0]; // Default to Asia session if no match
+    return timeBlocks[0];
   };
   
-  // Check for upcoming session alerts
-  const checkForSessionAlerts = () => {
-    if (!enableAlerts || hasShownAlert) return;
-    
-    const currentGmtHour = getCurrentGmtHour();
-    const londonNyOverlapBlock = timeBlocks.find(block => block.name === 'London/NY Overlap');
-    
-    if (!londonNyOverlapBlock) return;
-    
-    // 5 minutes before London/NY overlap (12 GMT)
-    const minutesBeforeOverlap = ((londonNyOverlapBlock.start - currentGmtHour) * 60);
-    
-    if (minutesBeforeOverlap > 0 && minutesBeforeOverlap <= 5) {
-      toast({
-        title: "Trading Session Alert",
-        description: "London/NY overlap begins in 5 minutes - high volatility expected",
-      });
-      setHasShownAlert(true);
-      
-      // Reset after the session has begun
-      setTimeout(() => {
-        setHasShownAlert(false);
-      }, 6 * 60 * 1000); // 6 minutes
-    }
-  };
-  
-  // Format time display for the time blocks
   const formatTimeDisplay = (gmtHour: number) => {
-    // Convert GMT hour to local time
     const date = new Date();
     date.setUTCHours(gmtHour, 0, 0, 0);
     
@@ -127,14 +158,29 @@ const KillZonesClock: React.FC = () => {
         </div>
         
         <div className="flex items-center space-x-2">
-          <Switch
-            id="enable-alerts"
-            checked={enableAlerts}
-            onCheckedChange={setEnableAlerts}
-          />
-          <Label htmlFor="enable-alerts">Enable alerts</Label>
+          <div className="flex items-center space-x-2">
+            <BellRing className="h-4 w-4" />
+            <Switch
+              id="enable-alerts"
+              checked={enableAlerts}
+              onCheckedChange={(checked) => {
+                setEnableAlerts(checked);
+                if (checked && notificationsPermission === 'default') {
+                  requestNotificationPermission();
+                }
+              }}
+            />
+            <Label htmlFor="enable-alerts">Enable alerts</Label>
+          </div>
         </div>
       </div>
+      
+      {enableAlerts && notificationsPermission === 'granted' && (
+        <div className="text-sm text-muted-foreground flex items-center gap-2">
+          <BellRing className="h-4 w-4" />
+          Notifications active – you'll be alerted 5 mins before key sessions
+        </div>
+      )}
       
       <div className="border border-border rounded-lg overflow-hidden">
         <div className="bg-secondary px-3 py-2 text-sm font-medium border-b border-border">
