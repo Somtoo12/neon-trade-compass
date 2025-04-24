@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ArrowRight } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Separator } from '@/components/ui/separator';
+import { futuresContracts } from '@/constants/currencyPairs';
 
 interface FuturesContract {
   name: string;
@@ -16,64 +17,6 @@ interface FuturesContract {
 }
 
 const FuturesCalculator: React.FC = () => {
-  // Contract definitions
-  const futuresContracts: Record<string, Record<string, FuturesContract>> = {
-    'ES': {
-      'Mini': { 
-        name: 'E-mini S&P 500',
-        symbol: 'ES',
-        contractSize: 50,
-        tickSize: 0.25,
-        tickValue: 12.50,
-        description: 'E-mini S&P 500 ($12.50/tick)'
-      },
-      'Micro': {
-        name: 'Micro E-mini S&P 500',
-        symbol: 'MES',
-        contractSize: 5,
-        tickSize: 0.25,
-        tickValue: 1.25,
-        description: 'Micro E-mini S&P 500 ($1.25/tick)'
-      }
-    },
-    'NQ': {
-      'Mini': {
-        name: 'E-mini Nasdaq 100',
-        symbol: 'NQ',
-        contractSize: 20,
-        tickSize: 0.25,
-        tickValue: 5.00,
-        description: 'E-mini Nasdaq 100 ($5.00/tick)'
-      },
-      'Micro': {
-        name: 'Micro E-mini Nasdaq 100',
-        symbol: 'MNQ',
-        contractSize: 2,
-        tickSize: 0.25,
-        tickValue: 0.50,
-        description: 'Micro E-mini Nasdaq 100 ($0.50/tick)'
-      }
-    },
-    'CL': {
-      'Mini': {
-        name: 'Crude Oil',
-        symbol: 'CL',
-        contractSize: 1000,
-        tickSize: 0.01,
-        tickValue: 10.00,
-        description: 'Crude Oil Futures ($10.00/tick)'
-      },
-      'Micro': {
-        name: 'Micro Crude Oil',
-        symbol: 'MCL',
-        contractSize: 100,
-        tickSize: 0.01,
-        tickValue: 1.00,
-        description: 'Micro Crude Oil ($1.00/tick)'
-      }
-    }
-  };
-
   const [symbol, setSymbol] = useState('ES');
   const [contractType, setContractType] = useState('Mini');
   const [entryPrice, setEntryPrice] = useState('4500.00');
