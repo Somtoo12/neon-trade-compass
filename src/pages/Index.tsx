@@ -8,7 +8,6 @@ import SessionClock from '@/components/tools/SessionClock';
 import CurrencyHeatmap from '@/components/tools/CurrencyHeatmap';
 import RiskManagement from '@/components/tools/RiskManagement';
 import TradeJournal from '@/components/calculators/TradeJournal';
-import PropFirmComparison from '@/components/propfirm/PropFirmComparison';
 import { useNavigate } from 'react-router-dom';
 
 interface IndexProps {
@@ -38,8 +37,6 @@ const Index: React.FC<IndexProps> = ({ activeSection }) => {
         return <RiskManagement />;
       case 'trade-journal':
         return <TradeJournal />;
-      case 'prop-firm-comparison':
-        return <PropFirmComparison />;
       default:
         return <ForexCalculator />;
     }
