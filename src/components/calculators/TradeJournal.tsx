@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   CalendarIcon, CheckCircle2, Copy, Edit2, Trash2,
   PieChart, BarChart3, Filter, Plus, Search, ChevronDown,
@@ -87,8 +88,27 @@ const TradeJournal: React.FC = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   
   // UI state
-  const [openCommandMenu, setOpenCommandMenu] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [showClearDialog, setShowClearDialog] = useState(false);
+  
+  // Filter pairs based on search term
+  const filteredPairs = {
+    majors: forexPairs.majors ? forexPairs.majors.filter(pair => 
+      pair.toLowerCase().includes(searchTerm.toLowerCase())
+    ) : [],
+    minors: forexPairs.minors ? forexPairs.minors.filter(pair => 
+      pair.toLowerCase().includes(searchTerm.toLowerCase())
+    ) : [],
+    exotics: forexPairs.exotics ? forexPairs.exotics.filter(pair => 
+      pair.toLowerCase().includes(searchTerm.toLowerCase())
+    ) : [],
+    crypto: cryptoPairs ? cryptoPairs.filter(pair =>
+      pair.toLowerCase().includes(searchTerm.toLowerCase())
+    ) : [],
+    others: [...indices, ...metals, ...energies].filter(pair =>
+      pair.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  };
 
   // Detect direction based on entry and take profit
   const direction = useMemo(() => {
@@ -209,23 +229,6 @@ const TradeJournal: React.FC = () => {
     navigator.clipboard.writeText(summary);
   };
 
-  // Process all predefined pairs
-  const predefinedPairs = useMemo(() => {
-    return allPairs.map(formatPair);
-  }, []);
-
-  // Filtered pairs based on user input
-  const [filteredPairs, setFilteredPairs] = useState<string[]>(predefinedPairs);
-  
-  // Filter pairs based on user input
-  const handlePairSearch = (searchTerm: string) => {
-    const term = searchTerm.toUpperCase();
-    const filtered = predefinedPairs.filter(pair => 
-      pair.includes(term)
-    );
-    setFilteredPairs(filtered);
-  };
-
   return (
     <Card className="p-6 neo-card">
       <div className="space-y-8">
@@ -265,58 +268,74 @@ const TradeJournal: React.FC = () => {
           <TabsContent value="entry" className="space-y-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* Currency Pair Input with Autocomplete */}
+                {/* Currency Pair Input with Select + Search (same as ForexCalculator) */}
                 <div className="space-y-2">
                   <Label>Currency Pair</Label>
-                  <div className="relative">
-                    <Input
-                      type="text"
-                      value={pair}
-                      onChange={(e) => {
-                        const value = e.target.value.toUpperCase();
-                        setPair(value);
-                        handlePairSearch(value);
-                        setOpenCommandMenu(true);
-                      }}
-                      placeholder="Type to search or enter custom pair..."
-                      className="input-glow"
-                    />
-                    <Popover open={openCommandMenu} onOpenChange={setOpenCommandMenu}>
-                      <PopoverTrigger className="absolute right-2 top-2.5">
-                        <ChevronDown className="h-4 w-4 opacity-50" />
-                      </PopoverTrigger>
-                      <PopoverContent className="w-full p-0" align="start">
-                        <Command>
-                          <CommandInput 
-                            placeholder="Search pairs..." 
-                            value={pair}
-                            onValueChange={(value) => {
-                              setPair(value);
-                              handlePairSearch(value);
-                            }}
-                          />
-                          <CommandEmpty>No matches found. You can use this custom pair.</CommandEmpty>
-                          {filteredPairs && filteredPairs.length > 0 && (
-                            <CommandGroup className="max-h-[200px] overflow-auto">
-                              {filteredPairs.map((item) => (
-                                <CommandItem
-                                  key={item}
-                                  value={item}
-                                  onSelect={(value) => {
-                                    setPair(value);
-                                    setOpenCommandMenu(false);
-                                  }}
-                                >
-                                  {item}
-                                  {item === pair && <CheckCircle2 className="ml-auto h-4 w-4" />}
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          )}
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                  </div>
+                  <Select 
+                    value={pair} 
+                    onValueChange={setPair}
+                  >
+                    <SelectTrigger className="bg-secondary/50 border-input/40 input-glow">
+                      <SelectValue placeholder="Select pair" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-input/40 max-h-[300px]">
+                      <div className="flex items-center px-3 pb-2">
+                        <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+                        <Input
+                          placeholder="Search pairs..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="h-8"
+                        />
+                      </div>
+                      <ScrollArea className="h-[200px]">
+                        {filteredPairs.majors && filteredPairs.majors.length > 0 && (
+                          <SelectGroup>
+                            <SelectLabel>Major Pairs</SelectLabel>
+                            {filteredPairs.majors.map((option) => (
+                              <SelectItem key={option} value={option.replace('/', '')}>{option}</SelectItem>
+                            ))}
+                          </SelectGroup>
+                        )}
+                        
+                        {filteredPairs.minors && filteredPairs.minors.length > 0 && (
+                          <SelectGroup>
+                            <SelectLabel>Minor Pairs</SelectLabel>
+                            {filteredPairs.minors.map((option) => (
+                              <SelectItem key={option} value={option.replace('/', '')}>{option}</SelectItem>
+                            ))}
+                          </SelectGroup>
+                        )}
+                        
+                        {filteredPairs.exotics && filteredPairs.exotics.length > 0 && (
+                          <SelectGroup>
+                            <SelectLabel>Exotic Pairs</SelectLabel>
+                            {filteredPairs.exotics.map((option) => (
+                              <SelectItem key={option} value={option.replace('/', '')}>{option}</SelectItem>
+                            ))}
+                          </SelectGroup>
+                        )}
+                        
+                        {filteredPairs.crypto && filteredPairs.crypto.length > 0 && (
+                          <SelectGroup>
+                            <SelectLabel>Crypto Pairs</SelectLabel>
+                            {filteredPairs.crypto.map((option) => (
+                              <SelectItem key={option} value={option.replace('/', '')}>{option}</SelectItem>
+                            ))}
+                          </SelectGroup>
+                        )}
+                        
+                        {filteredPairs.others && filteredPairs.others.length > 0 && (
+                          <SelectGroup>
+                            <SelectLabel>Other Markets</SelectLabel>
+                            {filteredPairs.others.map((option) => (
+                              <SelectItem key={option} value={option}>{option}</SelectItem>
+                            ))}
+                          </SelectGroup>
+                        )}
+                      </ScrollArea>
+                    </SelectContent>
+                  </Select>
                 </div>
                 
                 {/* Date Picker */}
