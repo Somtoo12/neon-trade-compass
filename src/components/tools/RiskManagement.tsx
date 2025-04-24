@@ -94,6 +94,71 @@ const RiskManagement: React.FC = () => {
           <TabsTrigger value="advanced">Advanced Position Sizing</TabsTrigger>
         </TabsList>
         
+        {/* Add the missing Basic Risk Calculator TabContent */}
+        <TabsContent value="basic">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm text-muted-foreground">Account Size (USD)</label>
+                <Input 
+                  type="number" 
+                  value={accountSize} 
+                  onChange={(e) => setAccountSize(e.target.value)}
+                  className="bg-secondary/50 border-input/40 input-glow"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm text-muted-foreground">Risk Percentage (%)</label>
+                <Input 
+                  type="number" 
+                  step="0.1"
+                  min="0.1"
+                  max="10"
+                  value={riskPercentage} 
+                  onChange={(e) => setRiskPercentage(e.target.value)}
+                  className="bg-secondary/50 border-input/40 input-glow"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm text-muted-foreground">Stop Loss (pips)</label>
+                <Input 
+                  type="number" 
+                  min="1"
+                  value={stopLossPips} 
+                  onChange={(e) => setStopLossPips(e.target.value)}
+                  className="bg-secondary/50 border-input/40 input-glow"
+                />
+              </div>
+            </div>
+            
+            <div className="dark:bg-gradient-to-br dark:from-gray-100 dark:to-gray-200 light:bg-[#FFFFFF] rounded-xl p-6 border dark:border-gray-300/50 light:border-gray-200/80 flex flex-col justify-center dark:shadow-sm light:shadow-[0_2px_15px_rgba(0,0,0,0.08)]">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm text-gray-600">Result</span>
+                <ArrowRight className="h-4 w-4 text-gray-500" />
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-sm text-gray-700 mb-1">Maximum Risk Amount</h3>
+                  <p className="text-xl font-bold text-gray-800">
+                    ${(parseFloat(accountSize) * (parseFloat(riskPercentage) / 100)).toFixed(2)} USD
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="text-sm text-gray-700 mb-1">Recommended Position Size</h3>
+                  <p className="text-3xl font-bold text-primary">{recommendedLotSize.toFixed(2)} lots</p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    ({(recommendedLotSize * 100000).toFixed(0)} units)
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+        
         <TabsContent value="advanced">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
