@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import PropFirmCalculator from "./pages/PropFirmCalculator";
+import FxifyDrawdownCalculator from "./pages/FxifyDrawdownCalculator";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
             <Route path="/" element={<Home />} />
             <Route path="/calculators" element={<Index />} />
             <Route path="/prop-firm-calculator" element={<PropFirmCalculator />} />
+            <Route path="/fxify-drawdown-calculator" element={<FxifyDrawdownCalculator />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
