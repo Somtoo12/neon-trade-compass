@@ -60,6 +60,7 @@
   html, body {
     @apply bg-background text-foreground;
     font-family: 'Inter', sans-serif;
+    scroll-behavior: smooth;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -87,6 +88,30 @@
   .input-glow:focus {
     @apply ring-2 ring-neon-purple shadow-[0_0_15px_rgba(123,97,255,0.3)];
   }
+  
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
 }
 
-/* Rest of the existing CSS remains the same */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
