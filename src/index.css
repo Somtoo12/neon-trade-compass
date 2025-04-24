@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
 
 @tailwind base;
@@ -89,4 +88,23 @@
   }
 }
 
-/* Rest of the existing CSS remains the same */
+/* Screenshot theme styles */
+.screenshot-light {
+  background: #FFFFFF !important;
+  color: #1A1F2C !important;
+}
+
+.screenshot-light * {
+  color: #1A1F2C !important;
+  border-color: #8E9196 !important;
+}
+
+.screenshot-dark {
+  background: #1A1F2C !important;
+  color: #FFFFFF !important;
+}
+
+.screenshot-dark * {
+  color: #FFFFFF !important;
+  border-color: #333 !important;
+}
