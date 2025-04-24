@@ -1,0 +1,176 @@
+
+import React, { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowRight } from 'lucide-react';
+
+const ForexCalculator: React.FC = () => {
+  const [pair, setPair] = useState('EUR/USD');
+  const [lotSize, setLotSize] = useState('0.01');
+  const [entryPrice, setEntryPrice] = useState('1.10000');
+  const [exitPrice, setExitPrice] = useState('1.11000');
+  const [accountCurrency, setAccountCurrency] = useState('USD');
+  
+  const [pipsResult, setPipsResult] = useState(0);
+  const [pipValue, setPipValue] = useState(0);
+  const [totalPnL, setTotalPnL] = useState(0);
+  
+  const pairOptions = [
+    'EUR/USD', 'GBP/USD', 'USD/JPY', 'AUD/USD', 
+    'USD/CAD', 'NZD/USD', 'USD/CHF', 'EUR/GBP'
+  ];
+  
+  const currencyOptions = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'NZD', 'CHF'];
+  
+  useEffect(() => {
+    calculatePips();
+  }, [pair, lotSize, entryPrice, exitPrice, accountCurrency]);
+  
+  const getPipDecimal = (pair: string) => {
+    if (pair.includes('JPY')) return 0.01;
+    return 0.0001;
+  };
+  
+  const calculatePips = () => {
+    const entry = parseFloat(entryPrice);
+    const exit = parseFloat(exitPrice);
+    const lot = parseFloat(lotSize);
+    
+    if (isNaN(entry) || isNaN(exit) || isNaN(lot)) {
+      setPipsResult(0);
+      setPipValue(0);
+      setTotalPnL(0);
+      return;
+    }
+    
+    const pipDecimal = getPipDecimal(pair);
+    const pipDiff = pair.includes('JPY') 
+      ? (exit - entry) / pipDecimal 
+      : (exit - entry) / pipDecimal;
+    
+    // Standard values - simplified for demo
+    let singlePipValue = 0;
+    if (pair.includes('JPY')) {
+      singlePipValue = 1000 * lot / 100;
+    } else {
+      singlePipValue = 10 * lot;
+    }
+    
+    // Convert pip value to account currency - simplified
+    const pipValueInAccountCurrency = singlePipValue;
+    
+    setPipsResult(Math.round(pipDiff * 100) / 100);
+    setPipValue(Math.round(pipValueInAccountCurrency * 100) / 100);
+    setTotalPnL(Math.round(pipDiff * pipValueInAccountCurrency * 100) / 100);
+  };
+  
+  return (
+    <Card className="neo-card p-6">
+      <h2 className="text-xl font-semibold mb-4 font-poppins">Forex Pip Calculator</h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm text-muted-foreground">Currency Pair</label>
+            <Select 
+              defaultValue={pair} 
+              onValueChange={setPair}
+            >
+              <SelectTrigger className="bg-secondary/50 border-input/40 input-glow">
+                <SelectValue placeholder="Select pair" />
+              </SelectTrigger>
+              <SelectContent className="bg-card border-input/40">
+                {pairOptions.map((option) => (
+                  <SelectItem key={option} value={option}>{option}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="space-y-2">
+            <label className="text-sm text-muted-foreground">Lot Size</label>
+            <Input 
+              type="number" 
+              step="0.01" 
+              min="0.01" 
+              value={lotSize} 
+              onChange={(e) => setLotSize(e.target.value)}
+              className="bg-secondary/50 border-input/40 input-glow"
+            />
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm text-muted-foreground">Entry Price</label>
+              <Input 
+                type="number" 
+                step="0.00001" 
+                value={entryPrice} 
+                onChange={(e) => setEntryPrice(e.target.value)}
+                className="bg-secondary/50 border-input/40 input-glow"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm text-muted-foreground">Exit Price</label>
+              <Input 
+                type="number" 
+                step="0.00001" 
+                value={exitPrice} 
+                onChange={(e) => setExitPrice(e.target.value)}
+                className="bg-secondary/50 border-input/40 input-glow"
+              />
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <label className="text-sm text-muted-foreground">Account Currency</label>
+            <Select 
+              defaultValue={accountCurrency} 
+              onValueChange={setAccountCurrency}
+            >
+              <SelectTrigger className="bg-secondary/50 border-input/40 input-glow">
+                <SelectValue placeholder="Select currency" />
+              </SelectTrigger>
+              <SelectContent className="bg-card border-input/40">
+                {currencyOptions.map((option) => (
+                  <SelectItem key={option} value={option}>{option}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        
+        <div className="bg-black/40 rounded-xl p-6 border border-white/5 flex flex-col justify-center">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-sm text-muted-foreground">Result</span>
+            <ArrowRight className="h-4 w-4 text-muted-foreground" />
+          </div>
+          
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-sm text-muted-foreground mb-1">Pips Gained/Lost</h3>
+              <p className={`text-2xl font-bold ${pipsResult >= 0 ? 'text-neon-green' : 'text-red-500'}`}>
+                {pipsResult >= 0 ? '+' : ''}{pipsResult.toFixed(1)}
+              </p>
+            </div>
+            
+            <div>
+              <h3 className="text-sm text-muted-foreground mb-1">Pip Value</h3>
+              <p className="text-xl font-medium">{pipValue.toFixed(2)} {accountCurrency}</p>
+            </div>
+            
+            <div>
+              <h3 className="text-sm text-muted-foreground mb-1">Total Profit/Loss</h3>
+              <p className={`text-3xl font-bold ${totalPnL >= 0 ? 'text-neon-green' : 'text-red-500'}`}>
+                {totalPnL >= 0 ? '+' : ''}{totalPnL.toFixed(2)} {accountCurrency}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+};
+
+export default ForexCalculator;
