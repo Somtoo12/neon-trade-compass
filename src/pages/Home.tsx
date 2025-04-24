@@ -7,22 +7,22 @@ import { Link } from "react-router-dom";
 const features = [
   {
     title: "Forex Pip Calculator",
-    description: "Supports 100+ pairs with live pip calculations.",
+    description: "Supports 100+ pairs with live pip calculations. Real-time pip value updates for major, minor, and exotic pairs.",
     icon: <Sparkles className="h-6 w-6 text-primary" />,
   },
   {
     title: "Crypto Profit & Lot Size Calculator",
-    description: "Includes MT4/MT5 logic with accurate crypto contracts.",
+    description: "Includes MT4/MT5 logic with accurate crypto contracts. Supports major cryptocurrencies like BTC, ETH, and emerging altcoins.",
     icon: <Zap className="h-6 w-6 text-primary" />,
   },
   {
-    title: "Futures Tick Calculator",
-    description: "Micro/Mini toggle with correct tick values.",
+    title: "Advanced Futures Calculator",
+    description: "Comprehensive futures trading calculator supporting E-mini S&P 500 (ES), Nasdaq (NQ), Dow (YM), Russell (RTY), Gold (GC), Crude Oil (CL), and more. Includes Micro/Mini contract sizes, tick values, and margin calculations.",
     icon: <Activity className="h-6 w-6 text-primary" />,
   },
   {
     title: "Trading Session Clock",
-    description: "Live session tracker with glowing active indicators.",
+    description: "Live session tracker with glowing active indicators. Covers all major trading sessions including NYSE, London, Tokyo, and Sydney.",
     icon: <CircleDot className="h-6 w-6 text-primary" />,
   },
 ];
