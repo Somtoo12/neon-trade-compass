@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -10,6 +9,9 @@ import FuturesCalculator from '@/components/calculators/FuturesCalculator';
 import SessionClock from '@/components/tools/SessionClock';
 import CurrencyHeatmap from '@/components/tools/CurrencyHeatmap';
 import RiskManagement from '@/components/tools/RiskManagement';
+import LotSizeTable from '@/components/calculators/LotSizeTable';
+import TradeJournal from '@/components/calculators/TradeJournal';
+import DailyRisk from '@/components/calculators/DailyRisk';
 
 const Index: React.FC = () => {
   const [activeSection, setActiveSection] = useState('forex-calculator');
@@ -28,6 +30,12 @@ const Index: React.FC = () => {
         return <CurrencyHeatmap />;
       case 'risk-management':
         return <RiskManagement />;
+      case 'lot-size-table':
+        return <LotSizeTable />;
+      case 'trade-journal':
+        return <TradeJournal />;
+      case 'daily-risk':
+        return <DailyRisk />;
       default:
         return <ForexCalculator />;
     }

@@ -1,5 +1,9 @@
+
 import React from 'react';
-import { BarChart, Clock, Gauge, LineChart, PieChart, Scale } from 'lucide-react';
+import { 
+  BarChart, Clock, Gauge, LineChart, PieChart, Scale,
+  Table, BookOpen, Calculator
+} from 'lucide-react';
 
 interface SidebarProps {
   activeSection: string;
@@ -20,6 +24,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection }) =>
     { id: 'session-clock', label: 'Session Clock', icon: <Clock className="h-5 w-5" /> },
     { id: 'currency-heatmap', label: 'Currency Heatmap', icon: <Gauge className="h-5 w-5" /> },
     { id: 'risk-management', label: 'Risk Management', icon: <Scale className="h-5 w-5" /> },
+    { id: 'lot-size-table', label: 'Lot Size Table', icon: <Table className="h-5 w-5" /> },
+    { id: 'trade-journal', label: 'Trade Journal', icon: <BookOpen className="h-5 w-5" /> },
+    { id: 'daily-risk', label: 'Daily Risk', icon: <Calculator className="h-5 w-5" /> },
   ];
 
   return (
