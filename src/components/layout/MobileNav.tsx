@@ -29,7 +29,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
 
   const handleNavClick = (section: string) => {
     setActiveSection(section);
-    setIsOpen(false);
+    setIsOpen(false); // Close the menu when a section is selected
   };
 
   return (
@@ -44,6 +44,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="p-1.5 rounded-lg bg-secondary"
+              aria-label={isOpen ? "Close menu" : "Open menu"}
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -52,7 +53,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
       </div>
 
       {isOpen && (
-        <div className="fixed inset-0 z-40 bg-background/95 backdrop-blur-sm pt-16">
+        <div className="fixed inset-0 z-40 bg-background/95 backdrop-blur-sm pt-16 overflow-y-auto">
           <nav className="container px-4 py-6">
             <ul className="space-y-3">
               {navItems.map((item) => (
@@ -64,6 +65,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
                         ? 'bg-accent/20 text-accent border border-accent/30'
                         : 'hover:bg-secondary text-foreground/80 hover:text-foreground'
                     }`}
+                    aria-selected={activeSection === item.id}
                   >
                     {item.icon}
                     <span>{item.label}</span>
@@ -74,10 +76,6 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
           </nav>
         </div>
       )}
-
-      <div className="p-4 bg-background overflow-y-auto">
-        {/* Content will be injected by the AppLayout component */}
-      </div>
     </>
   );
 };

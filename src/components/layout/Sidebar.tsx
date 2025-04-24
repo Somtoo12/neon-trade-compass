@@ -46,6 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection }) =>
                     ? 'bg-accent/20 text-accent neon-border neon-purple-glow'
                     : 'hover:bg-secondary text-foreground/80 hover:text-foreground'
                 }`}
+                aria-selected={activeSection === item.id}
               >
                 {item.icon}
                 <span>{item.label}</span>
