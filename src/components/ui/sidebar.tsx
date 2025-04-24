@@ -307,17 +307,4 @@ export const SidebarTrigger = () => {
 
 SidebarTrigger.displayName = "SidebarTrigger"
 
-// Export sidebar components
-export {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-}
-
+// Removed the redundant export statement that was causing the errors
