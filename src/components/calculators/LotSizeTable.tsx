@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Info } from 'lucide-react';
+import { InfoCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const LotSizeTable = () => {
@@ -105,7 +105,7 @@ const LotSizeTable = () => {
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger className="flex items-center gap-2">
-                          {row.lotSize} <Info className="h-4 w-4" />
+                          {row.lotSize} <InfoCircle className="h-4 w-4" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>Recommended lot size for your settings</p>
