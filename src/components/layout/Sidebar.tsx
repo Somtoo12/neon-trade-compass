@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { BarChart, Book, Clock, Gauge, LineChart, PieChart, Scale, Compass } from 'lucide-react';
+import { BarChart, Book, Clock, Gauge, LineChart, PieChart, Scale, Compass, GamepadIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface SidebarProps {
@@ -25,6 +24,12 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection }) =>
     { id: 'risk-management', label: 'Risk Management', icon: <Scale className="h-5 w-5" />, path: '/risk-management' },
     { id: 'trade-journal', label: 'Trade Journal', icon: <Book className="h-5 w-5" />, path: '/trade-journal' },
     { id: 'daily-trade-tools', label: '🧭 Daily Trade Tools', icon: <Compass className="h-5 w-5" />, path: '/daily-trade-tools' },
+    { 
+      id: 'trader-games', 
+      label: '🎮 Trader Game Center', 
+      icon: <GamepadIcon className="h-5 w-5" />, 
+      path: '/trader-games' 
+    },
   ];
 
   const handleNavClick = (section: string) => {

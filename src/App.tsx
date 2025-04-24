@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +14,7 @@ import ForexCalculator from "@/components/calculators/ForexCalculator";
 import CryptoCalculator from "@/components/calculators/CryptoCalculator";
 import FuturesCalculator from "@/components/calculators/FuturesCalculator";
 import TradeJournal from "@/components/calculators/TradeJournal";
+import TraderGameCenter from "./components/games/TraderGameCenter";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +36,7 @@ const App = () => (
             <Route path="/trade-journal" element={<Index activeSection="trade-journal" />} />
             <Route path="/daily-trade-tools" element={<Index activeSection="daily-trade-tools" />} />
             <Route path="/calculators" element={<Calculators />} />
+            <Route path="/trader-games" element={<Index activeSection="trader-games" />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
