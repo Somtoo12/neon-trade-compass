@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -17,24 +18,13 @@ const ForexCalculator: React.FC = () => {
   const [pipValue, setPipValue] = useState(0);
   const [totalPnL, setTotalPnL] = useState(0);
   
-  const allPairs = [
-    ...forexPairs.majors,
-    ...forexPairs.minors,
-    ...forexPairs.exotics
-  ];
+  // Use forexPairs as a simple array, not as an object with majors, minors, exotics properties
+  const allPairs = forexPairs;
   
   const [searchTerm, setSearchTerm] = useState('');
-  const filteredPairs = {
-    majors: forexPairs.majors.filter(pair => 
-      pair.toLowerCase().includes(searchTerm.toLowerCase())
-    ),
-    minors: forexPairs.minors.filter(pair => 
-      pair.toLowerCase().includes(searchTerm.toLowerCase())
-    ),
-    exotics: forexPairs.exotics.filter(pair => 
-      pair.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  };
+  const filteredPairs = forexPairs.filter(pair => 
+    pair.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   
   const currencyOptions = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'NZD', 'CHF'];
   
@@ -105,20 +95,8 @@ const ForexCalculator: React.FC = () => {
                 </div>
                 <ScrollArea className="h-[200px]">
                   <SelectGroup>
-                    <SelectLabel>Major Pairs</SelectLabel>
-                    {filteredPairs.majors.map((option) => (
-                      <SelectItem key={option} value={option}>{option}</SelectItem>
-                    ))}
-                  </SelectGroup>
-                  <SelectGroup>
-                    <SelectLabel>Minor Pairs</SelectLabel>
-                    {filteredPairs.minors.map((option) => (
-                      <SelectItem key={option} value={option}>{option}</SelectItem>
-                    ))}
-                  </SelectGroup>
-                  <SelectGroup>
-                    <SelectLabel>Exotic Pairs</SelectLabel>
-                    {filteredPairs.exotics.map((option) => (
+                    <SelectLabel>Pairs</SelectLabel>
+                    {filteredPairs.map((option) => (
                       <SelectItem key={option} value={option}>{option}</SelectItem>
                     ))}
                   </SelectGroup>
