@@ -209,43 +209,65 @@ const TradeJournal: React.FC = () => {
   };
 
   return (
-    <Card className="p-6 neo-card">
-      <div className="space-y-8">
-        <div className="flex items-center justify-between">
-          <h3 className="text-2xl font-semibold">Trade Journal Tracker</h3>
-          <div className="flex gap-2">
+    <Card className="p-4 md:p-6">
+      <div className="space-y-6">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <h3 className="text-lg md:text-2xl font-semibold">Trade Journal Tracker</h3>
+          <div className="flex flex-col gap-2 md:flex-row md:gap-3">
             <Button 
               size="sm" 
               variant="outline" 
-              className="gap-1" 
+              className="h-9 text-xs md:text-sm" 
               onClick={exportTradesAsCsv}
               disabled={filteredTrades.length === 0}
             >
-              <FileDown className="h-4 w-4" /> Export CSV
+              <FileDown className="h-3.5 w-3.5 md:h-4 md:w-4" /> Export CSV
             </Button>
             <Button 
               size="sm" 
               variant="outline" 
-              className="gap-1 text-red-500 hover:text-red-600" 
+              className="h-9 text-xs md:text-sm text-red-500 hover:text-red-600" 
               onClick={() => setShowClearDialog(true)}
               disabled={trades.length === 0}
             >
-              <Trash className="h-4 w-4" /> Clear All
+              <Trash className="h-3.5 w-3.5 md:h-4 md:w-4" /> Clear All
             </Button>
           </div>
         </div>
         
         <Tabs defaultValue="entry" className="w-full">
-          <TabsList className="grid grid-cols-4">
-            <TabsTrigger value="entry">Trade Entry</TabsTrigger>
-            <TabsTrigger value="summary">Summaries</TabsTrigger>
-            <TabsTrigger value="log">Trade Log</TabsTrigger>
-            <TabsTrigger value="charts">Analytics</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="entry" className="space-y-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="mobile-scrollable md:block">
+            <TabsList className="w-full md:w-auto flex md:inline-flex gap-2 md:gap-0 p-1.5">
+              <TabsTrigger 
+                value="entry" 
+                className="h-9 px-3 text-xs md:text-sm whitespace-nowrap"
+              >
+                Trade Entry
+              </TabsTrigger>
+              <TabsTrigger 
+                value="summary"
+                className="h-9 px-3 text-xs md:text-sm whitespace-nowrap"
+              >
+                Summaries
+              </TabsTrigger>
+              <TabsTrigger 
+                value="log"
+                className="h-9 px-3 text-xs md:text-sm whitespace-nowrap"
+              >
+                Trade Log
+              </TabsTrigger>
+              <TabsTrigger 
+                value="charts"
+                className="h-9 px-3 text-xs md:text-sm whitespace-nowrap"
+              >
+                Analytics
+              </TabsTrigger>
+            </TabsList>
+          </div>
+
+          <TabsContent value="entry">
+            <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <div className="space-y-2">
                   <Label>Currency Pair</Label>
                   <Select 
@@ -449,16 +471,17 @@ const TradeJournal: React.FC = () => {
             </form>
           </TabsContent>
           
-          <TabsContent value="summary" className="space-y-6">
+          <TabsContent value="summary" className="space-y-4 md:space-y-6">
             <div className="flex flex-wrap items-center justify-between gap-4">
-              <h4 className="text-lg font-medium">Trade Summaries</h4>
+              <h4 className="text-base md:text-lg font-medium">Trade Summaries</h4>
               <ScreenshotButton 
                 targetId="summaries-tab-content" 
                 filename="pipcraft-summary" 
+                className="h-9 text-xs md:text-sm px-3"
               />
             </div>
             
-            <div id="summaries-tab-content" className="space-y-6">
+            <div id="summaries-tab-content" className="space-y-4 md:space-y-6">
               <Card className="p-4 bg-gradient-to-r from-secondary/30 to-accent/20 border border-accent/30">
                 <div className="flex flex-wrap gap-4 justify-between text-sm">
                   <div>
@@ -492,7 +515,7 @@ const TradeJournal: React.FC = () => {
                 </div>
               </Card>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {filteredTrades.length > 0 ? (
                   filteredTrades.map((trade) => (
                     <Card 
@@ -576,17 +599,18 @@ const TradeJournal: React.FC = () => {
             </div>
           </TabsContent>
           
-          <TabsContent value="log" className="space-y-6">
+          <TabsContent value="log" className="space-y-4 md:space-y-6">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="text-lg font-medium">Trade Log</h4>
+              <h4 className="text-base md:text-lg font-medium">Trade Log</h4>
               <ScreenshotButton 
                 targetId="trade-log-tab-content" 
                 filename="pipcraft-tradelog" 
+                className="h-9 text-xs md:text-sm px-3"
               />
             </div>
             
-            <div id="trade-log-tab-content">
-              <div className="rounded-md border">
+            <div id="trade-log-tab-content" className="overflow-x-auto">
+              <div className="min-w-[800px] rounded-md border">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -656,82 +680,81 @@ const TradeJournal: React.FC = () => {
             </div>
           </TabsContent>
           
-          <TabsContent value="charts" className="space-y-6">
+          <TabsContent value="charts" className="space-y-4 md:space-y-6">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="text-lg font-medium">Analytics</h4>
+              <h4 className="text-base md:text-lg font-medium">Analytics</h4>
               <ScreenshotButton 
                 targetId="analytics-tab-content" 
                 filename="pipcraft-analytics" 
+                className="h-9 text-xs md:text-sm px-3"
               />
             </div>
             
             <div id="analytics-tab-content">
               {filteredTrades.length > 0 ? (
-                <>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <Card className="p-4">
-                      <h4 className="text-base font-medium mb-4 flex items-center">
-                        <PieChart className="h-4 w-4 mr-2" /> Win/Loss Ratio
-                      </h4>
-                      <div className="flex justify-center h-[250px]">
-                        <RePieChart width={250} height={250}>
-                          <Pie
-                            data={winsLossesData}
-                            cx="50%"
-                            cy="50%"
-                            outerRadius={80}
-                            fill="#8884d8"
-                            dataKey="value"
-                            label={({ name, value }) => `${name}: ${value}`}
-                          >
-                            {winsLossesData.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
-                          </Pie>
-                          <RechartsTooltip />
-                          <Legend />
-                        </RePieChart>
-                      </div>
-                    </Card>
-                    
-                    <Card className="p-4">
-                      <h4 className="text-base font-medium mb-4 flex items-center">
-                        <BarChart3 className="h-4 w-4 mr-2" /> Currency Pairs Performance (Pips)
-                      </h4>
-                      <div className="h-[250px] w-full overflow-x-auto">
-                        <BarChart
-                          width={Math.max(500, chartData.length * 50)}
-                          height={250}
-                          data={chartData}
-                          margin={{ top: 5, right: 30, left: 20, bottom: 50 }}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <Card className="p-4">
+                    <h4 className="text-base font-medium mb-4 flex items-center">
+                      <PieChart className="h-4 w-4 mr-2" /> Win/Loss Ratio
+                    </h4>
+                    <div className="flex justify-center h-[250px]">
+                      <RePieChart width={250} height={250}>
+                        <Pie
+                          data={winsLossesData}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          label={({ name, value }) => `${name}: ${value}`}
                         >
-                          <XAxis 
-                            dataKey="pair" 
-                            angle={-45}
-                            textAnchor="end"
-                            height={60}
-                          />
-                          <YAxis />
-                          <RechartsTooltip />
-                          <Legend />
-                          <Bar 
-                            dataKey="pips" 
-                            name="Pips" 
-                            fill="#8884d8"
-                            radius={[4, 4, 0, 0]}
-                          >
-                            {chartData.map((entry, index) => (
-                              <Cell 
-                                key={`cell-${index}`} 
-                                fill={entry.pips > 0 ? '#10b981' : '#ef4444'} 
-                              />
-                            ))}
-                          </Bar>
-                        </BarChart>
-                      </div>
-                    </Card>
-                  </div>
-                </>
+                          {winsLossesData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <RechartsTooltip />
+                        <Legend />
+                      </RePieChart>
+                    </div>
+                  </Card>
+                  
+                  <Card className="p-4">
+                    <h4 className="text-base font-medium mb-4 flex items-center">
+                      <BarChart3 className="h-4 w-4 mr-2" /> Currency Pairs Performance (Pips)
+                    </h4>
+                    <div className="h-[250px] w-full overflow-x-auto">
+                      <BarChart
+                        width={Math.max(500, chartData.length * 50)}
+                        height={250}
+                        data={chartData}
+                        margin={{ top: 5, right: 30, left: 20, bottom: 50 }}
+                      >
+                        <XAxis 
+                          dataKey="pair" 
+                          angle={-45}
+                          textAnchor="end"
+                          height={60}
+                        />
+                        <YAxis />
+                        <RechartsTooltip />
+                        <Legend />
+                        <Bar 
+                          dataKey="pips" 
+                          name="Pips" 
+                          fill="#8884d8"
+                          radius={[4, 4, 0, 0]}
+                        >
+                          {chartData.map((entry, index) => (
+                            <Cell 
+                              key={`cell-${index}`} 
+                              fill={entry.pips > 0 ? '#10b981' : '#ef4444'} 
+                            />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </div>
+                  </Card>
+                </div>
               ) : (
                 <div className="text-center py-10 text-muted-foreground">
                   No trades recorded yet. Add trades using the Trade Entry tab to see analytics.
