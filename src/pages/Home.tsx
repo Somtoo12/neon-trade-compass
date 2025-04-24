@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowRight, Sparkles, TrendingUp, Clock, Star, Calculator } from "lucide-react";
+import { ArrowRight, Sparkles, TrendingUp, Clock, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const features = [
@@ -9,31 +9,21 @@ const features = [
     title: "Forex Pip Calculator",
     description: "Supports 100+ currency pairs with live pip calculations and dynamic position sizing. Perfect for both spot and forward trades.",
     icon: Star,
-    link: "/calculators"
   },
   {
     title: "Crypto Profit & Lot Size Calculator",
     description: "Advanced calculations for major cryptocurrencies including Bitcoin, Ethereum, and altcoins. Features MT4/MT5 integration for seamless trading.",
     icon: TrendingUp,
-    link: "/calculators"
   },
   {
     title: "Futures Tick Calculator",
     description: "Complete support for ES, NQ, YM, RTY, GC, CL and more. Includes Micro/Mini contracts with precise tick values and margin calculations.",
     icon: Sparkles,
-    link: "/calculators"
-  },
-  {
-    title: "Prop Firm Drawdown Calculator",
-    description: "Calculate daily loss limits and maximum drawdowns for top prop trading firms like FXIFY, FTMO, and MyForexFunds based on their specific rules.",
-    icon: Calculator,
-    link: "/prop-firm-calculator"
   },
   {
     title: "Trading Session Clock",
     description: "Real-time market hours tracker for all major exchanges. Features visual indicators for Asian, London, and New York sessions.",
     icon: Clock,
-    link: "/calculators"
   },
 ];
 
@@ -44,7 +34,6 @@ const Home = () => {
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/20 rounded-full blur-3xl animate-pulse" />
         <div className="absolute top-60 -left-40 w-80 h-80 bg-accent/20 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute bottom-20 right-60 w-60 h-60 bg-neon-blue/10 rounded-full blur-3xl animate-float opacity-70" />
       </div>
 
       {/* Navigation */}
@@ -53,22 +42,13 @@ const Home = () => {
           <Link to="/" className="text-xl font-semibold font-poppins hover:text-primary transition-colors">
             PipCraft
           </Link>
-          <div className="flex items-center gap-4">
-            <Link 
-              to="/calculators"
-              className="text-sm text-muted-foreground hover:text-primary transition-colors relative group"
-            >
-              Calculators
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
-            </Link>
-            <Link 
-              to="/prop-firm-calculator"
-              className="text-sm text-muted-foreground hover:text-primary transition-colors relative group"
-            >
-              Prop Firm Calculator
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
-            </Link>
-          </div>
+          <Link 
+            to="/calculators"
+            className="text-sm text-muted-foreground hover:text-primary transition-colors relative group"
+          >
+            Calculators
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
+          </Link>
         </div>
       </nav>
 
@@ -85,27 +65,19 @@ const Home = () => {
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-fade-in">
             Trade smarter with precise tools for Forex, Crypto, and Futures.
           </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Link to="/calculators">
-              <Button className="px-8 py-6 text-lg group hover:scale-105 transition-transform duration-300 neo-card">
-                Trading Tools
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-            <Link to="/prop-firm-calculator">
-              <Button variant="outline" className="px-8 py-6 text-lg group hover:scale-105 transition-transform duration-300 neo-card">
-                Prop Firm Calculator
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-          </div>
+          <Link to="/calculators">
+            <Button className="px-8 py-6 text-lg group hover:scale-105 transition-transform duration-300 neo-card">
+              Open Tools
+              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </Link>
         </div>
       </section>
 
       {/* Features Section */}
       <section className="py-24 bg-black/20 relative">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {features.map((feature, index) => (
               <Card 
                 key={feature.title}
@@ -118,7 +90,7 @@ const Home = () => {
                   <div>
                     <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
                     <p className="text-muted-foreground mb-6">{feature.description}</p>
-                    <Link to={feature.link}>
+                    <Link to="/calculators">
                       <Button variant="outline" className="w-full group">
                         Use Tool
                         <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
