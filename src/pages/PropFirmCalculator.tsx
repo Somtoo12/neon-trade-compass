@@ -6,7 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ArrowLeft, Search, Info } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ArrowLeft, Search, Info, Calculator } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -42,26 +49,42 @@ const propFirms: PropFirm[] = [
     plans: [
       {
         id: '1-step',
-        name: '1-Step Plan',
+        name: 'One-Phase Evaluation',
         dailyLossCalcMethod: 'previous',
         dailyLossPercentage: 3,
-        maxDrawdownPercentage: 10,
+        maxDrawdownPercentage: 6,
         maxDrawdownType: 'trailing'
       },
       {
         id: '2-step',
-        name: '2-Step Plan',
-        dailyLossCalcMethod: 'current',
+        name: 'Two-Phase Evaluation',
+        dailyLossCalcMethod: 'previous',
         dailyLossPercentage: 4,
         maxDrawdownPercentage: 10,
         maxDrawdownType: 'trailing'
       },
       {
         id: '3-step',
-        name: '3-Step Plan',
-        dailyLossCalcMethod: 'current',
+        name: 'Three-Phase Evaluation',
+        dailyLossCalcMethod: 'previous',
         dailyLossPercentage: 5,
-        maxDrawdownPercentage: 10,
+        maxDrawdownPercentage: 5,
+        maxDrawdownType: 'fixed'
+      },
+      {
+        id: 'instant',
+        name: 'Instant Funding',
+        dailyLossCalcMethod: 'previous',
+        dailyLossPercentage: 8,
+        maxDrawdownPercentage: 8,
+        maxDrawdownType: 'trailing'
+      },
+      {
+        id: 'lightning',
+        name: 'Lightning Challenge',
+        dailyLossCalcMethod: 'previous',
+        dailyLossPercentage: 3,
+        maxDrawdownPercentage: 4,
         maxDrawdownType: 'trailing'
       }
     ]
@@ -87,7 +110,8 @@ const PropFirmCalculator: React.FC = () => {
   const [calculations, setCalculations] = useState<Record<string, { 
     selectedPlan: string, 
     currentBalance: string, 
-    previousDayBalance: string 
+    previousDayBalance: string,
+    highestBalance: string
   }>>({});
   const firmRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const { theme } = useTheme();
@@ -127,7 +151,7 @@ const PropFirmCalculator: React.FC = () => {
 
   const handleInputChange = (
     firmId: string, 
-    field: 'currentBalance' | 'previousDayBalance', 
+    field: 'currentBalance' | 'previousDayBalance' | 'highestBalance', 
     value: string
   ) => {
     // Only allow numeric input with decimal point
@@ -136,7 +160,7 @@ const PropFirmCalculator: React.FC = () => {
       setCalculations(prev => ({
         ...prev,
         [firmId]: {
-          ...prev[firmId] || { selectedPlan: '', currentBalance: '', previousDayBalance: '' },
+          ...prev[firmId] || { selectedPlan: '', currentBalance: '', previousDayBalance: '', highestBalance: '' },
           [field]: value
         }
       }));
@@ -173,11 +197,40 @@ const PropFirmCalculator: React.FC = () => {
     const plan = firm.plans.find(p => p.id === calc.selectedPlan);
     if (!plan) return '--';
 
-    const currentBalance = parseFloat(calc.currentBalance || '0');
-    if (currentBalance <= 0) return '--';
+    let balanceToUse;
+    
+    if (plan.maxDrawdownType === 'trailing') {
+      balanceToUse = parseFloat(calc.highestBalance || '0');
+      if (balanceToUse <= 0) {
+        balanceToUse = parseFloat(calc.currentBalance || '0');
+      }
+    } else {
+      // For fixed drawdown type
+      balanceToUse = parseFloat(calc.currentBalance || '0');
+    }
+    
+    if (balanceToUse <= 0) return '--';
 
-    const result = currentBalance * plan.maxDrawdownPercentage / 100;
+    const result = balanceToUse * plan.maxDrawdownPercentage / 100;
     return `$${result.toFixed(2)}`;
+  };
+
+  // Function to get plan description
+  const getPlanDescription = (planId: string): string => {
+    switch (planId) {
+      case '1-step':
+        return 'Daily Loss: 3% of previous day\'s balance, Max Drawdown: 6% trailing';
+      case '2-step':
+        return 'Daily Loss: 4% of previous day\'s balance, Max Drawdown: 10% trailing';
+      case '3-step':
+        return 'Daily Loss: 5% of previous day\'s balance, Max Drawdown: 5% static';
+      case 'instant':
+        return 'Daily Loss: 8% of previous day\'s balance, Max Drawdown: 8% trailing';
+      case 'lightning':
+        return 'Daily Loss: 3% of previous day\'s balance, Max Drawdown: 4% trailing';
+      default:
+        return '';
+    }
   };
 
   return (
@@ -193,7 +246,7 @@ const PropFirmCalculator: React.FC = () => {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
           <div className="flex items-center gap-2">
             <Link to="/calculators">
-              <Button variant="outline" size="sm" className="flex items-center gap-2">
+              <Button variant="outline" size="sm" className="flex items-center gap-2 neo-card">
                 <ArrowLeft className="h-4 w-4" />
                 Back to Calculators
               </Button>
@@ -212,7 +265,7 @@ const PropFirmCalculator: React.FC = () => {
         </div>
 
         <h1 className="text-3xl md:text-4xl font-bold mb-2 text-center bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-fade-in">
-          Prop Firm Drawdown Calculator
+          PipCraft Drawdown Center
         </h1>
         <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-10">
           Calculate Daily Loss Limits and Maximum Drawdowns for popular proprietary trading firms based on their specific rules.
@@ -251,23 +304,29 @@ const PropFirmCalculator: React.FC = () => {
                       {/* Plan Selection */}
                       <div>
                         <h3 className="text-lg font-medium mb-3">Select Plan</h3>
-                        <RadioGroup 
-                          value={calculations[firm.id]?.selectedPlan || ''}
+                        <Select
+                          value={calculations[firm.id]?.selectedPlan || ""}
                           onValueChange={(value) => handlePlanSelect(firm.id, value)}
-                          className="grid grid-cols-1 md:grid-cols-3 gap-2"
                         >
-                          {firm.plans.map(plan => (
-                            <div 
-                              key={plan.id}
-                              className={`flex items-center space-x-2 rounded-lg border p-3 cursor-pointer transition-all duration-200 hover:border-primary ${calculations[firm.id]?.selectedPlan === plan.id ? 'border-primary bg-primary/10' : 'border-border'}`}
-                            >
-                              <RadioGroupItem value={plan.id} id={`${firm.id}-${plan.id}`} />
-                              <Label htmlFor={`${firm.id}-${plan.id}`} className="cursor-pointer flex-1">
-                                {plan.name}
-                              </Label>
-                            </div>
-                          ))}
-                        </RadioGroup>
+                          <SelectTrigger className="w-full md:w-[300px]">
+                            <SelectValue placeholder="Select a plan" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {firm.plans.map(plan => (
+                              <SelectItem 
+                                key={plan.id} 
+                                value={plan.id}
+                              >
+                                <div>
+                                  <div className="font-medium">{plan.name}</div>
+                                  <div className="text-xs text-muted-foreground">
+                                    {getPlanDescription(plan.id)}
+                                  </div>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
 
                       {/* Calculator Form */}
@@ -307,18 +366,47 @@ const PropFirmCalculator: React.FC = () => {
                                 </div>
                               </div>
                               
-                              {firm.plans.find(p => p.id === calculations[firm.id]?.selectedPlan)?.dailyLossCalcMethod === 'previous' && (
+                              <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                  <Label htmlFor={`${firm.id}-previousBalance`} className="flex items-center gap-1">
+                                    Previous Day's Balance (5PM EST)
+                                    <TooltipProvider>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                                        </TooltipTrigger>
+                                        <TooltipContent className="max-w-xs neo-card border border-border/50">
+                                          <p>Daily Loss Limit is calculated based on the previous day's end of day (5PM EST) balance.</p>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                  </Label>
+                                </div>
+                                <div className="relative">
+                                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                                  <Input
+                                    id={`${firm.id}-previousBalance`}
+                                    type="text"
+                                    placeholder="10,000.00"
+                                    className="pl-8 input-glow"
+                                    value={calculations[firm.id]?.previousDayBalance || ''}
+                                    onChange={(e) => handleInputChange(firm.id, 'previousDayBalance', e.target.value)}
+                                  />
+                                </div>
+                              </div>
+                              
+                              {firm.plans.find(p => p.id === calculations[firm.id]?.selectedPlan)?.maxDrawdownType === 'trailing' && (
                                 <div className="space-y-2">
                                   <div className="flex items-center justify-between">
-                                    <Label htmlFor={`${firm.id}-previousBalance`} className="flex items-center gap-1">
-                                      Previous Day's Balance (5PM EST)
+                                    <Label htmlFor={`${firm.id}-highestBalance`} className="flex items-center gap-1">
+                                      Highest Balance Achieved
                                       <TooltipProvider>
                                         <Tooltip>
                                           <TooltipTrigger asChild>
                                             <Info className="h-4 w-4 text-muted-foreground cursor-help" />
                                           </TooltipTrigger>
                                           <TooltipContent className="max-w-xs neo-card border border-border/50">
-                                            <p>Daily Loss Limit is calculated based on the previous day's end of day (5PM EST) balance.</p>
+                                            <p>For trailing drawdown, this is the highest balance your account has achieved. The drawdown limit follows this amount.</p>
                                           </TooltipContent>
                                         </Tooltip>
                                       </TooltipProvider>
@@ -327,12 +415,12 @@ const PropFirmCalculator: React.FC = () => {
                                   <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
                                     <Input
-                                      id={`${firm.id}-previousBalance`}
+                                      id={`${firm.id}-highestBalance`}
                                       type="text"
-                                      placeholder="10,000.00"
+                                      placeholder="10,500.00"
                                       className="pl-8 input-glow"
-                                      value={calculations[firm.id]?.previousDayBalance || ''}
-                                      onChange={(e) => handleInputChange(firm.id, 'previousDayBalance', e.target.value)}
+                                      value={calculations[firm.id]?.highestBalance || ''}
+                                      onChange={(e) => handleInputChange(firm.id, 'highestBalance', e.target.value)}
                                     />
                                   </div>
                                 </div>
@@ -344,7 +432,7 @@ const PropFirmCalculator: React.FC = () => {
                               <h3 className="text-lg font-medium mb-3">Drawdown Limits</h3>
                               
                               {/* Daily Loss Limit */}
-                              <div className="p-4 rounded-lg bg-background/50 backdrop-blur border border-border/40 space-y-2">
+                              <div className="p-4 rounded-lg bg-background/50 backdrop-blur border border-border/40 space-y-2 neo-card">
                                 <div className="flex items-center justify-between">
                                   <Label className="text-muted-foreground flex items-center gap-1">
                                     Daily Loss Limit
@@ -355,9 +443,7 @@ const PropFirmCalculator: React.FC = () => {
                                         </TooltipTrigger>
                                         <TooltipContent className="max-w-xs neo-card border border-border/50">
                                           <p>
-                                            {firm.plans.find(p => p.id === calculations[firm.id]?.selectedPlan)?.dailyLossCalcMethod === 'previous' 
-                                              ? 'Calculated as a percentage of previous day\'s balance at 5PM EST.' 
-                                              : 'Calculated as a percentage of current balance.'}
+                                            Maximum allowable loss in a single trading day. Exceeding this limit results in disqualification.
                                           </p>
                                         </TooltipContent>
                                       </Tooltip>
@@ -381,7 +467,7 @@ const PropFirmCalculator: React.FC = () => {
                               </div>
                               
                               {/* Max Drawdown */}
-                              <div className="p-4 rounded-lg bg-background/50 backdrop-blur border border-border/40 space-y-2">
+                              <div className="p-4 rounded-lg bg-background/50 backdrop-blur border border-border/40 space-y-2 neo-card">
                                 <div className="flex items-center justify-between">
                                   <Label className="text-muted-foreground flex items-center gap-1">
                                     Maximum Drawdown
@@ -393,8 +479,8 @@ const PropFirmCalculator: React.FC = () => {
                                         <TooltipContent className="max-w-xs neo-card border border-border/50">
                                           <p>
                                             {firm.plans.find(p => p.id === calculations[firm.id]?.selectedPlan)?.maxDrawdownType === 'trailing' 
-                                              ? 'This is a trailing drawdown limit calculated from your highest account balance.' 
-                                              : 'This is a fixed drawdown limit calculated from your starting balance.'}
+                                              ? 'Follows your highest balance. If you gain, it moves. If you lose, it stays. This is a trailing drawdown that moves upward with new equity highs but doesn\'t decrease with losses.' 
+                                              : 'This is a fixed drawdown level set from the initial account balance, unaffected by account performance.'}
                                           </p>
                                         </TooltipContent>
                                       </Tooltip>
@@ -411,11 +497,23 @@ const PropFirmCalculator: React.FC = () => {
                                       {' '}
                                       {firm.plans.find(p => p.id === calculations[firm.id]?.selectedPlan)?.maxDrawdownType === 'trailing' 
                                         ? 'trailing drawdown' 
-                                        : 'fixed drawdown'}
+                                        : 'static drawdown'}
                                     </span>
                                   )}
                                 </div>
                               </div>
+
+                              {/* Warning section */}
+                              {calculations[firm.id]?.selectedPlan && 
+                               parseFloat(calculations[firm.id]?.currentBalance || '0') > 0 && 
+                               parseFloat(calculations[firm.id]?.previousDayBalance || '0') > 0 && (
+                                <div className="mt-4 p-4 rounded-lg bg-background/80 border border-yellow-600/30 neo-card">
+                                  <h4 className="text-sm font-medium text-yellow-500 mb-1">Important Risk Note</h4>
+                                  <p className="text-xs text-muted-foreground">
+                                    This calculator provides estimates based on the rules of {firm.name}. Always verify the exact rules with the prop firm directly as they may change over time.
+                                  </p>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
