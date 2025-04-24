@@ -24,6 +24,7 @@ import LiveDataTicker from '@/components/home/LiveDataTicker';
 import MetricsWall from '@/components/home/MetricsWall';
 import AppHeader from '@/components/home/AppHeader';
 import FeatureMarquee from '@/components/home/FeatureMarquee';
+import TradingVisual from '@/components/home/TradingVisual';
 
 const HomePage: React.FC = () => {
   const isMobile = useIsMobile();
@@ -130,6 +131,10 @@ const HomePage: React.FC = () => {
             </Button>
           </motion.div>
         </motion.div>
+        
+        <div className="absolute bottom-36 left-0 right-0">
+          <TradingVisual />
+        </div>
         
         <div className="absolute bottom-24 left-0 right-0">
           <FeatureMarquee />
