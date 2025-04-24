@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -23,13 +23,29 @@ const TradeJournal = () => {
   const [result, setResult] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
   const [open, setOpen] = useState(false);
-
-  // Ensure allPairs is always an array
-  const allPairs = [...forexPairs.majors, ...forexPairs.minors, ...forexPairs.exotics, ...cryptoPairs];
+  const [allPairs, setAllPairs] = useState<string[]>([]);
+  
+  // Initialize the pairs in useEffect to ensure it runs in client-side only
+  useEffect(() => {
+    // Create a safe array combining all pairs
+    const majors = Array.isArray(forexPairs.majors) ? forexPairs.majors : [];
+    const minors = Array.isArray(forexPairs.minors) ? forexPairs.minors : [];
+    const exotics = Array.isArray(forexPairs.exotics) ? forexPairs.exotics : [];
+    const crypto = Array.isArray(cryptoPairs) ? cryptoPairs : [];
+    
+    setAllPairs([...majors, ...minors, ...exotics, ...crypto]);
+  }, []);
 
   const direction = React.useMemo(() => {
     if (!entry || !takeProfit) return null;
-    return parseFloat(takeProfit) > parseFloat(entry) ? "LONG 🔺" : "SHORT 🔻";
+    const entryNum = parseFloat(entry);
+    const tpNum = parseFloat(takeProfit);
+    
+    // Only calculate direction if both values are valid numbers
+    if (!isNaN(entryNum) && !isNaN(tpNum)) {
+      return tpNum > entryNum ? "LONG 🔺" : "SHORT 🔻";
+    }
+    return null;
   }, [entry, takeProfit]);
 
   const resultClass = React.useMemo(() => {
@@ -39,12 +55,24 @@ const TradeJournal = () => {
   }, [result]);
 
   const generateSummary = () => {
-    const emoji = parseFloat(result) > 0 ? "🔥" : parseFloat(result) < 0 ? "😬" : "💡";
+    // Safely handle potentially undefined or invalid values
+    const safeResult = result || "";
+    const safeEmoji = !isNaN(parseFloat(safeResult)) 
+      ? (parseFloat(safeResult) > 0 ? "🔥" : parseFloat(safeResult) < 0 ? "😬" : "💡")
+      : "💡";
     
-    return `${pair} • ${direction || ""} ${emoji}
-📈 Entry: ${entry} | 🎯 TP: ${takeProfit} | 🛑 SL: ${stopLoss}
-🧠 Result: ${result} pips | Lot Size: ${lotSize}
-📝 "${notes}"`;
+    const safePair = pair || "";
+    const safeDirection = direction || "";
+    const safeEntry = entry || "";
+    const safeTakeProfit = takeProfit || "";
+    const safeStopLoss = stopLoss || "";
+    const safeLotSize = lotSize || "";
+    const safeNotes = notes || "";
+    
+    return `${safePair} • ${safeDirection} ${safeEmoji}
+📈 Entry: ${safeEntry} | 🎯 TP: ${safeTakeProfit} | 🛑 SL: ${safeStopLoss}
+🧠 Result: ${safeResult} pips | Lot Size: ${safeLotSize}
+📝 "${safeNotes}"`;
   };
 
   const copyToClipboard = () => {
@@ -89,7 +117,7 @@ const TradeJournal = () => {
                 <Command>
                   <CommandInput placeholder="Search pair..." className="h-9" />
                   <CommandEmpty>No pair found.</CommandEmpty>
-                  {/* Ensure we only render CommandGroup if allPairs is defined and not empty */}
+                  {/* Only render items if we have data */}
                   {allPairs && allPairs.length > 0 && (
                     <CommandGroup className="max-h-[200px] overflow-y-auto">
                       {allPairs.map((p) => (
