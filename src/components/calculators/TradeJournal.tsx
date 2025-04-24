@@ -24,6 +24,7 @@ const TradeJournal = () => {
   const [notes, setNotes] = useState<string>("");
   const [open, setOpen] = useState(false);
 
+  // Ensure allPairs is always an array
   const allPairs = [...forexPairs.majors, ...forexPairs.minors, ...forexPairs.exotics, ...cryptoPairs];
 
   const direction = React.useMemo(() => {
@@ -40,7 +41,7 @@ const TradeJournal = () => {
   const generateSummary = () => {
     const emoji = parseFloat(result) > 0 ? "🔥" : parseFloat(result) < 0 ? "😬" : "💡";
     
-    return `${pair} • ${direction} ${emoji}
+    return `${pair} • ${direction || ""} ${emoji}
 📈 Entry: ${entry} | 🎯 TP: ${takeProfit} | 🛑 SL: ${stopLoss}
 🧠 Result: ${result} pips | Lot Size: ${lotSize}
 📝 "${notes}"`;
@@ -88,20 +89,23 @@ const TradeJournal = () => {
                 <Command>
                   <CommandInput placeholder="Search pair..." className="h-9" />
                   <CommandEmpty>No pair found.</CommandEmpty>
-                  <CommandGroup className="max-h-[200px] overflow-y-auto">
-                    {allPairs.map((p) => (
-                      <CommandItem
-                        key={p}
-                        value={p}
-                        onSelect={(currentValue) => {
-                          setPair(currentValue);
-                          setOpen(false);
-                        }}
-                      >
-                        {p}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
+                  {/* Ensure we only render CommandGroup if allPairs is defined and not empty */}
+                  {allPairs && allPairs.length > 0 && (
+                    <CommandGroup className="max-h-[200px] overflow-y-auto">
+                      {allPairs.map((p) => (
+                        <CommandItem
+                          key={p}
+                          value={p}
+                          onSelect={(currentValue) => {
+                            setPair(currentValue);
+                            setOpen(false);
+                          }}
+                        >
+                          {p}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  )}
                 </Command>
               </PopoverContent>
             </Popover>
