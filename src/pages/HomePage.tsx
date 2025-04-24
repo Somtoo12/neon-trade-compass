@@ -156,6 +156,12 @@ const HomePage: React.FC = () => {
         <div className="absolute bottom-0 left-0 right-0 h-[150px] bg-gradient-to-t from-background to-transparent"></div>
       </div>
 
+      <section className="py-8 overflow-hidden bg-gradient-to-r from-accent/10 via-accent/5 to-accent/10 border-y border-accent/20">
+        <LiveDataTicker />
+      </section>
+
+      <BookmarkButtons />
+
       <section id="features" className="py-16 md:py-24 px-4 relative">
         <div className="container max-w-7xl mx-auto">
           <motion.h2 
@@ -171,12 +177,6 @@ const HomePage: React.FC = () => {
           <FeatureGrid />
         </div>
       </section>
-
-      <section className="py-8 overflow-hidden bg-gradient-to-r from-accent/10 via-accent/5 to-accent/10 border-y border-accent/20">
-        <LiveDataTicker />
-      </section>
-
-      <BookmarkButtons />
 
       <section className="py-16 md:py-24 px-4 relative">
         <div className="container max-w-7xl mx-auto">

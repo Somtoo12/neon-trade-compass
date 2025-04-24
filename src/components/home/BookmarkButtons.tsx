@@ -13,8 +13,8 @@ const BookmarkButtons = () => {
   const showAddToHomeInstructions = () => {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const message = isIOS
-      ? "Tap the Share icon (📤) in your browser and choose 'Add to Home Screen'"
-      : "Tap the menu (⋮) in your browser, then select 'Add to Home screen'";
+      ? "iPhone: Tap the Share icon, then Add to Home Screen"
+      : "Android: Tap the 3-dot menu, then Add to Home screen";
 
     toast({
       title: "Add to Home Screen",
@@ -26,11 +26,11 @@ const BookmarkButtons = () => {
   const showBookmarkInstructions = () => {
     const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
     const key = isMac ? '⌘' : 'Ctrl';
-    window.prompt(`Press ${key} + D to bookmark PipCraft in your browser`, document.title);
+    window.prompt(`Use ${key}+D to bookmark this site in your browser`, document.title);
   };
 
   return (
-    <section className="py-16 relative overflow-hidden">
+    <section className="py-8 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-accent/5 to-transparent opacity-30" />
       
       <div className="container max-w-4xl mx-auto px-4">
@@ -40,12 +40,12 @@ const BookmarkButtons = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-2xl md:text-3xl font-bold mb-8">
-            Pin PipCraft for{" "}
+          <h3 className="text-xl md:text-2xl font-bold mb-6">
+            Quick Save{" "}
             <span className="bg-gradient-to-r from-neon-green to-neon-blue bg-clip-text text-transparent">
-              Instant Access
+              Access
             </span>
-          </h2>
+          </h3>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             {isMobile ? (
