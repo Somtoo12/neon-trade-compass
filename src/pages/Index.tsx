@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import ForexCalculator from '@/components/calculators/ForexCalculator';
 import CryptoCalculator from '@/components/calculators/CryptoCalculator';
@@ -9,9 +6,6 @@ import FuturesCalculator from '@/components/calculators/FuturesCalculator';
 import SessionClock from '@/components/tools/SessionClock';
 import CurrencyHeatmap from '@/components/tools/CurrencyHeatmap';
 import RiskManagement from '@/components/tools/RiskManagement';
-import LotSizeTable from '@/components/calculators/LotSizeTable';
-import TradeJournal from '@/components/calculators/TradeJournal';
-import DailyRisk from '@/components/calculators/DailyRisk';
 
 const Index: React.FC = () => {
   const [activeSection, setActiveSection] = useState('forex-calculator');
@@ -30,12 +24,6 @@ const Index: React.FC = () => {
         return <CurrencyHeatmap />;
       case 'risk-management':
         return <RiskManagement />;
-      case 'lot-size-table':
-        return <LotSizeTable />;
-      case 'trade-journal':
-        return <TradeJournal />;
-      case 'daily-risk':
-        return <DailyRisk />;
       default:
         return <ForexCalculator />;
     }
@@ -44,21 +32,13 @@ const Index: React.FC = () => {
   return (
     <AppLayout activeSection={activeSection} setActiveSection={setActiveSection}>
       <div className="container mx-auto max-w-6xl">
-        <div className="flex items-center space-x-4 mb-6">
-          <Link to="/">
-            <Button variant="outline" size="sm" className="gap-2">
-              <ArrowLeft className="h-4 w-4" />
-              Back to Home
-            </Button>
-          </Link>
-          <div>
-            <h1 className="text-3xl font-bold mb-2 font-poppins bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
-              PipCraft Trading Tools
-            </h1>
-            <p className="text-muted-foreground">
-              Smart tools to enhance your trading decisions. No noise. No API. Pure calculation.
-            </p>
-          </div>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-2 font-poppins bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
+            PipCraft Trading Tools
+          </h1>
+          <p className="text-muted-foreground">
+            Smart tools to enhance your trading decisions. No noise. No API. Pure calculation.
+          </p>
         </div>
 
         {renderSection()}
