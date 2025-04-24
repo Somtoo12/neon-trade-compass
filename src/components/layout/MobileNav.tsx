@@ -70,11 +70,10 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
         </div>
       )}
 
-      {!isOpen && (
-        <div className="p-4 bg-background overflow-y-auto">
-          {/* Content goes here */}
-        </div>
-      )}
+      {/* Always render the content area regardless of menu state */}
+      <div className="p-4 bg-background overflow-y-auto">
+        {/* Content will be injected by the AppLayout component */}
+      </div>
     </>
   );
 };

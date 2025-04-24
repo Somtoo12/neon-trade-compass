@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import Sidebar from './Sidebar';
 import MobileNav from './MobileNav';
 import Footer from './Footer';
@@ -21,7 +21,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       {isMobile ? (
-        <MobileNav activeSection={activeSection} setActiveSection={setActiveSection} />
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <MobileNav activeSection={activeSection} setActiveSection={setActiveSection} />
+          <main className="flex-1 overflow-y-auto">
+            {children}
+          </main>
+        </div>
       ) : (
         <div className="flex flex-1 overflow-hidden">
           <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} />
