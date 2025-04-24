@@ -1,8 +1,6 @@
 
 import React, { useState } from 'react';
-import { BarChart, Book, Calendar, Clock, Flag, Gauge, LineChart, Menu, PieChart, Scale, X } from 'lucide-react';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
+import { BarChart, Book, Clock, Gauge, LineChart, Menu, PieChart, Scale, X } from 'lucide-react';
 import ThemeToggle from '../theme/ThemeToggle';
 
 interface MobileNavProps {
@@ -17,7 +15,7 @@ interface NavItem {
 }
 
 const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }) => {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const navItems: NavItem[] = [
     { id: 'forex-calculator', label: 'Forex Pip Calculator', icon: <BarChart className="h-5 w-5" /> },
@@ -25,75 +23,62 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
     { id: 'futures-calculator', label: 'Futures Calculator', icon: <PieChart className="h-5 w-5" /> },
     { id: 'session-clock', label: 'Session Clock', icon: <Clock className="h-5 w-5" /> },
     { id: 'currency-heatmap', label: 'Currency Heatmap', icon: <Gauge className="h-5 w-5" /> },
-    { id: 'economic-calendar', label: 'Economic Calendar', icon: <Calendar className="h-5 w-5" /> },
     { id: 'risk-management', label: 'Risk Management', icon: <Scale className="h-5 w-5" /> },
     { id: 'trade-journal', label: 'Trade Journal', icon: <Book className="h-5 w-5" /> },
   ];
 
-  const handleNavigation = (sectionId: string) => {
-    setActiveSection(sectionId);
-    setOpen(false);
+  const handleNavClick = (section: string) => {
+    setActiveSection(section);
+    setIsOpen(false);
   };
 
   return (
-    <div className="sticky top-0 z-30 w-full bg-background/80 backdrop-blur-sm border-b">
-      <div className="container flex items-center justify-between h-14">
-        <div className="flex items-center gap-2">
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-60 p-0">
-              <div className="h-full flex flex-col">
-                <div className="p-4 border-b">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-semibold bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
-                      PipCraft
-                    </h2>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setOpen(false)}
-                    >
-                      <X className="h-4 w-4" />
-                      <span className="sr-only">Close</span>
-                    </Button>
-                  </div>
-                </div>
-                <nav className="flex-1 overflow-auto py-2">
-                  <ul className="space-y-2 px-2">
-                    {navItems.map((item) => (
-                      <li key={item.id}>
-                        <button
-                          onClick={() => handleNavigation(item.id)}
-                          className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
-                            activeSection === item.id
-                              ? 'bg-accent/20 text-accent neon-border'
-                              : 'hover:bg-secondary text-foreground/80 hover:text-foreground'
-                          }`}
-                        >
-                          {item.icon}
-                          <span>{item.label}</span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </nav>
-              </div>
-            </SheetContent>
-          </Sheet>
-          <h1 className="text-lg font-bold bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
+    <>
+      <div className="sticky top-0 z-50 glassmorphism border-b border-border/40 shadow-lg">
+        <div className="flex items-center justify-between p-4">
+          <h1 className="text-xl font-bold font-poppins bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
             PipCraft
           </h1>
-        </div>
-        <div className="flex items-center">
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-1.5 rounded-lg bg-secondary"
+            >
+              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+
+      {isOpen && (
+        <div className="fixed inset-0 z-40 bg-background/95 backdrop-blur-sm pt-16">
+          <nav className="container px-4 py-6">
+            <ul className="space-y-3">
+              {navItems.map((item) => (
+                <li key={item.id}>
+                  <button
+                    onClick={() => handleNavClick(item.id)}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 ${
+                      activeSection === item.id
+                        ? 'bg-accent/20 text-accent border border-accent/30'
+                        : 'hover:bg-secondary text-foreground/80 hover:text-foreground'
+                    }`}
+                  >
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      )}
+
+      <div className="p-4 bg-background overflow-y-auto">
+        {/* Content will be injected by the AppLayout component */}
+      </div>
+    </>
   );
 };
 

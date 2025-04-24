@@ -8,7 +8,6 @@ import SessionClock from '@/components/tools/SessionClock';
 import CurrencyHeatmap from '@/components/tools/CurrencyHeatmap';
 import RiskManagement from '@/components/tools/RiskManagement';
 import TradeJournal from '@/components/calculators/TradeJournal';
-import EconomicCalendar from '@/components/tools/EconomicCalendar';
 
 const Index: React.FC = () => {
   const [activeSection, setActiveSection] = useState('forex-calculator');
@@ -29,8 +28,6 @@ const Index: React.FC = () => {
         return <RiskManagement />;
       case 'trade-journal':
         return <TradeJournal />;
-      case 'economic-calendar':
-        return <EconomicCalendar />;
       default:
         return <ForexCalculator />;
     }
