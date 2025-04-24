@@ -3,15 +3,14 @@ import { Search, X, Calendar } from 'lucide-react';
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter, AlertDialogCancel } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EventRow } from './calendar/EventRow';
 import { format } from 'date-fns';
 
-// Your provided API key
 const API_KEY = 'YOUR_PUBLIC_FCSAPI_KEY';
 
-// Mock data for initial rendering before API fetch
 const mockEvents = [
   {
     id: 'event1',
@@ -59,7 +58,6 @@ const mockEvents = [
   }
 ];
 
-// Country flags mapping
 const countryFlags: Record<string, string> = {
   'US': '🇺🇸',
   'EU': '🇪🇺',
@@ -72,16 +70,13 @@ const countryFlags: Record<string, string> = {
   'CN': '🇨🇳',
 };
 
-// User biases types
 type BiasType = 'bullish' | 'bearish' | 'neutral';
 
-// Event user data type
 interface EventUserData {
   bias: BiasType | null;
   notes: string;
 }
 
-// Reaction data type
 interface ReactionData {
   previousActual: string;
   previousForecast: string;
@@ -107,13 +102,11 @@ const mockReactions: Record<string, ReactionData> = {
   }
 };
 
-// Helper function to format time from ISO string
 const formatLocalTime = (isoString: string) => {
   const date = new Date(isoString);
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
 
-// Helper function to generate countdown string
 const getCountdown = (futureTime: string) => {
   const future = new Date(futureTime).getTime();
   const now = Date.now();
@@ -138,15 +131,9 @@ const EconomicCalendar: React.FC = () => {
   });
   const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
   
-  // Function to fetch economic calendar data
   const fetchCalendarData = async () => {
     setLoading(true);
     try {
-      // In a real implementation, we would fetch from the actual API endpoint
-      // const response = await fetch(`https://fcsapi.com/api-v3/forex/economy_cal?access_key=${API_KEY}`);
-      // const data = await response.json();
-      
-      // For now, we'll simulate an API response with our mock data
       setTimeout(() => {
         setEvents(mockEvents);
         setLoading(false);
@@ -157,7 +144,6 @@ const EconomicCalendar: React.FC = () => {
     }
   };
 
-  // Update user data for an event
   const updateEventUserData = (eventId: string, field: 'bias' | 'notes', value: string | BiasType) => {
     const updatedData = {
       ...userData,
@@ -171,12 +157,10 @@ const EconomicCalendar: React.FC = () => {
     localStorage.setItem('event_user_data', JSON.stringify(updatedData));
   };
 
-  // Initial fetch when component mounts
   useEffect(() => {
     fetchCalendarData();
   }, []);
 
-  // Filter events based on search and impact
   const filteredEvents = events.filter(event => {
     const matchesSearch = searchQuery === '' || 
       event.event.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -187,20 +171,18 @@ const EconomicCalendar: React.FC = () => {
     return matchesSearch && matchesImpact;
   });
   
-  // Find next high impact event
   const nextHighImpactEvent = events.find(event => 
     event.impact === 'high' && new Date(event.date).getTime() > Date.now()
   );
   
-  // Render impact badge with appropriate color
   const renderImpactBadge = (impact: string) => {
     switch(impact) {
       case 'high':
-        return <Badge className="bg-red-500 hover:bg-red-600">🔴 High</Badge>;
+        return <Badge variant="destructive">🔴 High</Badge>;
       case 'medium':
-        return <Badge className="bg-orange-500 hover:bg-orange-600">🟠 Medium</Badge>;
+        return <Badge variant="secondary">🟠 Medium</Badge>;
       case 'low':
-        return <Badge className="bg-green-500 hover:bg-green-600">🟢 Low</Badge>;
+        return <Badge variant="default">🟢 Low</Badge>;
       default:
         return null;
     }
@@ -209,7 +191,6 @@ const EconomicCalendar: React.FC = () => {
   return (
     <div className="economic-calendar space-y-4">
       
-      {/* Reaction Modal */}
       <AlertDialog open={!!selectedReaction} onOpenChange={() => setSelectedReaction(null)}>
         {selectedReaction && mockReactions[selectedReaction] && (
           <AlertDialogContent className="max-w-3xl">
@@ -268,10 +249,8 @@ const EconomicCalendar: React.FC = () => {
             </Button>
           </div>
 
-          {/* Sticky Controls */}
           <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm -mx-4 px-4 py-2 border-b">
             <div className="space-y-4">
-              {/* Search */}
               <div className="relative">
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input 
@@ -292,7 +271,6 @@ const EconomicCalendar: React.FC = () => {
                 )}
               </div>
               
-              {/* Impact Filters */}
               <div className="flex flex-wrap gap-2">
                 <Button 
                   variant={impactFilter === 'all' ? 'default' : 'outline'} 
@@ -328,7 +306,6 @@ const EconomicCalendar: React.FC = () => {
                 </Button>
               </div>
 
-              {/* Next High Impact Countdown */}
               {nextHighImpactEvent && (
                 <div className="flex items-center gap-2 bg-accent/20 p-2 rounded-lg">
                   <div className="text-sm">
@@ -340,7 +317,6 @@ const EconomicCalendar: React.FC = () => {
             </div>
           </div>
 
-          {/* Events List */}
           <div className="space-y-px -mx-4">
             {loading ? (
               <div className="space-y-px p-4">
