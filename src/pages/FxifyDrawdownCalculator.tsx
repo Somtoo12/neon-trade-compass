@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Info, Calculator } from "lucide-react";
+import { ArrowLeft, Info, Calculator, Copy } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -176,6 +176,18 @@ const FxifyDrawdownCalculator: React.FC = () => {
   const isBreachingMaxDrawdown = (): boolean => {
     const current = parseFloat(currentBalance) || 0;
     return current < getMaxDrawdownThreshold();
+  };
+
+  const calculateEquityBreachLevel = (): number => {
+    if (!plan) return 0;
+    const dailyLimit = getDailyLossLimitThreshold();
+    const maxDrawdownLimit = getMaxDrawdownThreshold();
+    return Math.min(dailyLimit, maxDrawdownLimit);
+  };
+
+  const isBreachingEquityLevel = (): boolean => {
+    const current = parseFloat(currentBalance) || 0;
+    return current < calculateEquityBreachLevel();
   };
 
   const getDrawdownStatus = (): { status: 'safe' | 'warning' | 'breach', message: string } => {
@@ -546,6 +558,65 @@ const FxifyDrawdownCalculator: React.FC = () => {
               
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Drawdown Results</h3>
+                
+                <div className="p-4 rounded-lg bg-background/50 backdrop-blur border ${
+                  isBreachingEquityLevel() ? 'border-red-500/50 animate-pulse' : 'border-border/40'
+                } neo-card space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-muted-foreground flex items-center gap-1">
+                      Equity Breach Level
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs neo-card border border-border/50">
+                            <p>If your equity falls below this level, your account will be breached. This is the lower of your daily loss and maximum drawdown limits.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </Label>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8"
+                        onClick={() => {
+                          navigator.clipboard.writeText(formatCurrency(calculateEquityBreachLevel()));
+                          toast({
+                            title: "Copied to clipboard",
+                            description: "Equity breach level has been copied to your clipboard",
+                          });
+                        }}
+                      >
+                        <Copy className="h-4 w-4 mr-1" />
+                        Copy Value
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="text-center py-4">
+                    <div className={`text-2xl font-bold ${
+                      isBreachingEquityLevel() 
+                        ? 'text-red-500' 
+                        : 'text-primary animate-fade-in'
+                    }`}>
+                      {showResults ? formatCurrency(calculateEquityBreachLevel()) : '--'}
+                    </div>
+                    {showResults && (
+                      <div className="text-xs text-muted-foreground mt-1">
+                        {isBreachingEquityLevel()
+                          ? "⚠️ ACCOUNT IS CURRENTLY BREACHED"
+                          : "Account is within safe limits"}
+                      </div>
+                    )}
+                  </div>
+                  {showResults && (
+                    <div className="text-xs text-muted-foreground border-t border-border/40 pt-2 mt-2">
+                      <div>Daily Loss Limit: {formatCurrency(getDailyLossLimitThreshold())}</div>
+                      <div>Max Drawdown Limit: {formatCurrency(getMaxDrawdownThreshold())}</div>
+                    </div>
+                  )}
+                </div>
                 
                 <div className="p-4 rounded-lg bg-background/50 backdrop-blur border border-border/40 space-y-2 neo-card">
                   <div className="flex items-center justify-between">
