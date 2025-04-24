@@ -1,14 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
-import { Clock } from 'lucide-react';
+import { Clock, Globe } from 'lucide-react';
 
 interface MarketSession {
+  code: string;
   name: string;
   timezone: string;
   offset: number;
   startHour: number;
   endHour: number;
+  marketCode: string;
 }
 
 const SessionClock: React.FC = () => {
@@ -16,10 +18,10 @@ const SessionClock: React.FC = () => {
   const [activeSessions, setActiveSessions] = useState<string[]>([]);
   
   const marketSessions: MarketSession[] = [
-    { name: 'Sydney', timezone: 'AEDT', offset: 10, startHour: 7, endHour: 16 },
-    { name: 'Tokyo', timezone: 'JST', offset: 9, startHour: 9, endHour: 18 },
-    { name: 'London', timezone: 'BST', offset: 1, startHour: 8, endHour: 16 },
-    { name: 'New York', timezone: 'EDT', offset: -4, startHour: 8, endHour: 17 },
+    { code: 'US', name: 'New York', timezone: 'EDT', offset: -4, startHour: 9.5, endHour: 16, marketCode: 'NY' },
+    { code: 'GB', name: 'London', timezone: 'BST', offset: 1, startHour: 8, endHour: 16.5, marketCode: 'LDN' },
+    { code: 'JP', name: 'Tokyo', timezone: 'JST', offset: 9, startHour: 9, endHour: 15, marketCode: 'TKY' },
+    { code: 'AU', name: 'Sydney', timezone: 'AEST', offset: 10, startHour: 10, endHour: 16, marketCode: 'SYD' },
   ];
   
   useEffect(() => {
@@ -32,24 +34,37 @@ const SessionClock: React.FC = () => {
   
   // Calculate time in a specific timezone
   const calculateLocalTime = (offset: number): {time: Date, hour: number} => {
-    // Get UTC time in milliseconds
     const utc = currentTime.getTime() + (currentTime.getTimezoneOffset() * 60000);
-    // Create new Date object for the timezone
     const localTime = new Date(utc + (3600000 * offset));
     return {
       time: localTime,
-      hour: localTime.getHours()
+      hour: localTime.getHours() + (localTime.getMinutes() / 60)
     };
   };
   
-  // Format time
+  // Format time with seconds
   const formatTime = (date: Date): string => {
-    return date.toLocaleTimeString([], { 
-      hour: '2-digit', 
-      minute: '2-digit', 
-      second: '2-digit',
-      hour12: false 
+    return date.toLocaleTimeString('en-US', { 
+      hour12: true,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
     });
+  };
+
+  // Format date
+  const formatDate = (date: Date): string => {
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  // Get current timezone
+  const getCurrentTimezone = (): string => {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
   };
   
   // Check if session is active
@@ -67,45 +82,90 @@ const SessionClock: React.FC = () => {
   }, [currentTime]);
   
   return (
-    <Card className="neo-card p-6">
-      <h2 className="text-xl font-semibold mb-4 font-poppins">Trading Session Clock</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        {marketSessions.map((session) => {
-          const { time } = calculateLocalTime(session.offset);
-          const isActive = activeSessions.includes(session.name);
-          
-          return (
-            <div 
-              key={session.name}
-              className={`p-4 rounded-lg flex flex-col items-center transition-all duration-300 border ${
-                isActive 
-                  ? 'active-session' 
-                  : 'border-white/5 bg-black/30'
-              }`}
-            >
-              <div className="mb-2 text-lg font-medium">{session.name}</div>
-              <div className="text-muted-foreground text-xs mb-3">{session.timezone}</div>
-              
-              <div className={`w-24 h-24 rounded-full flex items-center justify-center border-4 ${
-                isActive 
-                  ? 'border-neon-green animate-pulse-glow neon-green-glow' 
-                  : 'border-white/20'
-              }`}>
-                <Clock className={`h-8 w-8 ${isActive ? 'text-neon-green' : 'text-muted-foreground'}`} />
+    <Card className="neo-card p-6 bg-black/40">
+      <div className="space-y-8">
+        {/* Local Time Section */}
+        <div className="text-center space-y-2">
+          <div className="flex items-center justify-center gap-2 text-muted-foreground mb-4">
+            <Globe className="h-5 w-5" />
+            <span>Your Local Time</span>
+          </div>
+          <div className="text-4xl font-bold font-mono tracking-wider text-primary">
+            {formatTime(currentTime)}
+          </div>
+          <div className="text-sm text-muted-foreground">
+            {formatDate(currentTime)}
+          </div>
+          <div className="text-xs text-muted-foreground/70">
+            Timezone: {getCurrentTimezone()}
+          </div>
+        </div>
+
+        {/* Market Sessions Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {marketSessions.map((session) => {
+            const { time } = calculateLocalTime(session.offset);
+            const isActive = activeSessions.includes(session.name);
+            
+            return (
+              <div 
+                key={session.name}
+                className={`relative p-4 rounded-lg ${
+                  isActive 
+                    ? 'bg-primary/5 border border-primary/20' 
+                    : 'bg-black/20 border border-white/5'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground">{session.code}</span>
+                    <span className="font-medium">{session.name}</span>
+                  </div>
+                  {isActive && (
+                    <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">
+                      ACTIVE
+                    </span>
+                  )}
+                </div>
+                
+                <div className="text-2xl font-mono tracking-wider mb-2">
+                  {formatTime(time)}
+                </div>
+                
+                <div className="text-xs text-muted-foreground flex items-center gap-2">
+                  <span>{session.marketCode}</span>
+                  <span>•</span>
+                  <span>
+                    Market {isActive ? 'Open' : 'Closed'}
+                  </span>
+                </div>
               </div>
-              
-              <div className="mt-4 text-xl font-medium">{formatTime(time)}</div>
-              <div className="mt-1 text-xs text-muted-foreground">
-                {isActive ? 'Market Open' : 'Market Closed'}
-              </div>
+            );
+          })}
+        </div>
+
+        {/* Trading Hours Information */}
+        <div className="mt-6 p-4 rounded-lg bg-black/20 border border-white/5">
+          <h3 className="text-sm font-medium mb-3">Trading Hours (Local Market Time)</h3>
+          <div className="space-y-2 text-sm text-muted-foreground">
+            <div className="flex gap-2">
+              <span className="text-xs">US</span>
+              New York (NYSE): 9:30 AM - 4:00 PM ET, Mon-Fri
             </div>
-          );
-        })}
-      </div>
-      
-      <div className="mt-6 text-center text-xs text-muted-foreground">
-        Times shown reflect regular trading hours. Extended hours may vary.
+            <div className="flex gap-2">
+              <span className="text-xs">GB</span>
+              London (LSE): 8:00 AM - 4:30 PM GMT, Mon-Fri
+            </div>
+            <div className="flex gap-2">
+              <span className="text-xs">JP</span>
+              Tokyo (TSE): 9:00 AM - 3:00 PM JST, Mon-Fri
+            </div>
+            <div className="flex gap-2">
+              <span className="text-xs">AU</span>
+              Sydney (ASX): 10:00 AM - 4:00 PM AEST, Mon-Fri
+            </div>
+          </div>
+        </div>
       </div>
     </Card>
   );
