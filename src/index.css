@@ -70,10 +70,6 @@
     @apply text-base md:text-sm;
     font-size: 16px !important;
   }
-
-  button {
-    @apply touch-manipulation;
-  }
 }
 
 @layer components {
@@ -103,73 +99,6 @@
 
   .mobile-safe-top {
     @apply pt-safe;
-  }
-  
-  /* Mobile-specific improvements */
-  .mobile-card {
-    @apply p-3 rounded-lg;
-  }
-  
-  .mobile-input {
-    @apply h-12 text-base;
-  }
-  
-  .mobile-button {
-    @apply h-12 px-4 text-base;
-  }
-  
-  .mobile-nav-button {
-    @apply py-3 px-4 text-base font-medium;
-  }
-  
-  .mobile-scrollable {
-    @apply -mx-3 px-3 overflow-x-auto flex md:block pb-2 md:pb-0 gap-2 snap-x snap-mandatory;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-  
-  .mobile-scrollable::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .mobile-scrollable > * {
-    @apply snap-start flex-shrink-0;
-  }
-
-  @media (max-width: 640px) {
-    .mobile-container {
-      @apply px-3 py-2;
-    }
-    
-    .mobile-scrollable {
-      @apply -mx-3 px-3 overflow-x-auto flex pb-2 gap-2 snap-x snap-mandatory;
-    }
-    
-    .mobile-scrollable > * {
-      @apply snap-start flex-shrink-0;
-    }
-  }
-  
-  @media (max-width: 767px) {
-    .trade-journal-card {
-      @apply p-4;
-    }
-    
-    .trade-journal-heading {
-      @apply text-lg;
-    }
-    
-    .trade-journal-button {
-      @apply h-9 text-xs px-3;
-    }
-    
-    .trade-summary-grid {
-      @apply grid-cols-1 gap-4;
-    }
-    
-    .chart-container {
-      @apply h-[250px] min-h-[250px] w-full overflow-x-auto;
-    }
   }
 }
 

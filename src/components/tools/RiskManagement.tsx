@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -84,29 +85,18 @@ const RiskManagement: React.FC = () => {
   };
 
   return (
-    <Card className="p-4 md:p-6">
-      <h2 className="text-lg md:text-xl font-semibold mb-4 font-poppins">Risk Management Tools</h2>
+    <Card className="p-6">
+      <h2 className="text-xl font-semibold mb-4 font-poppins">Risk Management Tools</h2>
       
       <Tabs defaultValue="basic" className="w-full">
-        <div className="mobile-scrollable md:block">
-          <TabsList className="grid w-full grid-cols-2 mb-4 md:mb-6">
-            <TabsTrigger 
-              value="basic"
-              className="h-9 text-xs md:text-sm"
-            >
-              Basic Risk Calculator
-            </TabsTrigger>
-            <TabsTrigger 
-              value="advanced"
-              className="h-9 text-xs md:text-sm"
-            >
-              Advanced Position Sizing
-            </TabsTrigger>
-          </TabsList>
-        </div>
+        <TabsList className="grid w-full grid-cols-2 mb-6">
+          <TabsTrigger value="basic">Basic Risk Calculator</TabsTrigger>
+          <TabsTrigger value="advanced">Advanced Position Sizing</TabsTrigger>
+        </TabsList>
         
+        {/* Add the missing Basic Risk Calculator TabContent */}
         <TabsContent value="basic">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">Account Size (USD)</label>
@@ -170,7 +160,7 @@ const RiskManagement: React.FC = () => {
         </TabsContent>
         
         <TabsContent value="advanced">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
