@@ -2,7 +2,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import TradingChecklist from './TradingChecklist';
-import BreachRiskBar from './BreachRiskBar';
 import KillZonesClock from './KillZonesClock';
 
 const DailyTradeTools: React.FC = () => {
@@ -26,17 +25,6 @@ const DailyTradeTools: React.FC = () => {
           </CardHeader>
           <CardContent>
             <TradingChecklist />
-          </CardContent>
-        </Card>
-
-        <Card className="neo-card overflow-hidden neon-border shadow-lg">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-lg">🚨 Breach Risk Bar</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <BreachRiskBar />
           </CardContent>
         </Card>
 
