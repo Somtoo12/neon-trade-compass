@@ -1,9 +1,9 @@
-
 import React from 'react';
 import Sidebar from './Sidebar';
 import MobileNav from './MobileNav';
 import Footer from './Footer';
 import { useIsMobile } from '@/hooks/use-mobile';
+import ThemeToggle from '../theme/ThemeToggle';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -19,7 +19,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const isMobile = useIsMobile();
   
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
+    <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
+      {!isMobile && <ThemeToggle />}
       {isMobile ? (
         <div className="flex flex-col flex-1 overflow-hidden">
           <MobileNav activeSection={activeSection} setActiveSection={setActiveSection} />

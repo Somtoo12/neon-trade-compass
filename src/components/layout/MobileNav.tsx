@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
 import { BarChart, Clock, Gauge, LineChart, Menu, PieChart, Scale, X } from 'lucide-react';
+import ThemeToggle from '../theme/ThemeToggle';
 
 interface MobileNavProps {
   activeSection: string;
@@ -37,12 +37,15 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
           <h1 className="text-xl font-bold font-poppins bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
             PipCraft
           </h1>
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="p-1.5 rounded-lg bg-secondary"
-          >
-            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-1.5 rounded-lg bg-secondary"
+            >
+              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -70,7 +73,6 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
         </div>
       )}
 
-      {/* Always render the content area regardless of menu state */}
       <div className="p-4 bg-background overflow-y-auto">
         {/* Content will be injected by the AppLayout component */}
       </div>
