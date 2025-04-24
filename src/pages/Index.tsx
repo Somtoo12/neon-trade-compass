@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import ForexCalculator from '@/components/calculators/ForexCalculator';
 import CryptoCalculator from '@/components/calculators/CryptoCalculator';
@@ -8,9 +8,18 @@ import SessionClock from '@/components/tools/SessionClock';
 import CurrencyHeatmap from '@/components/tools/CurrencyHeatmap';
 import RiskManagement from '@/components/tools/RiskManagement';
 import TradeJournal from '@/components/calculators/TradeJournal';
+import { useNavigate } from 'react-router-dom';
 
-const Index: React.FC = () => {
-  const [activeSection, setActiveSection] = useState('forex-calculator');
+interface IndexProps {
+  activeSection: string;
+}
+
+const Index: React.FC<IndexProps> = ({ activeSection }) => {
+  const navigate = useNavigate();
+  
+  const setActiveSection = (section: string) => {
+    navigate(`/${section}`);
+  };
 
   const renderSection = () => {
     switch (activeSection) {

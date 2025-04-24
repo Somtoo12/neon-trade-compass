@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { BarChart, Book, Clock, Gauge, LineChart, Menu, PieChart, Scale, X } from 'lucide-react';
 import ThemeToggle from '../theme/ThemeToggle';
+import { Link, useLocation } from 'react-router-dom';
 
 interface MobileNavProps {
   activeSection: string;
@@ -12,19 +13,21 @@ interface NavItem {
   id: string;
   label: string;
   icon: React.ReactNode;
+  path: string;
 }
 
 const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
   const navItems: NavItem[] = [
-    { id: 'forex-calculator', label: 'Forex Pip Calculator', icon: <BarChart className="h-5 w-5" /> },
-    { id: 'crypto-calculator', label: 'Crypto Calculator', icon: <LineChart className="h-5 w-5" /> },
-    { id: 'futures-calculator', label: 'Futures Calculator', icon: <PieChart className="h-5 w-5" /> },
-    { id: 'session-clock', label: 'Session Clock', icon: <Clock className="h-5 w-5" /> },
-    { id: 'currency-heatmap', label: 'Currency Heatmap', icon: <Gauge className="h-5 w-5" /> },
-    { id: 'risk-management', label: 'Risk Management', icon: <Scale className="h-5 w-5" /> },
-    { id: 'trade-journal', label: 'Trade Journal', icon: <Book className="h-5 w-5" /> },
+    { id: 'forex-calculator', label: 'Forex Pip Calculator', icon: <BarChart className="h-5 w-5" />, path: '/forex-calculator' },
+    { id: 'crypto-calculator', label: 'Crypto Calculator', icon: <LineChart className="h-5 w-5" />, path: '/crypto-calculator' },
+    { id: 'futures-calculator', label: 'Futures Calculator', icon: <PieChart className="h-5 w-5" />, path: '/futures-calculator' },
+    { id: 'session-clock', label: 'Session Clock', icon: <Clock className="h-5 w-5" />, path: '/session-clock' },
+    { id: 'currency-heatmap', label: 'Currency Heatmap', icon: <Gauge className="h-5 w-5" />, path: '/currency-heatmap' },
+    { id: 'risk-management', label: 'Risk Management', icon: <Scale className="h-5 w-5" />, path: '/risk-management' },
+    { id: 'trade-journal', label: 'Trade Journal', icon: <Book className="h-5 w-5" />, path: '/trade-journal' },
   ];
 
   const handleNavClick = (section: string) => {
@@ -58,7 +61,8 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
             <ul className="space-y-3">
               {navItems.map((item) => (
                 <li key={item.id}>
-                  <button
+                  <Link
+                    to={item.path}
                     onClick={() => handleNavClick(item.id)}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 ${
                       activeSection === item.id
@@ -69,7 +73,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
                   >
                     {item.icon}
                     <span>{item.label}</span>
-                  </button>
+                  </Link>
                 </li>
               ))}
             </ul>
