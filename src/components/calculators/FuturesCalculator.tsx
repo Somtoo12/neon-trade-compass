@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -17,8 +18,22 @@ interface FuturesContract {
 }
 
 const FuturesCalculator: React.FC = () => {
-  const [symbol, setSymbol] = useState('ES');
-  const [contractType, setContractType] = useState('Mini');
+  // Get all available symbols that have at least one contract type
+  const availableSymbols = Object.keys(futuresContracts);
+  const initialSymbol = availableSymbols[0] || 'ES';
+  
+  // For the selected symbol, determine available contract types
+  const getContractTypes = (sym: string) => {
+    if (!futuresContracts[sym]) return [];
+    return Object.keys(futuresContracts[sym]);
+  };
+  
+  // Initialize with first symbol and its first available contract type
+  const [symbol, setSymbol] = useState(initialSymbol);
+  const initialContractTypes = getContractTypes(initialSymbol);
+  const initialContractType = initialContractTypes.length > 0 ? initialContractTypes[0] : 'Mini';
+  const [contractType, setContractType] = useState(initialContractType);
+  
   const [entryPrice, setEntryPrice] = useState('4500.00');
   const [exitPrice, setExitPrice] = useState('4525.00');
   
@@ -26,8 +41,32 @@ const FuturesCalculator: React.FC = () => {
   const [tickValue, setTickValue] = useState(0);
   const [totalPnL, setTotalPnL] = useState(0);
   
-  const contractOptions = Object.keys(futuresContracts);
-  const selectedContract = futuresContracts[symbol][contractType];
+  // Handle symbol change to ensure valid contract type is selected
+  const handleSymbolChange = (newSymbol: string) => {
+    setSymbol(newSymbol);
+    const contractTypes = getContractTypes(newSymbol);
+    // If current contract type isn't available for new symbol, use the first available
+    if (!contractTypes.includes(contractType)) {
+      setContractType(contractTypes[0] || '');
+    }
+  };
+  
+  // Safely get the selected contract
+  const getSelectedContract = () => {
+    if (futuresContracts[symbol] && futuresContracts[symbol][contractType]) {
+      return futuresContracts[symbol][contractType];
+    }
+    return {
+      name: 'Unknown',
+      symbol: 'N/A',
+      contractSize: 0,
+      tickSize: 0.01,
+      tickValue: 0,
+      description: 'Contract not available'
+    };
+  };
+  
+  const selectedContract = getSelectedContract();
   
   useEffect(() => {
     calculateTicks();
@@ -44,7 +83,7 @@ const FuturesCalculator: React.FC = () => {
       return;
     }
     
-    const contract = futuresContracts[symbol][contractType];
+    const contract = getSelectedContract();
     const diff = exit - entry;
     const ticks = diff / contract.tickSize;
     
@@ -53,6 +92,9 @@ const FuturesCalculator: React.FC = () => {
     setTotalPnL(Math.round(ticks * contract.tickValue * 100) / 100);
   };
   
+  // Get available contract types for current symbol
+  const availableContractTypes = getContractTypes(symbol);
+  
   return (
     <Card className="neo-card p-6">
       <h2 className="text-xl font-semibold mb-4 font-poppins">Futures Tick Calculator</h2>
@@ -60,40 +102,22 @@ const FuturesCalculator: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm text-muted-foreground">Contract Type</label>
-            <Select 
-              defaultValue={contractType} 
-              onValueChange={setContractType}
-            >
-              <SelectTrigger className="bg-secondary/50 border-input/40 input-glow">
-                <SelectValue placeholder="Select type" />
-              </SelectTrigger>
-              <SelectContent className="bg-card border-input/40">
-                <SelectItem value="Mini">Mini</SelectItem>
-                <SelectItem value="Micro">Micro</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <Separator className="my-2" />
-          
-          <div className="space-y-2">
             <label className="text-sm text-muted-foreground">Futures Symbol</label>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div>
                     <Select 
-                      defaultValue={symbol} 
-                      onValueChange={setSymbol}
+                      value={symbol} 
+                      onValueChange={handleSymbolChange}
                     >
                       <SelectTrigger className="bg-secondary/50 border-input/40 input-glow">
                         <SelectValue placeholder="Select symbol" />
                       </SelectTrigger>
                       <SelectContent className="bg-card border-input/40">
-                        {contractOptions.map((option) => (
-                          <SelectItem key={option} value={option}>
-                            {futuresContracts[option][contractType].symbol} - {futuresContracts[option][contractType].name}
+                        {availableSymbols.map((sym) => (
+                          <SelectItem key={sym} value={sym}>
+                            {sym} - {Object.values(futuresContracts[sym])[0].name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -106,6 +130,25 @@ const FuturesCalculator: React.FC = () => {
               </Tooltip>
             </TooltipProvider>
           </div>
+          
+          <div className="space-y-2">
+            <label className="text-sm text-muted-foreground">Contract Type</label>
+            <Select 
+              value={contractType} 
+              onValueChange={setContractType}
+            >
+              <SelectTrigger className="bg-secondary/50 border-input/40 input-glow">
+                <SelectValue placeholder="Select type" />
+              </SelectTrigger>
+              <SelectContent className="bg-card border-input/40">
+                {availableContractTypes.map((type) => (
+                  <SelectItem key={type} value={type}>{type}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Separator className="my-2" />
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
