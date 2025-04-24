@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Card } from "@/components/ui/card";
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -54,6 +55,7 @@ const calculateProfit = (pips: number, lotSize: number): number => {
 const formatPair = (pair: string) => pair.replace('/', '').toUpperCase();
 
 const TradeJournal: React.FC = () => {
+  const isMobile = useIsMobile();
   const {
     trades,
     filteredTrades,
@@ -210,6 +212,14 @@ const TradeJournal: React.FC = () => {
 
   return (
     <Card className="p-6 neo-card">
+      {isMobile && (
+        <div className="w-full bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4 mb-6 text-center">
+          <p className="font-bold text-yellow-700 text-sm">
+            🖥️ For the best experience, we recommend using a PC or computer
+          </p>
+        </div>
+      )}
+
       <div className="space-y-8">
         <div className="flex items-center justify-between">
           <h3 className="text-2xl font-semibold">Trade Journal Tracker</h3>
