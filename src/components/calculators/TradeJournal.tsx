@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -23,36 +23,12 @@ const TradeJournal = () => {
   const [result, setResult] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
   const [open, setOpen] = useState(false);
-  const [allPairs, setAllPairs] = useState<string[]>([]);
-  
-  // Initialize the pairs when the component mounts
-  useEffect(() => {
-    try {
-      // Safely handle the arrays with defaults if they're undefined
-      const majors = Array.isArray(forexPairs.majors) ? forexPairs.majors : [];
-      const minors = Array.isArray(forexPairs.minors) ? forexPairs.minors : [];
-      const exotics = Array.isArray(forexPairs.exotics) ? forexPairs.exotics : [];
-      const crypto = Array.isArray(cryptoPairs) ? cryptoPairs : [];
-      
-      // Set the consolidated array ensuring it's never undefined
-      setAllPairs([...majors, ...minors, ...exotics, ...crypto]);
-    } catch (error) {
-      console.error("Error setting currency pairs:", error);
-      // Ensure we at least have an empty array
-      setAllPairs([]);
-    }
-  }, []);
+
+  const allPairs = [...forexPairs.majors, ...forexPairs.minors, ...forexPairs.exotics, ...cryptoPairs];
 
   const direction = React.useMemo(() => {
     if (!entry || !takeProfit) return null;
-    const entryNum = parseFloat(entry);
-    const tpNum = parseFloat(takeProfit);
-    
-    // Only calculate direction if both values are valid numbers
-    if (!isNaN(entryNum) && !isNaN(tpNum)) {
-      return tpNum > entryNum ? "LONG 🔺" : "SHORT 🔻";
-    }
-    return null;
+    return parseFloat(takeProfit) > parseFloat(entry) ? "LONG 🔺" : "SHORT 🔻";
   }, [entry, takeProfit]);
 
   const resultClass = React.useMemo(() => {
@@ -62,24 +38,12 @@ const TradeJournal = () => {
   }, [result]);
 
   const generateSummary = () => {
-    // Safely handle potentially undefined or invalid values
-    const safeResult = result || "";
-    const safeEmoji = !isNaN(parseFloat(safeResult)) 
-      ? (parseFloat(safeResult) > 0 ? "🔥" : parseFloat(safeResult) < 0 ? "😬" : "💡")
-      : "💡";
+    const emoji = parseFloat(result) > 0 ? "🔥" : parseFloat(result) < 0 ? "😬" : "💡";
     
-    const safePair = pair || "";
-    const safeDirection = direction || "";
-    const safeEntry = entry || "";
-    const safeTakeProfit = takeProfit || "";
-    const safeStopLoss = stopLoss || "";
-    const safeLotSize = lotSize || "";
-    const safeNotes = notes || "";
-    
-    return `${safePair} • ${safeDirection} ${safeEmoji}
-📈 Entry: ${safeEntry} | 🎯 TP: ${safeTakeProfit} | 🛑 SL: ${safeStopLoss}
-🧠 Result: ${safeResult} pips | Lot Size: ${safeLotSize}
-📝 "${safeNotes}"`;
+    return `${pair} • ${direction} ${emoji}
+📈 Entry: ${entry} | 🎯 TP: ${takeProfit} | 🛑 SL: ${stopLoss}
+🧠 Result: ${result} pips | Lot Size: ${lotSize}
+📝 "${notes}"`;
   };
 
   const copyToClipboard = () => {
@@ -124,25 +88,20 @@ const TradeJournal = () => {
                 <Command>
                   <CommandInput placeholder="Search pair..." className="h-9" />
                   <CommandEmpty>No pair found.</CommandEmpty>
-                  {/* Ensure we only render the CommandGroup and items if allPairs is available */}
-                  {Array.isArray(allPairs) && allPairs.length > 0 ? (
-                    <CommandGroup className="max-h-[200px] overflow-y-auto">
-                      {allPairs.map((p) => (
-                        <CommandItem
-                          key={p}
-                          value={p}
-                          onSelect={(currentValue) => {
-                            setPair(currentValue);
-                            setOpen(false);
-                          }}
-                        >
-                          {p}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  ) : (
-                    <div className="p-2 text-sm text-center">Loading pairs...</div>
-                  )}
+                  <CommandGroup className="max-h-[200px] overflow-y-auto">
+                    {allPairs.map((p) => (
+                      <CommandItem
+                        key={p}
+                        value={p}
+                        onSelect={(currentValue) => {
+                          setPair(currentValue);
+                          setOpen(false);
+                        }}
+                      >
+                        {p}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
                 </Command>
               </PopoverContent>
             </Popover>
