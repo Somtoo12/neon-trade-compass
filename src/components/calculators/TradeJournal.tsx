@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -63,6 +62,9 @@ const calculateProfit = (pips: number, lotSize: number): number => {
 const generateId = (): string => {
   return Math.random().toString(36).substring(2, 9);
 };
+
+// Format pairs to match expected format and handle custom pairs
+const formatPair = (pair: string) => pair.replace('/', '').toUpperCase();
 
 const TradeJournal: React.FC = () => {
   const { toast } = useToast();
@@ -277,6 +279,25 @@ const TradeJournal: React.FC = () => {
     });
   };
 
+  // Process all predefined pairs
+  const predefinedPairs = useMemo(() => {
+    const fPairs = forexPairs.map(formatPair);
+    const cPairs = cryptoPairs.map(formatPair);
+    return [...fPairs, ...cPairs];
+  }, []);
+
+  // Filtered pairs based on user input
+  const [filteredPairs, setFilteredPairs] = useState<string[]>(predefinedPairs);
+  
+  // Filter pairs based on user input
+  const handlePairSearch = (searchTerm: string) => {
+    const term = searchTerm.toUpperCase();
+    const filtered = predefinedPairs.filter(pair => 
+      pair.includes(term)
+    );
+    setFilteredPairs(filtered);
+  };
+
   return (
     <Card className="p-6 neo-card">
       <div className="space-y-8">
@@ -294,51 +315,56 @@ const TradeJournal: React.FC = () => {
           <TabsContent value="entry" className="space-y-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* Currency Pair Dropdown */}
+                {/* Currency Pair Input with Autocomplete */}
                 <div className="space-y-2">
                   <Label>Currency Pair</Label>
-                  <Popover open={openCommandMenu} onOpenChange={setOpenCommandMenu}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className="w-full justify-between"
-                      >
-                        {pair || "Select pair..."}
-                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-full p-0" align="start">
-                      <Command>
-                        <CommandInput placeholder="Search pairs..." className="h-9" />
-                        <CommandEmpty>No pairs found.</CommandEmpty>
-                        <CommandGroup className="max-h-[200px] overflow-auto">
-                          {Array.isArray(allPairs) && allPairs.length > 0 ? (
-                            allPairs.map((item) => (
+                  <div className="relative">
+                    <Input
+                      type="text"
+                      value={pair}
+                      onChange={(e) => {
+                        const value = e.target.value.toUpperCase();
+                        setPair(value);
+                        handlePairSearch(value);
+                        setOpenCommandMenu(true);
+                      }}
+                      placeholder="Type to search or enter custom pair..."
+                      className="input-glow"
+                    />
+                    <Popover open={openCommandMenu} onOpenChange={setOpenCommandMenu}>
+                      <PopoverTrigger className="absolute right-2 top-2.5">
+                        <ChevronDown className="h-4 w-4 opacity-50" />
+                      </PopoverTrigger>
+                      <PopoverContent className="w-full p-0" align="start">
+                        <Command>
+                          <CommandInput 
+                            placeholder="Search pairs..." 
+                            value={pair}
+                            onValueChange={(value) => {
+                              setPair(value);
+                              handlePairSearch(value);
+                            }}
+                          />
+                          <CommandEmpty>No matches found. You can use this custom pair.</CommandEmpty>
+                          <CommandGroup className="max-h-[200px] overflow-auto">
+                            {filteredPairs.map((item) => (
                               <CommandItem
                                 key={item}
                                 value={item}
-                                onSelect={(currentValue) => {
-                                  setPair(currentValue);
+                                onSelect={(value) => {
+                                  setPair(value);
                                   setOpenCommandMenu(false);
                                 }}
                               >
                                 {item}
                                 {item === pair && <CheckCircle2 className="ml-auto h-4 w-4" />}
                               </CommandItem>
-                            ))
-                          ) : (
-                            <CommandItem value="EURUSD" onSelect={() => {
-                              setPair("EURUSD");
-                              setOpenCommandMenu(false);
-                            }}>
-                              EURUSD
-                            </CommandItem>
-                          )}
-                        </CommandGroup>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
+                            ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                 </div>
                 
                 {/* Date Picker */}
@@ -794,65 +820,4 @@ const TradeJournal: React.FC = () => {
                         width={500}
                         height={250}
                         data={chartData}
-                        margin={{ top: 5, right: 30, left: 20, bottom: 50 }}
-                      >
-                        <XAxis dataKey="pair" angle={-45} textAnchor="end" height={70} />
-                        <YAxis />
-                        <RechartsTooltip formatter={(value, name) => [`${value}`, name === 'pips' ? 'Pips' : 'Trades']} />
-                        <Legend />
-                        <Bar dataKey="pips" name="Total Pips" fill="#8884d8">
-                          {chartData.map((entry, index) => (
-                            <Cell 
-                              key={`cell-${index}`} 
-                              fill={entry.pips > 0 ? '#10b981' : '#ef4444'} 
-                            />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </div>
-                  </Card>
-                </div>
-
-                <Card className="p-4">
-                  <h4 className="text-base font-medium mb-4 flex items-center">
-                    <AreaChart className="h-4 w-4 mr-2" /> Performance by Pair
-                  </h4>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Pair</TableHead>
-                        <TableHead>Trades</TableHead>
-                        <TableHead>Total Pips</TableHead>
-                        <TableHead>Total P/L ($)</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {chartData.map((data) => (
-                        <TableRow key={data.pair}>
-                          <TableCell>{data.pair}</TableCell>
-                          <TableCell>{data.count}</TableCell>
-                          <TableCell className={`${data.pips > 0 ? 'text-green-500' : data.pips < 0 ? 'text-red-500' : ''}`}>
-                            {data.pips > 0 ? '+' : ''}{data.pips}
-                          </TableCell>
-                          <TableCell className={`${data.profit > 0 ? 'text-green-500' : data.profit < 0 ? 'text-red-500' : ''}`}>
-                            {data.profit > 0 ? '+' : ''}${data.profit.toFixed(2)}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </Card>
-              </>
-            ) : (
-              <div className="text-center py-10 text-muted-foreground">
-                No trades recorded yet. Add trades to see analytics.
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
-      </div>
-    </Card>
-  );
-};
-
-export default TradeJournal;
+                        margin={{ top: 5, right: 30, left

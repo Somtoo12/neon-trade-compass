@@ -11,24 +11,20 @@ export const cryptoPairs = [
   'AR/USD', 'ONE/USD', 'HOT/USD', 'BAT/USD', 'ZIL/USD'
 ].slice(0, 100); // Ensure we never exceed 100 pairs
 
-export const forexPairs = {
-  majors: [
-    'EUR/USD', 'GBP/USD', 'USD/JPY', 'USD/CHF', 'USD/CAD', 
-    'AUD/USD', 'NZD/USD'
-  ],
-  minors: [
-    'EUR/GBP', 'EUR/JPY', 'GBP/JPY', 'EUR/AUD', 'GBP/AUD',
-    'AUD/JPY', 'EUR/CAD', 'GBP/CAD', 'CAD/JPY', 'EUR/NZD',
-    'GBP/NZD', 'EUR/CHF', 'GBP/CHF', 'AUD/CAD', 'AUD/CHF',
-    'AUD/NZD', 'CAD/CHF', 'NZD/JPY', 'NZD/CHF'
-  ],
-  exotics: [
-    'EUR/TRY', 'USD/TRY', 'USD/MXN', 'USD/ZAR', 'USD/THB',
-    'USD/SGD', 'USD/SEK', 'USD/NOK', 'USD/DKK', 'USD/PLN',
-    'EUR/HUF', 'EUR/PLN', 'EUR/CZK', 'EUR/SEK', 'EUR/NOK',
-    'GBP/PLN', 'USD/HKD', 'USD/CNH', 'USD/INR', 'USD/BRL'
-  ]
-};
+export const forexPairs = [
+  // Major pairs
+  'EUR/USD', 'GBP/USD', 'USD/JPY', 'AUD/USD', 'NZD/USD', 'USD/CAD', 'USD/CHF',
+  
+  // Cross rates
+  'EUR/GBP', 'EUR/JPY', 'GBP/JPY', 'EUR/AUD', 'EUR/CAD', 'EUR/CHF',
+  'GBP/JPY', 'AUD/JPY', 'CAD/JPY', 'CHF/JPY',
+  
+  // Commodities
+  'XAU/USD', 'XAG/USD', 'XPT/USD', 'XPD/USD',
+  
+  // Indices
+  'US30/USD', 'SPX500/USD', 'NAS100/USD', 'UK100/GBP', 'GER40/EUR', 'JPN225/JPY'
+];
 
 export const futuresContracts = {
   'ES': {
