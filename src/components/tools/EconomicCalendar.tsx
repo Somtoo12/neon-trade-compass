@@ -4,59 +4,12 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter, AlertDialogCancel } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EventRow } from './calendar/EventRow';
 import { format } from 'date-fns';
+import { useToast } from "@/hooks/use-toast";
 
 const API_KEY = 'w9lfRZ7QZMH8BLPuDNbGdRK7';
-
-const mockEvents = [
-  {
-    id: 'event1',
-    date: new Date().toISOString(),
-    country: 'US',
-    currency: 'USD',
-    event: 'CPI (YoY)',
-    impact: 'high',
-    forecast: '2.9%',
-    previous: '3.1%',
-    actual: '3.0%',
-  },
-  {
-    id: 'event2',
-    date: new Date(Date.now() + 3600000).toISOString(),
-    country: 'EU',
-    currency: 'EUR',
-    event: 'ECB Interest Rate Decision',
-    impact: 'high',
-    forecast: '3.75%',
-    previous: '3.75%',
-    actual: null,
-  },
-  {
-    id: 'event3',
-    date: new Date(Date.now() + 7200000).toISOString(),
-    country: 'GB',
-    currency: 'GBP',
-    event: 'Manufacturing PMI',
-    impact: 'medium',
-    forecast: '51.2',
-    previous: '50.7',
-    actual: null,
-  },
-  {
-    id: 'event4',
-    date: new Date(Date.now() + 10800000).toISOString(),
-    country: 'JP',
-    currency: 'JPY',
-    event: 'GDP Growth Rate QoQ',
-    impact: 'low',
-    forecast: '0.3%',
-    previous: '0.1%',
-    actual: null,
-  }
-];
 
 const countryFlags: Record<string, string> = {
   'US': '🇺🇸',
@@ -77,59 +30,16 @@ interface EventUserData {
   notes: string;
 }
 
-interface ReactionData {
-  previousActual: string;
-  previousForecast: string;
-  date: string;
-  notes: string;
-  imageUrl: string;
-}
-
-const mockReactions: Record<string, ReactionData> = {
-  'event1': {
-    previousActual: '3.1%',
-    previousForecast: '3.0%',
-    date: '2023-03-15',
-    notes: 'EURUSD spiked 60 pips then reversed in 15 mins. Initial reaction was bullish due to lower than expected inflation.',
-    imageUrl: 'https://i.imgur.com/mGfQJEF.png'
-  },
-  'event2': {
-    previousActual: '3.75%',
-    previousForecast: '3.75%',
-    date: '2023-04-12',
-    notes: 'No change as expected, but hawkish commentary led to 45 pip rally in EURUSD over next hour.',
-    imageUrl: 'https://i.imgur.com/NsSH0KM.png'
-  }
-};
-
-const formatLocalTime = (isoString: string) => {
-  const date = new Date(isoString);
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-};
-
-const getCountdown = (futureTime: string) => {
-  const future = new Date(futureTime).getTime();
-  const now = Date.now();
-  const diff = future - now;
-  
-  if (diff <= 0) return 'Now';
-  
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  
-  return `${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m`;
-};
-
 const EconomicCalendar: React.FC = () => {
-  const [events, setEvents] = useState(mockEvents);
-  const [loading, setLoading] = useState(false);
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [impactFilter, setImpactFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
   const [userData, setUserData] = useState<Record<string, EventUserData>>(() => {
     const saved = localStorage.getItem('event_user_data');
     return saved ? JSON.parse(saved) : {};
   });
-  const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
+  const { toast } = useToast();
   
   const fetchCalendarData = async () => {
     setLoading(true);
@@ -146,26 +56,41 @@ const EconomicCalendar: React.FC = () => {
       }
 
       const data = await response.json();
-      const formattedEvents = data?.response ? data.response.map((event: any) => ({
-        id: event.id,
-        date: new Date(event.date).toISOString(),
-        country: event.country,
-        currency: event.currency,
-        event: event.title,
-        impact: event.impact.toLowerCase(),
-        forecast: event.forecast,
-        previous: event.previous,
-        actual: event.actual
-      })) : [];
-
-      setEvents(formattedEvents.length > 0 ? formattedEvents : mockEvents);
+      
+      if (data.status && data.response) {
+        const formattedEvents = data.response.map((event: any) => ({
+          id: event.id,
+          date: new Date(event.date).toISOString(),
+          country: event.country,
+          currency: event.currency,
+          event: event.title,
+          impact: event.impact.toLowerCase(),
+          forecast: event.forecast,
+          previous: event.previous,
+          actual: event.actual
+        }));
+        setEvents(formattedEvents);
+      } else {
+        throw new Error('Invalid API response format');
+      }
     } catch (error) {
       console.error('Error fetching economic calendar:', error);
-      setEvents(mockEvents);
+      toast({
+        title: "Error",
+        description: "Failed to fetch economic calendar data. Please try again later.",
+        variant: "destructive"
+      });
+      setEvents([]);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchCalendarData();
+    const interval = setInterval(fetchCalendarData, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const updateEventUserData = (eventId: string, field: 'bias' | 'notes', value: string | BiasType) => {
     const updatedData = {
@@ -180,10 +105,6 @@ const EconomicCalendar: React.FC = () => {
     localStorage.setItem('event_user_data', JSON.stringify(updatedData));
   };
 
-  useEffect(() => {
-    fetchCalendarData();
-  }, []);
-
   const filteredEvents = events.filter(event => {
     const matchesSearch = searchQuery === '' || 
       event.event.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -197,65 +118,9 @@ const EconomicCalendar: React.FC = () => {
   const nextHighImpactEvent = events.find(event => 
     event.impact === 'high' && new Date(event.date).getTime() > Date.now()
   );
-  
-  const renderImpactBadge = (impact: string) => {
-    switch(impact) {
-      case 'high':
-        return <Badge variant="destructive">🔴 High</Badge>;
-      case 'medium':
-        return <Badge variant="secondary">🟠 Medium</Badge>;
-      case 'low':
-        return <Badge variant="default">🟢 Low</Badge>;
-      default:
-        return null;
-    }
-  };
 
   return (
     <div className="economic-calendar space-y-4">
-      
-      <AlertDialog open={!!selectedReaction} onOpenChange={() => setSelectedReaction(null)}>
-        {selectedReaction && mockReactions[selectedReaction] && (
-          <AlertDialogContent className="max-w-3xl">
-            <AlertDialogHeader>
-              <AlertDialogTitle>Previous Market Reaction</AlertDialogTitle>
-              <AlertDialogDescription>
-                {events.find(e => e.id === selectedReaction)?.event} - {mockReactions[selectedReaction].date}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
-              <div className="space-y-4 border-r pr-4">
-                <h4 className="font-medium">Previous Release</h4>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Forecast</p>
-                    <p className="font-medium">{mockReactions[selectedReaction].previousForecast}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Actual</p>
-                    <p className="font-medium">{mockReactions[selectedReaction].previousActual}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-4">
-                <h4 className="font-medium">Market Reaction</h4>
-                <p className="text-sm">{mockReactions[selectedReaction].notes}</p>
-                <div className="relative aspect-video w-full rounded-md overflow-hidden border">
-                  <img 
-                    src={mockReactions[selectedReaction].imageUrl} 
-                    alt="Price reaction chart" 
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-              </div>
-            </div>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Close</AlertDialogCancel>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        )}
-      </AlertDialog>
-
       <Card className="p-4">
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -367,8 +232,8 @@ const EconomicCalendar: React.FC = () => {
                         countryFlags={countryFlags}
                         userData={userData}
                         onUpdateUserData={updateEventUserData}
-                        onViewReaction={setSelectedReaction}
-                        mockReactions={mockReactions}
+                        onViewReaction={() => {}}
+                        mockReactions={{}}
                       />
                     ))}
                   </div>
@@ -376,7 +241,7 @@ const EconomicCalendar: React.FC = () => {
               </div>
             ) : (
               <div className="text-center py-10">
-                <p className="text-muted-foreground">No economic events match your search criteria.</p>
+                <p className="text-muted-foreground">No economic events found. Try adjusting your filters or refreshing.</p>
               </div>
             )}
           </div>
