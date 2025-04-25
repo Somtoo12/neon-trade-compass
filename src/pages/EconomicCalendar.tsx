@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
-import { Clock, Calendar, AlertTriangle } from 'lucide-react';
+import { Clock, Calendar, AlertTriangle, RotateCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
-// Sample upcoming events data - in a real app, this could come from an API
 const SAMPLE_EVENTS = [
   {
     id: 1,
@@ -44,9 +44,22 @@ const NextEventCountdown = ({ expanded, toggleExpanded, isMobile }: {
   const [nextEvent, setNextEvent] = useState<any>(null);
   const [timeRemaining, setTimeRemaining] = useState('');
   const [isImminentEvent, setIsImminentEvent] = useState(false);
+  const [countdownEnabled, setCountdownEnabled] = useState(() => {
+    return localStorage.getItem('pipcraft_econ_countdown_enabled') === 'true';
+  });
+  const { toast } = useToast();
   
   useEffect(() => {
-    // Find the next upcoming event
+    localStorage.setItem('pipcraft_econ_countdown_enabled', String(countdownEnabled));
+  }, [countdownEnabled]);
+  
+  useEffect(() => {
+    localStorage.setItem('pipcraft_econ_display_mode', String(expanded));
+  }, [expanded]);
+  
+  useEffect(() => {
+    if (!countdownEnabled) return;
+    
     const now = new Date();
     const upcomingEvents = SAMPLE_EVENTS.filter(event => event.time > now)
       .sort((a, b) => a.time.getTime() - b.time.getTime());
@@ -54,7 +67,15 @@ const NextEventCountdown = ({ expanded, toggleExpanded, isMobile }: {
     const next = upcomingEvents.length > 0 ? upcomingEvents[0] : null;
     setNextEvent(next);
     
-    // Set up countdown timer
+    if (next) {
+      localStorage.setItem('pipcraft_econ_next_news', JSON.stringify({
+        title: next.title,
+        time: next.time.toISOString(),
+        impact: next.impact,
+        currency: next.currency
+      }));
+    }
+    
     const timer = setInterval(() => {
       if (next) {
         const diff = next.time.getTime() - Date.now();
@@ -65,10 +86,8 @@ const NextEventCountdown = ({ expanded, toggleExpanded, isMobile }: {
           return;
         }
         
-        // Check if event is within 5 minutes
         setIsImminentEvent(diff < 5 * 60 * 1000);
         
-        // Format time remaining
         const minutes = Math.floor(diff / 1000 / 60);
         const seconds = Math.floor((diff / 1000) % 60);
         
@@ -85,7 +104,7 @@ const NextEventCountdown = ({ expanded, toggleExpanded, isMobile }: {
     }, 1000);
     
     return () => clearInterval(timer);
-  }, []);
+  }, [countdownEnabled]);
   
   const getImpactColor = (impact: string) => {
     switch (impact) {
@@ -103,6 +122,17 @@ const NextEventCountdown = ({ expanded, toggleExpanded, isMobile }: {
       case 'low': return '⚪';
       default: return '⚪';
     }
+  };
+  
+  const resetSettings = () => {
+    localStorage.removeItem('pipcraft_econ_next_news');
+    localStorage.removeItem('pipcraft_econ_display_mode');
+    localStorage.removeItem('pipcraft_econ_countdown_enabled');
+    setCountdownEnabled(false);
+    toast({
+      title: "Settings Reset",
+      description: "Calendar preferences have been cleared",
+    });
   };
   
   if (!nextEvent && !expanded) return null;
@@ -126,8 +156,32 @@ const NextEventCountdown = ({ expanded, toggleExpanded, isMobile }: {
               ⚡ Next Major Event Countdown
             </h3>
           </div>
-          <div className="text-xs bg-background/30 px-2 py-1 rounded-full">
-            {expanded ? "Click to collapse" : "Click for details"}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                setCountdownEnabled(!countdownEnabled);
+              }}
+              className={cn(
+                "p-1 h-8 w-8",
+                countdownEnabled ? "text-neon-green" : "text-muted-foreground"
+              )}
+            >
+              <Clock className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                resetSettings();
+              }}
+              className="p-1 h-8 w-8"
+            >
+              <RotateCcw className="h-4 w-4" />
+            </Button>
           </div>
         </div>
         
@@ -185,7 +239,9 @@ const NextEventCountdown = ({ expanded, toggleExpanded, isMobile }: {
 };
 
 const EconomicCalendar = () => {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(() => {
+    return localStorage.getItem('pipcraft_econ_display_mode') === 'true';
+  });
   const [isMobile, setIsMobile] = useState(false);
   
   useEffect(() => {
