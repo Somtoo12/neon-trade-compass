@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -12,6 +11,7 @@ import InsightsPanel from './InsightsPanel';
 import ExportTools from './ExportTools';
 import GoalCalculator, { GoalInputs } from './GoalCalculator';
 import PassSummary from './PassSummary';
+import InfoCard from './InfoCard';
 
 export type RiskStyle = 'conservative' | 'balanced' | 'aggressive';
 export type TraderData = {
@@ -49,7 +49,6 @@ const ChallengeBlueprint: React.FC = () => {
     dailyTrades: 0
   });
   
-  // Load saved data from localStorage on component mount
   useEffect(() => {
     const savedRiskStyle = localStorage.getItem('challengeBlueprint_riskStyle');
     const savedGoalInputs = localStorage.getItem('challengeBlueprint_goalInputs');
@@ -79,17 +78,14 @@ const ChallengeBlueprint: React.FC = () => {
     }
   }, []);
   
-  // Calculate metrics when trader data changes or risk style changes
   useEffect(() => {
     if (traderData) {
       calculateStrategyMetrics(traderData, riskStyle);
       
-      // Save to local storage
       localStorage.setItem('challengeBlueprint_traderData', JSON.stringify(traderData));
     }
   }, [traderData, riskStyle]);
 
-  // Save risk style to localStorage when it changes
   useEffect(() => {
     localStorage.setItem('challengeBlueprint_riskStyle', riskStyle);
   }, [riskStyle]);
@@ -97,10 +93,8 @@ const ChallengeBlueprint: React.FC = () => {
   const calculateStrategyMetrics = (data: TraderData, style: RiskStyle) => {
     setIsLoading(true);
     
-    // Simulating calculation delay
     setTimeout(() => {
-      // Apply different multipliers based on risk style
-      let multiplier = 1.0; // balanced
+      let multiplier = 1.0;
       if (style === 'conservative') multiplier = 1.2;
       if (style === 'aggressive') multiplier = 0.8;
       
@@ -113,13 +107,11 @@ const ChallengeBlueprint: React.FC = () => {
       
       const drawdownRisk = data.riskPerTrade * Math.sqrt(tradesNeeded) / 10 * multiplier;
       
-      // Adjust probability based on risk style and data.isAccelerated
       let passProbability = Math.min(98, 100 - drawdownRisk * 2);
       if (data.isAccelerated) {
-        passProbability = Math.max(30, passProbability - 15); // Higher risk with accelerated challenge
+        passProbability = Math.max(30, passProbability - 15);
       }
       
-      // Generate mock equity curve data
       const equityCurveData = generateEquityCurve(data, style);
       
       setStrategyMetrics({
@@ -133,29 +125,25 @@ const ChallengeBlueprint: React.FC = () => {
       
       setIsLoading(false);
       
-      // Auto-switch to strategy tab after calculation
       if (activeTab === 'input') {
         setActiveTab('strategy');
       }
-    }, 800); // Reduced loading delay for better UX
+    }, 800);
   };
-  
+
   const generateEquityCurve = (data: TraderData, style: RiskStyle): {x: number, y: number}[] => {
     const points = [];
-    let equity = 100; // Start at 100%
+    let equity = 100;
     const daysPerPoint = Math.max(1, Math.floor(data.passDays / 20));
     
-    // Adjust volatility based on risk style
-    let volatility = 0.8; // balanced
+    let volatility = 0.8;
     if (style === 'conservative') volatility = 0.5;
     if (style === 'aggressive') volatility = 1.2;
     
     for (let i = 0; i <= data.passDays; i += daysPerPoint) {
-      // Add some randomness to make it look realistic
       const random = Math.random() * volatility - volatility / 2;
       equity += (data.profitTarget / data.passDays) * daysPerPoint + random;
       
-      // Ensure we don't go below a certain threshold for visual purposes
       equity = Math.max(95, equity);
       
       points.push({
@@ -164,7 +152,6 @@ const ChallengeBlueprint: React.FC = () => {
       });
     }
     
-    // Ensure the last point hits the profit target
     points.push({
       x: data.passDays,
       y: 100 + data.profitTarget
@@ -177,27 +164,21 @@ const ChallengeBlueprint: React.FC = () => {
     setIsLoading(true);
     
     setTimeout(() => {
-      // Calculate based on goal inputs
       const expectedValuePerTrade = (inputs.winRate / 100 * inputs.rewardRiskRatio * inputs.riskPerTrade) - 
                                     ((100 - inputs.winRate) / 100 * inputs.riskPerTrade);
       
-      // Calculate trades needed to reach target
       const tradesNeeded = inputs.targetPercent / expectedValuePerTrade;
       
-      // Calculate daily trades needed
       const dailyTrades = Math.ceil(tradesNeeded / inputs.daysRemaining);
       
-      // Calculate required wins based on probability
       const requiredWins = Math.ceil(tradesNeeded * (inputs.winRate / 100));
       
-      // Calculate pass probability based on win rate consistency
       let passProbability = Math.min(95, 
-        50 + (inputs.winRate - 50) * 1.5 +  // Base on win rate
-        (inputs.rewardRiskRatio - 1) * 10 - // Better R:R improves odds
-        Math.max(0, (2 - inputs.riskPerTrade) * 5) // Lower risk slightly improves odds
+        50 + (inputs.winRate - 50) * 1.5 + 
+        (inputs.rewardRiskRatio - 1) * 10 - 
+        Math.max(0, (2 - inputs.riskPerTrade) * 5)
       );
       
-      // Cap the probability between 1-99%
       passProbability = Math.max(1, Math.min(99, passProbability));
       
       setGoalResults({
@@ -224,9 +205,8 @@ const ChallengeBlueprint: React.FC = () => {
   const handleRiskStyleChange = (style: RiskStyle) => {
     setRiskStyle(style);
     
-    // Update goal inputs if they exist
     if (goalInputs) {
-      let riskValue = 1.0; // balanced
+      let riskValue = 1.0;
       if (style === 'conservative') riskValue = 0.5;
       if (style === 'aggressive') riskValue = 2.0;
       
@@ -239,7 +219,7 @@ const ChallengeBlueprint: React.FC = () => {
     }
     
     if (traderData) {
-      let riskValue = 1.0; // balanced
+      let riskValue = 1.0;
       if (style === 'conservative') riskValue = 0.5;
       if (style === 'aggressive') riskValue = 2.0;
       
@@ -277,6 +257,8 @@ const ChallengeBlueprint: React.FC = () => {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6">
+      <InfoCard />
+      
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
