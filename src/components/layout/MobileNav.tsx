@@ -53,9 +53,9 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
     <>
       <div className={`fixed top-0 left-0 right-0 z-50 glassmorphism border-b border-border/40 shadow-lg transition-all duration-300 ${isScrolled ? 'bg-background/95' : 'bg-background/80'}`}>
         <div className="flex items-center justify-between p-4">
-          <h1 className="text-xl font-bold font-poppins bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
+          <Link to="/" className="text-xl font-bold font-poppins bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
             PipCraft
-          </h1>
+          </Link>
           <div className="flex items-center gap-3">
             <ThemeToggle />
             <button

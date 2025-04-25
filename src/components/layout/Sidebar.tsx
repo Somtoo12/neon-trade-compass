@@ -1,7 +1,7 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';  // Add Link import
 import { BarChart, Book, Clock, Gauge, LineChart, PieChart, Scale, Calculator, Compass, GamepadIcon, CalendarDays, ClipboardCheck } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 interface SidebarProps {
   activeSection: string;
@@ -38,9 +38,11 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection }) =>
   return (
     <div className="w-64 lg:w-72 h-screen sticky top-0 glassmorphism overflow-y-auto p-4 border-r border-border/30">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-center font-poppins bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
-          PipCraft
-        </h1>
+        <Link to="/" className="block text-center">  {/* Wrap logo in Link */}
+          <h1 className="text-2xl font-bold font-poppins bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
+            PipCraft
+          </h1>
+        </Link>
         <div className="text-xs text-center text-muted-foreground mt-1">
           Smart Tools. No Noise.
         </div>

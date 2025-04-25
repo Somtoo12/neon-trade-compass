@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -87,7 +86,6 @@ const AppHeader: React.FC = () => {
         </div>
       </motion.header>
       
-      {/* Mobile menu */}
       {isMobile && isMobileMenuOpen && (
         <motion.div 
           className="fixed inset-0 z-40 bg-background/95 backdrop-blur-md pt-16"
