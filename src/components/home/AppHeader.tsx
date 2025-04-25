@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import ThemeToggle from '@/components/theme/ThemeToggle';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Badge } from '@/components/ui/badge';
 
 const AppHeader: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -50,9 +51,18 @@ const AppHeader: React.FC = () => {
         transition={{ delay: 0.2, duration: 0.6 }}
       >
         <div className="container mx-auto flex items-center justify-between">
-          <Link to="/" className="font-bold text-xl bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
-            PipCraft
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link to="/" className="font-bold text-xl bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
+              PipCraft
+            </Link>
+            
+            <Badge 
+              variant="outline" 
+              className="bg-accent/20 text-accent hover:bg-accent/30 ml-2 text-xs py-1 px-2"
+            >
+              BUILT FOR THE TRADERS OF THE FUTURE
+            </Badge>
+          </div>
           
           {isMobile ? (
             <div className="flex items-center gap-2">
@@ -113,3 +123,4 @@ const AppHeader: React.FC = () => {
 };
 
 export default AppHeader;
+
