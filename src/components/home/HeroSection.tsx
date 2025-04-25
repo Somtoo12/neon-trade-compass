@@ -114,68 +114,56 @@ const HeroSection: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-[85vh] flex items-center justify-center px-4 overflow-hidden bg-background">
-      {/* Command console container */}
+    <div className="relative min-h-[85vh] flex items-center justify-center px-3 md:px-4 overflow-hidden bg-background">
       <div className="w-full max-w-7xl mx-auto relative z-10">
-        {/* Grid background effect */}
-        <div 
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: `
-              linear-gradient(to right, var(--neon-purple) 1px, transparent 1px),
-              linear-gradient(to bottom, var(--neon-purple) 1px, transparent 1px)
-            `,
-            backgroundSize: '40px 40px',
-            transform: 'perspective(1000px) rotateX(60deg)',
-            transformOrigin: 'center top'
-          }}
-        />
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: `linear-gradient(to right, var(--neon-purple) 1px, transparent 1px),
+            linear-gradient(to bottom, var(--neon-purple) 1px, transparent 1px)`,
+          backgroundSize: '40px 40px',
+          transform: 'perspective(1000px) rotateX(60deg)',
+          transformOrigin: 'center top'
+        }} />
 
-        <div className="relative z-20 text-center space-y-6">
-          {/* Badge and title */}
-          <div className="space-y-4">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex justify-center"
-            >
-              <Badge className="bg-accent/20 text-accent hover:bg-accent/30">
-                BUILT FOR THE TRADERS OF THE FUTURE
-              </Badge>
-            </motion.div>
+        <div className="relative z-20 text-center space-y-4 md:space-y-6">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex justify-center"
+          >
+            <Badge className="bg-accent/20 text-accent hover:bg-accent/30 text-xs md:text-sm">
+              BUILT FOR THE TRADERS OF THE FUTURE
+            </Badge>
+          </motion.div>
 
-            <motion.h1 
-              className="text-4xl md:text-6xl lg:text-7xl font-bold font-poppins tracking-tight"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              <span className="bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
-                PipCraft
-              </span>
-            </motion.h1>
+          <motion.h1 
+            className="text-3xl md:text-4xl lg:text-7xl font-bold font-poppins tracking-tight"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <span className="bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
+              PipCraft
+            </span>
+          </motion.h1>
 
-            {/* Animated console text */}
-            <motion.p 
-              className="text-lg md:text-xl text-foreground/80 font-mono"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              {typerText}
-              {typerText !== "Your Complete Trading Control Hub." && (
-                <motion.span
-                  animate={{ opacity: [1, 0, 1] }}
-                  transition={{ duration: 0.8, repeat: Infinity }}
-                >_</motion.span>
-              )}
-            </motion.p>
-          </div>
+          <motion.p 
+            className="text-base md:text-lg text-foreground/80 font-mono max-w-[90%] mx-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            {typerText}
+            {typerText !== "Your Complete Trading Control Hub." && (
+              <motion.span
+                animate={{ opacity: [1, 0, 1] }}
+                transition={{ duration: 0.8, repeat: Infinity }}
+              >_</motion.span>
+            )}
+          </motion.p>
 
-          {/* Action buttons row */}
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 px-4">
             <Link to="/calculators">
               <Button 
                 size="lg"
-                className="bg-gradient-to-r from-neon-purple via-neon-blue to-neon-purple bg-size-200 bg-pos-0 hover:bg-pos-100 transition-all duration-500"
+                className="w-full sm:w-auto bg-gradient-to-r from-neon-purple via-neon-blue to-neon-purple bg-size-200 bg-pos-0 hover:bg-pos-100 transition-all duration-500"
               >
                 Explore PipCraft
                 <ArrowRight className="ml-2" />
@@ -186,81 +174,31 @@ const HeroSection: React.FC = () => {
               <Button
                 variant="outline"
                 size="lg"
-                className="border-accent/50 hover:border-accent"
+                className="w-full sm:w-auto border-accent/50 hover:border-accent"
               >
                 <Music className="mr-2" />
                 Focus Mode
               </Button>
             </Link>
-            
-            {isMobile ? (
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => {
-                  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-                  toast({
-                    title: "Add to Home Screen",
-                    description: isIOS
-                      ? "iPhone: Tap Share, then Add to Home Screen"
-                      : "Android: Tap menu, then Add to Home screen",
-                  });
-                }}
-                className="border-accent/50 hover:border-accent"
-              >
-                📲 Save to Home Screen
-              </Button>
-            ) : (
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => {
-                  const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-                  const key = isMac ? '⌘' : 'Ctrl';
-                  window.prompt(`Use ${key}+D to bookmark this site`, document.title);
-                }}
-                className="border-accent/50 hover:border-accent"
-              >
-                ⭐ Bookmark on Desktop
-              </Button>
-            )}
           </div>
 
-          {/* Tool grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto mt-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 max-w-4xl mx-auto mt-8 px-3">
             {toolGrid.map((tool, index) => (
               <Link to={tool.route} key={tool.name}>
                 <motion.div
-                  className="group relative p-6 rounded-xl backdrop-blur-sm bg-black/20 border border-white/10 transition-all hover:bg-black/30"
+                  className="group relative p-4 md:p-6 rounded-xl backdrop-blur-sm bg-black/20 border border-white/10 transition-all hover:bg-black/30"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                   whileHover={{ scale: 1.02 }}
                 >
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-neon-purple/5 to-neon-blue/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <tool.icon className="w-8 h-8 mb-3 text-accent" />
-                  <h3 className="font-medium mb-1">{tool.name}</h3>
-                  <p className="text-sm text-foreground/60">{tool.description}</p>
+                  <tool.icon className="w-6 h-6 md:w-8 md:h-8 mb-2 md:mb-3 text-accent" />
+                  <h3 className="text-sm md:text-base font-medium mb-1">{tool.name}</h3>
+                  <p className="text-xs md:text-sm text-foreground/60">{tool.description}</p>
                 </motion.div>
               </Link>
             ))}
-          </div>
-
-          {/* Settings toggle - bottom right */}
-          <div className="absolute bottom-4 right-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setAnimationsEnabled(!animationsEnabled);
-                toast({
-                  title: animationsEnabled ? "Animations disabled" : "Animations enabled",
-                });
-              }}
-              className="text-xs opacity-60 hover:opacity-100"
-            >
-              {animationsEnabled ? "Disable" : "Enable"} Animations
-            </Button>
           </div>
         </div>
       </div>
