@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { BarChart, Book, Clock, Gauge, LineChart, Menu, PieChart, Scale, Compass, X, GamepadIcon } from 'lucide-react';
+import { BarChart, Book, Clock, Gauge, LineChart, Menu, PieChart, Scale, Compass, X, GamepadIcon, CalendarDays, ClipboardCheck } from 'lucide-react';
 import ThemeToggle from '../theme/ThemeToggle';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -22,6 +22,8 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
   const location = useLocation();
 
   const navItems: NavItem[] = [
+    { id: 'daily-trade-tools', label: '🧭 Daily Trade Tools', icon: <Compass className="h-5 w-5" />, path: '/daily-trade-tools' },
+    { id: 'challenge-blueprint', label: 'Challenge Blueprint', icon: <ClipboardCheck className="h-5 w-5" />, path: '/challenge-blueprint' },
     { id: 'forex-calculator', label: 'Forex Pip Calculator', icon: <BarChart className="h-5 w-5" />, path: '/forex-calculator' },
     { id: 'crypto-calculator', label: 'Crypto Calculator', icon: <LineChart className="h-5 w-5" />, path: '/crypto-calculator' },
     { id: 'futures-calculator', label: 'Futures Calculator', icon: <PieChart className="h-5 w-5" />, path: '/futures-calculator' },
@@ -29,7 +31,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
     { id: 'currency-heatmap', label: 'Currency Heatmap', icon: <Gauge className="h-5 w-5" />, path: '/currency-heatmap' },
     { id: 'risk-management', label: 'Risk Management', icon: <Scale className="h-5 w-5" />, path: '/risk-management' },
     { id: 'trade-journal', label: 'Trade Journal', icon: <Book className="h-5 w-5" />, path: '/trade-journal' },
-    { id: 'daily-trade-tools', label: '🧭 Daily Trade Tools', icon: <Compass className="h-5 w-5" />, path: '/daily-trade-tools' },
+    { id: 'economic-calendar', label: 'Economic Calendar', icon: <CalendarDays className="h-5 w-5" />, path: '/economic-calendar' },
     { id: 'trader-games', label: '🎮 Trader Game Center', icon: <GamepadIcon className="h-5 w-5" />, path: '/trader-games' },
   ];
 
