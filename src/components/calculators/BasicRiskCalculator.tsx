@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowRight, CircleInfo, Search } from 'lucide-react';
+import { ArrowRight, Info, Search } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { forexPairs } from '@/constants/currencyPairs';
@@ -211,7 +210,7 @@ const BasicRiskCalculator: React.FC = () => {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
-                      <CircleInfo className="h-4 w-4 text-muted-foreground" />
+                      <Info className="h-4 w-4 text-muted-foreground" />
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>1 Standard Lot = 100,000 units</p>
