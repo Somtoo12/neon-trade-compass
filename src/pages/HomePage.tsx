@@ -19,7 +19,7 @@ const HomePage: React.FC = () => {
       <ScrollToTop />
       <AppHeader />
       
-      {/* Hero Section */}
+      {/* Hero Section - Redesigned with space theme */}
       <HeroSection />
 
       {/* Tool Showcase - Auto-scrolling Banner */}

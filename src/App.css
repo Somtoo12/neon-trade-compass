@@ -109,3 +109,17 @@ html {
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
+
+/* New space theme animations */
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}
+
+.space-star {
+  animation: pulse 3s infinite ease-in-out;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 15px var(--neon-purple);
+}
