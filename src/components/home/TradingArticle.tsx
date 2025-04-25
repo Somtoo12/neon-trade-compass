@@ -1,8 +1,10 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import ArticleHeader from './article/ArticleHeader';
+import KeyTakeaways from './article/KeyTakeaways';
+import VideoSection from './article/VideoSection';
+import CallToAction from './article/CallToAction';
 
 const TradingArticle = () => {
   return (
@@ -14,19 +16,7 @@ const TradingArticle = () => {
           viewport={{ once: true }}
           className="prose prose-invert prose-lg max-w-none"
         >
-          <header className="text-center mb-12">
-            <motion.h1 
-              className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-            >
-              Why Every Trader Needs a Smart Command Center in 2025
-            </motion.h1>
-            <p className="text-xl text-muted-foreground">
-              Boost Performance with All Essential Tools in One Place
-            </p>
-          </header>
+          <ArticleHeader />
 
           <div className="space-y-8">
             <section>
@@ -50,40 +40,10 @@ const TradingArticle = () => {
               </p>
             </section>
 
-            <section>
-              <h2 className="text-2xl font-bold mt-12 mb-6">Key Takeaways</h2>
-              <ul className="list-none space-y-4">
-                <li className="flex items-start gap-3">
-                  <span className="text-neon-green">•</span>
-                  Trading with scattered tools can lower focus and increase errors
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-neon-blue">•</span>
-                  A unified command center combines key trading tools for better control
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-neon-purple">•</span>
-                  PipCraft provides a free, easy-to-use platform that improves trading efficiency
-                </li>
-              </ul>
-            </section>
+            <KeyTakeaways />
+            <VideoSection />
 
-            {/* Continue with other sections following similar pattern */}
-            <section className="mt-12">
-              <h2 className="text-2xl font-bold mb-6">Understanding Modern Trading Challenges</h2>
-              <div className="aspect-video w-full mb-8">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src="https://www.youtube.com/embed/8Brhe2-FnnA"
-                  title="Understanding Modern Trading Challenges"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="rounded-xl"
-                ></iframe>
-              </div>
-              
+            <section>
               <h3 className="text-xl font-semibold mb-4">Information Overload and Distraction</h3>
               <p className="mb-6">
                 Traders often deal with excessive information from multiple sources like news feeds, charts, alerts, and social media. This flood of data can lead to confusion and missed important signals. Switching between many platforms wastes time and breaks focus.
@@ -100,14 +60,7 @@ const TradingArticle = () => {
               </div>
             </section>
 
-            {/* Add remaining sections following similar pattern... */}
-
-            <section className="mt-16">
-              <Button className="w-full md:w-auto" size="lg">
-                Start Using PipCraft Now
-                <ArrowRight className="ml-2" />
-              </Button>
-            </section>
+            <CallToAction />
           </div>
         </motion.article>
       </div>
