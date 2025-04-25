@@ -1,87 +1,13 @@
 
-import React, { useState, useEffect } from 'react';
-import { EventCountdown } from '@/components/calendar/EventCountdown';
-import type { EconomicEvent } from '@/utils/eventUtils';
-
-// Sample events - In production, these would come from the calendar widget
-const SAMPLE_EVENTS: EconomicEvent[] = [
-  {
-    id: 1,
-    title: 'Non-Farm Payrolls',
-    time: new Date(Date.now() + 15 * 60 * 1000),
-    impact: 'high',
-    currency: 'USD'
-  },
-  {
-    id: 2,
-    title: 'Interest Rate Decision',
-    time: new Date(Date.now() + 120 * 60 * 1000),
-    impact: 'high',
-    currency: 'EUR'
-  },
-  {
-    id: 3,
-    title: 'Manufacturing PMI',
-    time: new Date(Date.now() + 180 * 60 * 1000),
-    impact: 'medium',
-    currency: 'GBP'
-  }
-];
+import React from 'react';
 
 const EconomicCalendar = () => {
-  const [expanded, setExpanded] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
-  const [nextEvent, setNextEvent] = useState<EconomicEvent | null>(null);
-  
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    // Load stored event data
-    const storedEventData = localStorage.getItem('pipcraft_next_event');
-    if (storedEventData) {
-      const { event } = JSON.parse(storedEventData);
-      setNextEvent(event);
-    }
-    
-    // Find next upcoming event
-    const updateNextEvent = () => {
-      const now = new Date();
-      const upcomingEvents = SAMPLE_EVENTS.filter(event => event.time > now)
-        .sort((a, b) => a.time.getTime() - b.time.getTime());
-      
-      const next = upcomingEvents.length > 0 ? upcomingEvents[0] : null;
-      setNextEvent(next);
-    };
-    
-    updateNextEvent();
-    const eventChecker = setInterval(updateNextEvent, 60000); // Check for new events every minute
-    
-    return () => {
-      window.removeEventListener('resize', checkMobile);
-      clearInterval(eventChecker);
-    };
-  }, []);
-  
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6">
       <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
         Economic Calendar
       </h1>
       <p className="text-muted-foreground mb-6">Stay ahead of market-moving events.</p>
-      
-      <div className="sticky top-16 z-10 transition-all duration-300">
-        <EventCountdown 
-          event={nextEvent}
-          expanded={expanded}
-          toggleExpanded={() => setExpanded(!expanded)}
-          isMobile={isMobile}
-        />
-      </div>
       
       <div className="w-full rounded-lg border border-border/50 shadow-md bg-[#0f0f0f] p-2 overflow-x-auto">
         <div className="tradingview-widget-container w-full h-[600px]">
@@ -111,3 +37,4 @@ const EconomicCalendar = () => {
 };
 
 export default EconomicCalendar;
+
