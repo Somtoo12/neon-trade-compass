@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BarChart, Book, Clock, Gauge, LineChart, PieChart, Scale, Compass, GamepadIcon, Award, CalendarDays, ClipboardCheck } from 'lucide-react';
+import { BarChart, Book, Clock, Gauge, LineChart, PieChart, Scale, Compass, GamepadIcon, CalendarDays, ClipboardCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface SidebarProps {

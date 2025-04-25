@@ -9,8 +9,6 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Calculators from "./pages/Calculators";
 import HomePage from "./pages/HomePage";
-import EconomicCalendar from "./pages/EconomicCalendar";
-import ChallengeBlueprint from "./components/tools/ChallengeBlueprint/index";
 
 const queryClient = new QueryClient();
 
