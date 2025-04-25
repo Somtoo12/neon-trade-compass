@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Info } from 'lucide-react';
-import { forexPairs } from '@/constants/currencyPairs';
+import { forexPairs, cryptoPairs } from '@/constants/currencyPairs';
 
 const MaxLotSizeCalculator: React.FC = () => {
   const [accountEquity, setAccountEquity] = useState('10000');
@@ -31,12 +31,16 @@ const MaxLotSizeCalculator: React.FC = () => {
 
   const maxLotSize = calculateMaxLotSize();
   
+  // Combined array of all trading pairs
   const allPairs = [
-    ...(forexPairs.metals || []),
+    ...(forexPairs.majors || []),
+    ...(forexPairs.minors || []),
+    ...(forexPairs.exotics || []),
     ...(forexPairs.indices || []),
+    ...(forexPairs.metals || []),
     ...(forexPairs.crypto || []),
-    ...(forexPairs.majors || [])
-  ];
+    ...(cryptoPairs || []).slice(0, 100 - (forexPairs.majors?.length || 0) - (forexPairs.metals?.length || 0) - (forexPairs.indices?.length || 0) - (forexPairs.crypto?.length || 0))
+  ].slice(0, 100);
 
   const getDefaultContractSize = (selectedAsset: string) => {
     if (forexPairs.crypto?.includes(selectedAsset)) return '1';
@@ -48,6 +52,11 @@ const MaxLotSizeCalculator: React.FC = () => {
   const handleAssetChange = (newAsset: string) => {
     setAsset(newAsset);
     setContractSize(getDefaultContractSize(newAsset));
+  };
+  
+  // Prevent toggle group from closing when clicking inside custom leverage input
+  const handleCustomLeverageClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
   };
 
   return (
@@ -116,6 +125,7 @@ const MaxLotSizeCalculator: React.FC = () => {
                 type="number"
                 value={customLeverage}
                 onChange={(e) => setCustomLeverage(e.target.value)}
+                onClick={handleCustomLeverageClick}
                 className="bg-secondary/50 border-input/40 input-glow mt-2"
                 min="1"
                 placeholder="Enter custom leverage"
@@ -145,9 +155,36 @@ const MaxLotSizeCalculator: React.FC = () => {
                 <SelectValue placeholder="Select asset" />
               </SelectTrigger>
               <SelectContent className="max-h-[300px]">
-                {allPairs.map((pair) => (
-                  <SelectItem key={pair} value={pair}>{pair}</SelectItem>
-                ))}
+                <SelectGroup>
+                  <SelectLabel>Forex Majors</SelectLabel>
+                  {forexPairs.majors?.map((pair) => (
+                    <SelectItem key={pair} value={pair}>{pair}</SelectItem>
+                  ))}
+                </SelectGroup>
+                <SelectGroup>
+                  <SelectLabel>Metals</SelectLabel>
+                  {forexPairs.metals?.map((pair) => (
+                    <SelectItem key={pair} value={pair}>{pair}</SelectItem>
+                  ))}
+                </SelectGroup>
+                <SelectGroup>
+                  <SelectLabel>Indices</SelectLabel>
+                  {forexPairs.indices?.map((pair) => (
+                    <SelectItem key={pair} value={pair}>{pair}</SelectItem>
+                  ))}
+                </SelectGroup>
+                <SelectGroup>
+                  <SelectLabel>Crypto</SelectLabel>
+                  {forexPairs.crypto?.concat(cryptoPairs || []).slice(0, 50).map((pair) => (
+                    <SelectItem key={pair} value={pair}>{pair}</SelectItem>
+                  ))}
+                </SelectGroup>
+                <SelectGroup>
+                  <SelectLabel>Minors & Exotics</SelectLabel>
+                  {[...(forexPairs.minors || []), ...(forexPairs.exotics || [])].slice(0, 30).map((pair) => (
+                    <SelectItem key={pair} value={pair}>{pair}</SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>
