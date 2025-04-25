@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Music, Calculator, BarChart2, Calendar, BrainCircuit, Clock, LineChart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -125,15 +124,7 @@ const HeroSection: React.FC = () => {
         }} />
 
         <div className="relative z-20 text-center space-y-4 md:space-y-6">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex justify-center"
-          >
-            <Badge className="bg-accent/20 text-accent hover:bg-accent/30 text-xs md:text-sm">
-              BUILT FOR THE TRADERS OF THE FUTURE
-            </Badge>
-          </motion.div>
+          
 
           <motion.h1 
             className="text-3xl md:text-4xl lg:text-7xl font-bold font-poppins tracking-tight"

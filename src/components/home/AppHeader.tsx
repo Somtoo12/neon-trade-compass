@@ -6,7 +6,6 @@ import {
 } from 'lucide-react';
 import ThemeToggle from '@/components/theme/ThemeToggle';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Badge } from '@/components/ui/badge';
 
 const AppHeader: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -46,13 +45,6 @@ const AppHeader: React.FC = () => {
             <Link to="/" className="font-bold text-lg md:text-xl bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
               PipCraft
             </Link>
-            
-            <Badge 
-              variant="outline" 
-              className="bg-accent/20 text-accent hover:bg-accent/30 text-[10px] md:text-xs py-0.5 md:py-1 px-2 w-fit"
-            >
-              BUILT FOR THE TRADERS OF THE FUTURE
-            </Badge>
           </div>
           
           {isMobile ? (
