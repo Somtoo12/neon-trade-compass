@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { BarChart, Book, Clock, Gauge, LineChart, PieChart, Scale, Compass, GamepadIcon, Award } from 'lucide-react';
+import { BarChart, Book, Clock, Gauge, LineChart, PieChart, Scale, Compass, GamepadIcon, Award, CalendarDays } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface SidebarProps {
@@ -17,7 +16,8 @@ interface NavItem {
 
 const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection }) => {
   const navItems: NavItem[] = [
-    { id: 'challenge-blueprint', label: '🏆 Challenge Blueprint', icon: <Award className="h-5 w-5" />, path: '/challenge-blueprint' },
+    { id: 'challenge-blueprint', label: '📊 Challenge Blueprint', icon: <Award className="h-5 w-5" />, path: '/challenge-blueprint' },
+    { id: 'economic-calendar', label: '📅 Economic Calendar', icon: <CalendarDays className="h-5 w-5" />, path: '/economic-calendar' },
     { id: 'forex-calculator', label: 'Forex Pip Calculator', icon: <BarChart className="h-5 w-5" />, path: '/forex-calculator' },
     { id: 'crypto-calculator', label: 'Crypto Calculator', icon: <LineChart className="h-5 w-5" />, path: '/crypto-calculator' },
     { id: 'futures-calculator', label: 'Futures Calculator', icon: <PieChart className="h-5 w-5" />, path: '/futures-calculator' },
@@ -26,12 +26,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection }) =>
     { id: 'risk-management', label: 'Risk Management', icon: <Scale className="h-5 w-5" />, path: '/risk-management' },
     { id: 'trade-journal', label: 'Trade Journal', icon: <Book className="h-5 w-5" />, path: '/trade-journal' },
     { id: 'daily-trade-tools', label: '🧭 Daily Trade Tools', icon: <Compass className="h-5 w-5" />, path: '/daily-trade-tools' },
-    { 
-      id: 'trader-games', 
-      label: '🎮 Trader Game Center', 
-      icon: <GamepadIcon className="h-5 w-5" />, 
-      path: '/trader-games' 
-    },
+    { id: 'trader-games', label: '🎮 Trader Game Center', icon: <GamepadIcon className="h-5 w-5" />, path: '/trader-games' },
   ];
 
   const handleNavClick = (section: string) => {
