@@ -6,12 +6,11 @@ import {
   Calculator, 
   BookOpen, 
   Clock, 
-  BarChart, 
-  LineChart, 
-  Scale, 
-  Calendar, 
+  Calendar,
   Zap, 
-  TrendingUp
+  TrendingUp,
+  ClipboardCheck,
+  Scale
 } from 'lucide-react';
 
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -75,9 +74,7 @@ const HomePage: React.FC = () => {
           ))}
         </div>
 
-        <motion.div 
-          className="relative z-10 text-center max-w-3xl mx-auto"
-        >
+        <motion.div className="relative z-10 text-center max-w-3xl mx-auto">
           {/* Text protection lightbox */}
           <div className="absolute inset-0 bg-background/40 backdrop-blur-sm rounded-3xl -m-8"></div>
           
@@ -113,7 +110,7 @@ const HomePage: React.FC = () => {
             </span>
           </motion.h1>
           
-          {/* Tagline with enhanced readability */}
+          {/* Updated tagline */}
           <motion.p 
             className="relative text-lg md:text-2xl lg:text-3xl mb-6 md:mb-8 text-foreground/90 font-light z-10"
             initial={{ opacity: 0 }}
@@ -121,26 +118,25 @@ const HomePage: React.FC = () => {
             transition={{ duration: 0.7, delay: 0.6 }}
             style={{ textShadow: '0 1px 4px rgba(0,0,0,0.7)' }}
           >
-            Smarter Trading. Every Tool You'll Ever Need — Reimagined.
+            Advanced Trading Tools: Max Lot Calculator, Real-time Economic Calendar, and Prop Challenge Blueprint
           </motion.p>
           
-          {/* CTA button */}
+          {/* Updated CTA buttons */}
           <motion.div
-            className="relative z-10"
+            className="relative z-10 flex flex-col sm:flex-row gap-4 justify-center items-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.8 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
           >
-            <Button 
-              onClick={scrollToFeatures} 
-              className="group relative px-6 py-3 bg-gradient-to-r from-neon-purple via-neon-blue to-neon-purple bg-size-200 bg-pos-0 hover:bg-pos-100 text-white font-medium text-lg transition-all duration-500 shadow-[0_0_15px_rgba(123,97,255,0.5)] hover:shadow-[0_0_25px_rgba(123,97,255,0.7)]"
-              size="lg"
-            >
-              Explore PipCraft
-              <ArrowRight className="ml-2 h-5 w-5 inline transition-transform duration-300 group-hover:translate-x-1" />
-            </Button>
+            <Link to="/max-lot-size">
+              <Button 
+                className="group relative px-6 py-3 bg-gradient-to-r from-neon-purple via-neon-blue to-neon-purple bg-size-200 bg-pos-0 hover:bg-pos-100 text-white font-medium text-lg transition-all duration-500 shadow-[0_0_15px_rgba(123,97,255,0.5)] hover:shadow-[0_0_25px_rgba(123,97,255,0.7)]"
+                size="lg"
+              >
+                Try Max Lot Calculator
+                <Scale className="ml-2 h-5 w-5 inline" />
+              </Button>
+            </Link>
           </motion.div>
         </motion.div>
         
@@ -162,23 +158,8 @@ const HomePage: React.FC = () => {
 
       <BookmarkButtons />
 
-      <section id="features" className="py-16 md:py-24 px-4 relative">
-        <div className="container max-w-7xl mx-auto">
-          <motion.h2 
-            className="text-3xl md:text-4xl font-bold mb-10 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            Trading Tools <span className="text-primary">Reimagined</span>
-          </motion.h2>
-
-          <FeatureGrid />
-        </div>
-      </section>
-
-      <section className="py-16 md:py-24 px-4 relative">
+      {/* Featured Tools Section */}
+      <section className="py-16 md:py-24 px-4 relative bg-gradient-to-b from-background to-background/95">
         <div className="container max-w-7xl mx-auto">
           <motion.h2 
             className="text-3xl md:text-4xl font-bold mb-12 text-center"
@@ -187,10 +168,46 @@ const HomePage: React.FC = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            PipCraft <span className="text-primary">Community</span>
+            Professional <span className="text-primary">Trading Tools</span>
           </motion.h2>
-          
-          <MetricsWall />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Max Lot Size Calculator Card */}
+            <Link to="/max-lot-size">
+              <motion.div 
+                className="p-6 rounded-xl border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-card"
+                whileHover={{ scale: 1.02 }}
+              >
+                <Scale className="h-8 w-8 mb-4 text-neon-blue" />
+                <h3 className="text-xl font-semibold mb-3">Max Lot Size Calculator</h3>
+                <p className="text-muted-foreground">Calculate optimal position sizes based on your account equity and leverage for safer trading.</p>
+              </motion.div>
+            </Link>
+
+            {/* Economic Calendar Card */}
+            <Link to="/economic-calendar">
+              <motion.div 
+                className="p-6 rounded-xl border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-card"
+                whileHover={{ scale: 1.02 }}
+              >
+                <Calendar className="h-8 w-8 mb-4 text-neon-green" />
+                <h3 className="text-xl font-semibold mb-3">Economic Calendar</h3>
+                <p className="text-muted-foreground">Stay ahead of market-moving events with our real-time economic calendar and event tracker.</p>
+              </motion.div>
+            </Link>
+
+            {/* Challenge Blueprint Card */}
+            <Link to="/challenge-blueprint">
+              <motion.div 
+                className="p-6 rounded-xl border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-card"
+                whileHover={{ scale: 1.02 }}
+              >
+                <ClipboardCheck className="h-8 w-8 mb-4 text-neon-purple" />
+                <h3 className="text-xl font-semibold mb-3">Challenge Blueprint</h3>
+                <p className="text-muted-foreground">Master your prop firm challenge with our comprehensive planning and tracking tools.</p>
+              </motion.div>
+            </Link>
+          </div>
         </div>
       </section>
 
