@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Calculators from "./pages/Calculators";
 import HomePage from "./pages/HomePage";
+import MaxLotSize from "./pages/MaxLotSize";
 
 const queryClient = new QueryClient();
 
@@ -28,7 +29,7 @@ const App = () => (
             <Route path="/session-clock" element={<Index activeSection="session-clock" />} />
             <Route path="/currency-heatmap" element={<Index activeSection="currency-heatmap" />} />
             <Route path="/risk-management" element={<Index activeSection="risk-management" />} />
-            <Route path="/max-lot-size" element={<Index activeSection="max-lot-size" />} />
+            <Route path="/max-lot-size" element={<MaxLotSize />} />
             <Route path="/trade-journal" element={<Index activeSection="trade-journal" />} />
             <Route path="/daily-trade-tools" element={<Index activeSection="daily-trade-tools" />} />
             <Route path="/challenge-blueprint" element={<Index activeSection="challenge-blueprint" />} />
