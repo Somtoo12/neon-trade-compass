@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 
 // Import home page components
@@ -9,9 +9,10 @@ import ToolShowcase from '@/components/home/ToolShowcase';
 import ToolCategories from '@/components/home/ToolCategories';
 import FeaturedTools from '@/components/home/FeaturedTools';
 import GameCenter from '@/components/home/GameCenter';
-import Footer from '@/components/home/Footer';
+import Footer from '@/components/layout/Footer';
 import ScrollToTop from '@/components/home/ScrollToTop';
 import BookmarkButtons from '@/components/home/BookmarkButtons';
+import TradingArticle from '@/components/home/TradingArticle';
 
 const HomePage: React.FC = () => {
   return (
@@ -19,25 +20,13 @@ const HomePage: React.FC = () => {
       <ScrollToTop />
       <AppHeader />
       
-      {/* Hero Section - Redesigned with space theme */}
       <HeroSection />
-
-      {/* Tool Showcase - Auto-scrolling Banner */}
       <ToolShowcase />
-
-      {/* Bookmark Functionality */}
       <BookmarkButtons />
-
-      {/* Tool Categories */}
       <ToolCategories />
-
-      {/* Featured Tools */}
       <FeaturedTools />
-
-      {/* Game Center Teaser */}
       <GameCenter />
-
-      {/* Footer */}
+      <TradingArticle />
       <Footer />
     </div>
   );
