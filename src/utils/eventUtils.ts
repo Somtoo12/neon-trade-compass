@@ -25,6 +25,45 @@ export interface CalendarEvent {
   currency: string;
 }
 
+// Add sample events for the economic calendar
+export const SAMPLE_EVENTS: CalendarEvent[] = [
+  {
+    id: 1,
+    title: 'Non-Farm Payrolls',
+    time: new Date(Date.now() + 1000 * 60 * 15), // 15 minutes from now
+    impact: 'high',
+    currency: 'USD'
+  },
+  {
+    id: 2,
+    title: 'Interest Rate Decision',
+    time: new Date(Date.now() + 1000 * 60 * 60), // 1 hour from now
+    impact: 'high',
+    currency: 'EUR'
+  },
+  {
+    id: 3,
+    title: 'GDP',
+    time: new Date(Date.now() + 1000 * 60 * 60 * 3), // 3 hours from now
+    impact: 'medium',
+    currency: 'GBP'
+  },
+  {
+    id: 4,
+    title: 'CPI Data',
+    time: new Date(Date.now() + 1000 * 60 * 60 * 6), // 6 hours from now
+    impact: 'medium',
+    currency: 'JPY'
+  },
+  {
+    id: 5,
+    title: 'Unemployment Rate',
+    time: new Date(Date.now() + 1000 * 60 * 60 * 12), // 12 hours from now
+    impact: 'low',
+    currency: 'AUD'
+  }
+];
+
 export const findNextEvent = (events: CalendarEvent[]) => {
   const now = new Date();
   return events
