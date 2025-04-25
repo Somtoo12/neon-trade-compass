@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -266,5 +265,8 @@ const HeroSection: React.FC = () => {
     </div>
   );
 };
+
+// Developer note for images: If you add icons, logos, or screenshots, always compress and set descriptive alt like alt="PipCraft logo".
+// SEO note: The welcome/typerText messages and page content should be reviewed and updated regularly to ensure top Google rankings and prevent duplicate or stale content.
 
 export default HeroSection;

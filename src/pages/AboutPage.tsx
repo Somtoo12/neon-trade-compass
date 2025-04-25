@@ -1,13 +1,18 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import SEO from '@/components/seo';
 
 const AboutPage = () => {
   return (
     <div className="min-h-screen bg-background text-foreground pt-safe">
       <div className="container mx-auto px-4 py-8 max-w-3xl">
+        <SEO 
+          title="About PipCraft – Trader-Built Smart Tools for the Prop Firm Era"
+          description="Learn about PipCraft's mission to deliver free, high-performance forex/crypto tools: risk managers, calculators, journals, and more for prop traders and independent investors."
+          canonical="https://pipcrafts.com/about"
+        />
         <Link to="/" className="inline-block mb-8">
           <Button variant="ghost" size="sm" className="gap-2">
             <ArrowLeft className="h-4 w-4" />

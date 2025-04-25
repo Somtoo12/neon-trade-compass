@@ -1,13 +1,18 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import SEO from '@/components/seo';
 
 const ContactPage = () => {
   return (
     <div className="min-h-screen bg-background text-foreground pt-safe">
       <div className="container mx-auto px-4 py-8 max-w-3xl">
+        <SEO
+          title="Contact PipCraft – Get Fast Support for Forex & Crypto Tools"
+          description="Need assistance with PipCraft calculators, prop firm tools, or risk management? Contact our team and get a quick response. Support for traders is our top priority."
+          canonical="https://pipcrafts.com/contact"
+        />
         <Link to="/" className="inline-block mb-8">
           <Button variant="ghost" size="sm" className="gap-2">
             <ArrowLeft className="h-4 w-4" />

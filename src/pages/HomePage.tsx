@@ -29,9 +29,12 @@ const HomePage: React.FC = () => {
   return (
     <>
       <SEO 
-        title="PipCraft – All-in-One Trading Tools for Forex, Crypto & Futures"
-        description="Trade smarter with PipCraft — your free trading command center featuring pip calculators, risk managers, journals, economic calendars, and more."
+        title="PipCraft – Free Trading Command Center for Forex, Crypto and Futures Traders"
+        description="Discover unique, all-in-one forex, crypto, and futures trading tools: advanced pip calculators, smart risk management, prop firm sizing, journals, and more. Built for ambitious traders."
+        canonical="https://pipcrafts.com/"
       />
+      {/* Developer note: If you add images to this page, compress them and ALWAYS provide meaningful alt text for SEO + accessibility. */}
+      {/* Content last updated: {new Date().toISOString().split('T')[0]} */}
       <div className="min-h-screen bg-background text-foreground overflow-hidden">
         <ScrollToTop />
         <AppHeader />
