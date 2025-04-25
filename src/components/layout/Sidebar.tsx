@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { BarChart, Book, Clock, Gauge, LineChart, PieChart, Scale, Compass, GamepadIcon, Award, CalendarDays } from 'lucide-react';
+import { BarChart, Book, Clock, Gauge, LineChart, PieChart, Scale, Compass, GamepadIcon, Award, CalendarDays, ClipboardCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface SidebarProps {
@@ -17,7 +18,7 @@ interface NavItem {
 const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection }) => {
   const navItems: NavItem[] = [
     { id: 'daily-trade-tools', label: '🧭 Daily Trade Tools', icon: <Compass className="h-5 w-5" />, path: '/daily-trade-tools' },
-    { id: 'challenge-blueprint', label: 'Challenge Blueprint', icon: <Award className="h-5 w-5" />, path: '/challenge-blueprint' },
+    { id: 'challenge-blueprint', label: 'Challenge Blueprint', icon: <ClipboardCheck className="h-5 w-5" />, path: '/challenge-blueprint' },
     { id: 'forex-calculator', label: 'Forex Pip Calculator', icon: <BarChart className="h-5 w-5" />, path: '/forex-calculator' },
     { id: 'crypto-calculator', label: 'Crypto Calculator', icon: <LineChart className="h-5 w-5" />, path: '/crypto-calculator' },
     { id: 'futures-calculator', label: 'Futures Calculator', icon: <PieChart className="h-5 w-5" />, path: '/futures-calculator' },
