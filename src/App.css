@@ -1,4 +1,3 @@
-
 #root {
   max-width: 100%;
   margin: 0 auto;
@@ -122,4 +121,29 @@ html {
 
 .hover-glow:hover {
   box-shadow: 0 0 15px var(--neon-purple);
+}
+
+/* 3D Grid animations */
+.grid-perspective {
+  transform: perspective(1000px) rotateX(60deg);
+  transform-origin: center top;
+}
+
+/* Glass morphism effects */
+.glass {
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Command console effects */
+.console-shadow {
+  box-shadow: 
+    0 0 30px rgba(123, 97, 255, 0.2),
+    inset 0 0 20px rgba(123, 97, 255, 0.1);
+}
+
+/* Enhance button hover states */
+.hover-glow:hover {
+  box-shadow: 0 0 20px var(--neon-purple);
 }
