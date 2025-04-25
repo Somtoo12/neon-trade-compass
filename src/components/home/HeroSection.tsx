@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Music, Calculator, BarChart2, Calendar, BrainCircuit, Clock, LineChart } from 'lucide-react';
+import { ArrowRight, Music, Calculator, BarChart2, Calendar, BrainCircuit, Clock, LineChart, Star } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -176,7 +177,7 @@ const HeroSection: React.FC = () => {
               onClick={showBookmarkInstructions}
               className="w-full sm:w-auto border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm"
             >
-              <star className="mr-2 h-4 w-4" />
+              <Star className="mr-2 h-4 w-4" />
               Bookmark on Desktop
             </Button>
           </div>
