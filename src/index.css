@@ -28,6 +28,9 @@
     --ring: 262.1 83.3% 57.8%;
     --radius: 0.75rem;
     --glow-color: rgba(123, 97, 255, 0.8);
+    --neon-green: #00ffb3;
+    --neon-blue: #00c2ff;
+    --neon-purple: #7b61ff;
   }
   
   :root.light-mode {
@@ -51,6 +54,9 @@
     --input: 240 5.9% 85%;
     --ring: 261 43% 69%; /* Soft purple ring */
     --glow-color: rgba(123, 97, 255, 0.4);
+    --neon-green: #00cc8e;
+    --neon-blue: #0099cc;
+    --neon-purple: #6b50e0;
   }
 
   * {
@@ -150,6 +156,32 @@
   
   .responsive-flex {
     @apply flex flex-col md:flex-row;
+  }
+
+  /* Background position utilities for gradient animations */
+  .bg-pos-0 {
+    background-position: 0% 50%;
+  }
+  
+  .bg-pos-100 {
+    background-position: 100% 50%;
+  }
+  
+  .bg-size-200 {
+    background-size: 200% 200%;
+  }
+
+  /* New glow borders for featured cards */
+  .border-gradient-0 {
+    border-image: linear-gradient(to right, var(--neon-green), var(--neon-blue)) 1;
+  }
+  
+  .border-gradient-1 {
+    border-image: linear-gradient(to right, var(--neon-blue), var(--neon-purple)) 1;
+  }
+  
+  .border-gradient-2 {
+    border-image: linear-gradient(to right, var(--neon-purple), var(--neon-green)) 1;
   }
 }
 
