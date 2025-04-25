@@ -3,6 +3,7 @@ import React from 'react';
 import Sidebar from './Sidebar';
 import MobileNav from './MobileNav';
 import Footer from './Footer';
+import BackButton from './BackButton';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ThemeToggle from '../theme/ThemeToggle';
 
@@ -26,9 +27,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
       {isMobile ? (
         <div className="flex flex-col flex-1 overflow-hidden">
-          {/* Sticky mobile navigation */}
-          <MobileNav activeSection={activeSection} setActiveSection={setActiveSection} />
-          <main className="flex-1 overflow-y-auto p-3 md:p-4 pt-20">
+          {/* Back button and mobile navigation */}
+          <div className="flex items-center justify-between py-2 px-3">
+            <BackButton />
+            <MobileNav activeSection={activeSection} setActiveSection={setActiveSection} />
+          </div>
+          <main className="flex-1 overflow-y-auto p-3 md:p-4 pt-16">
             {children}
           </main>
         </div>
@@ -36,6 +40,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         <div className="flex flex-1 overflow-hidden">
           <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} />
           <main className="flex-1 overflow-y-auto p-4">
+            <div className="mb-4">
+              <BackButton />
+            </div>
             {children}
           </main>
         </div>
