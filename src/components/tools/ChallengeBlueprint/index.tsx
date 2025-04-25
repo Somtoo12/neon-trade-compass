@@ -3,12 +3,15 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
+import { toast } from "@/components/ui/use-toast";
 import TraderInputForm from './TraderInputForm';
 import StrategyBreakdown from './StrategyBreakdown';
 import RiskStyleSelector from './RiskStyleSelector';
 import MiniSimulator from './MiniSimulator';
 import InsightsPanel from './InsightsPanel';
 import ExportTools from './ExportTools';
+import GoalCalculator, { GoalInputs } from './GoalCalculator';
+import PassSummary from './PassSummary';
 
 export type RiskStyle = 'conservative' | 'aggressive';
 export type TraderData = {
@@ -36,13 +39,58 @@ const ChallengeBlueprint: React.FC = () => {
   const [strategyMetrics, setStrategyMetrics] = useState<StrategyMetrics | null>(null);
   const [riskStyle, setRiskStyle] = useState<RiskStyle>('conservative');
   const [activeTab, setActiveTab] = useState('input');
+  const [goalInputs, setGoalInputs] = useState<GoalInputs | null>(null);
+  const [goalResults, setGoalResults] = useState({
+    tradesNeeded: 0,
+    passProbability: 0,
+    requiredWins: 0,
+    dailyTrades: 0
+  });
+  
+  // Load saved data from localStorage on component mount
+  useEffect(() => {
+    const savedRiskStyle = localStorage.getItem('challengeBlueprint_riskStyle');
+    const savedGoalInputs = localStorage.getItem('challengeBlueprint_goalInputs');
+    const savedTraderData = localStorage.getItem('challengeBlueprint_traderData');
+    
+    if (savedRiskStyle) {
+      setRiskStyle(savedRiskStyle as RiskStyle);
+    }
+    
+    if (savedGoalInputs) {
+      try {
+        const parsedInputs = JSON.parse(savedGoalInputs);
+        setGoalInputs(parsedInputs);
+        calculateGoalResults(parsedInputs);
+      } catch (e) {
+        console.error("Error parsing saved goal inputs:", e);
+      }
+    }
+    
+    if (savedTraderData) {
+      try {
+        const parsedData = JSON.parse(savedTraderData);
+        setTraderData(parsedData);
+      } catch (e) {
+        console.error("Error parsing saved trader data:", e);
+      }
+    }
+  }, []);
   
   // Calculate metrics when trader data changes or risk style changes
   useEffect(() => {
     if (traderData) {
       calculateStrategyMetrics(traderData, riskStyle);
+      
+      // Save to local storage
+      localStorage.setItem('challengeBlueprint_traderData', JSON.stringify(traderData));
     }
   }, [traderData, riskStyle]);
+
+  // Save risk style to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem('challengeBlueprint_riskStyle', riskStyle);
+  }, [riskStyle]);
 
   const calculateStrategyMetrics = (data: TraderData, style: RiskStyle) => {
     setIsLoading(true);
@@ -80,7 +128,7 @@ const ChallengeBlueprint: React.FC = () => {
       if (activeTab === 'input') {
         setActiveTab('strategy');
       }
-    }, 1500); // Fake loading delay for UX
+    }, 800); // Reduced loading delay for better UX
   };
   
   const generateEquityCurve = (data: TraderData, style: RiskStyle): {x: number, y: number}[] => {
@@ -112,12 +160,90 @@ const ChallengeBlueprint: React.FC = () => {
     return points;
   };
 
+  const calculateGoalResults = (inputs: GoalInputs) => {
+    setIsLoading(true);
+    
+    setTimeout(() => {
+      // Calculate based on goal inputs
+      const expectedValuePerTrade = (inputs.winRate / 100 * inputs.rewardRiskRatio * inputs.riskPerTrade) - 
+                                    ((100 - inputs.winRate) / 100 * inputs.riskPerTrade);
+      
+      // Calculate trades needed to reach target
+      const tradesNeeded = inputs.targetPercent / expectedValuePerTrade;
+      
+      // Calculate daily trades needed
+      const dailyTrades = Math.ceil(tradesNeeded / inputs.daysRemaining);
+      
+      // Calculate required wins based on probability
+      const requiredWins = Math.ceil(tradesNeeded * (inputs.winRate / 100));
+      
+      // Calculate pass probability based on win rate consistency
+      let passProbability = Math.min(95, 
+        50 + (inputs.winRate - 50) * 1.5 +  // Base on win rate
+        (inputs.rewardRiskRatio - 1) * 10 - // Better R:R improves odds
+        Math.max(0, (2 - inputs.riskPerTrade) * 5) // Lower risk slightly improves odds
+      );
+      
+      // Cap the probability between 1-99%
+      passProbability = Math.max(1, Math.min(99, passProbability));
+      
+      setGoalResults({
+        tradesNeeded: Math.ceil(tradesNeeded),
+        passProbability,
+        requiredWins,
+        dailyTrades
+      });
+      
+      setIsLoading(false);
+      
+      toast({
+        title: "Pass plan calculated",
+        description: `You need about ${Math.ceil(tradesNeeded)} trades with ${requiredWins} wins to reach your target.`,
+        duration: 3000,
+      });
+    }, 500);
+  };
+
   const handleSubmit = (data: TraderData) => {
     setTraderData(data);
   };
 
   const handleRiskStyleChange = (style: RiskStyle) => {
     setRiskStyle(style);
+    
+    // Update goal inputs if they exist
+    if (goalInputs) {
+      const updatedGoalInputs = {
+        ...goalInputs,
+        riskPerTrade: style === 'conservative' ? 0.5 : 2.0
+      };
+      setGoalInputs(updatedGoalInputs);
+      calculateGoalResults(updatedGoalInputs);
+    }
+  };
+  
+  const handleRiskPerTradeChange = (value: number) => {
+    if (goalInputs) {
+      const updatedGoalInputs = {
+        ...goalInputs,
+        riskPerTrade: value
+      };
+      setGoalInputs(updatedGoalInputs);
+      calculateGoalResults(updatedGoalInputs);
+    }
+    
+    if (traderData) {
+      const updatedTraderData = {
+        ...traderData,
+        riskPerTrade: value
+      };
+      setTraderData(updatedTraderData);
+    }
+  };
+
+  const handleGoalCalculate = (inputs: GoalInputs) => {
+    setGoalInputs(inputs);
+    calculateGoalResults(inputs);
   };
 
   return (
@@ -150,11 +276,30 @@ const ChallengeBlueprint: React.FC = () => {
         </TabsList>
         
         <TabsContent value="input">
-          <Card className="border border-border/50 shadow-md bg-card/30 backdrop-blur-sm">
-            <CardContent className="pt-6">
-              <TraderInputForm onSubmit={handleSubmit} />
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="border border-border/50 shadow-md bg-card/30 backdrop-blur-sm">
+              <CardContent className="pt-6">
+                <TraderInputForm onSubmit={handleSubmit} initialData={traderData} />
+              </CardContent>
+            </Card>
+            
+            <div className="space-y-6">
+              <GoalCalculator 
+                onCalculate={handleGoalCalculate}
+                initialData={goalInputs}
+              />
+              
+              {goalInputs && (
+                <PassSummary 
+                  tradesNeeded={goalResults.tradesNeeded}
+                  passProbability={goalResults.passProbability}
+                  requiredWins={goalResults.requiredWins}
+                  dailyTrades={goalResults.dailyTrades}
+                  isLoading={isLoading}
+                />
+              )}
+            </div>
+          </div>
         </TabsContent>
         
         <TabsContent value="strategy">
@@ -172,6 +317,7 @@ const ChallengeBlueprint: React.FC = () => {
                   currentStyle={riskStyle} 
                   onStyleChange={handleRiskStyleChange} 
                   metrics={strategyMetrics}
+                  onRiskPerTradeChange={handleRiskPerTradeChange}
                 />
                 <div className="mt-6">
                   <InsightsPanel />
