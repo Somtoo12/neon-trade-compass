@@ -17,6 +17,7 @@ import CryptoCalculator from "@/components/calculators/CryptoCalculator";
 import FuturesCalculator from "@/components/calculators/FuturesCalculator";
 import TradeJournal from "@/components/calculators/TradeJournal";
 import TraderGameCenter from "./components/games/TraderGameCenter";
+import ChallengeBlueprint from "./components/tools/ChallengeBlueprint";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/risk-management" element={<Index activeSection="risk-management" />} />
             <Route path="/trade-journal" element={<Index activeSection="trade-journal" />} />
             <Route path="/daily-trade-tools" element={<Index activeSection="daily-trade-tools" />} />
+            <Route path="/challenge-blueprint" element={<Index activeSection="challenge-blueprint" />} />
             <Route path="/calculators" element={<Calculators />} />
             <Route path="/trader-games" element={<Index activeSection="trader-games" />} />
             <Route path="*" element={<NotFound />} />
