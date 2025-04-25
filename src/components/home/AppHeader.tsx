@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -10,7 +11,6 @@ import {
   X, 
   Calendar,
   Home,
-  MessageCircle,
   Award
 } from 'lucide-react';
 import ThemeToggle from '@/components/theme/ThemeToggle';
@@ -37,8 +37,6 @@ const AppHeader: React.FC = () => {
     { label: 'Games', icon: <GamepadIcon className="h-4 w-4" />, path: '/trader-games' },
     { label: 'Calendar', icon: <Calendar className="h-4 w-4" />, path: '/daily-trade-tools' },
     { label: 'Tools', icon: <Compass className="h-4 w-4" />, path: '/tools' },
-    { label: 'Promos', icon: <Award className="h-4 w-4" />, path: '/risk-management' },
-    { label: 'Chat', icon: <MessageCircle className="h-4 w-4" />, path: '#' },
   ];
   
   return (
