@@ -4,10 +4,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const BackButton = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const isMobile = useIsMobile();
 
   // Don't show on homepage
   if (location.pathname === '/') {
@@ -23,9 +25,9 @@ const BackButton = () => {
     >
       <Button
         variant="ghost"
-        size="sm"
+        size={isMobile ? "default" : "sm"}
         onClick={() => navigate(-1)}
-        className="gap-2 text-muted-foreground hover:text-foreground hover:bg-accent/10 backdrop-blur-sm"
+        className="gap-2 text-muted-foreground hover:text-foreground hover:bg-accent/10 backdrop-blur-sm min-h-[44px] min-w-[44px]"
       >
         <ArrowLeft className="h-4 w-4" />
         Back

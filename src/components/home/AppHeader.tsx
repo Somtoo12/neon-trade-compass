@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -33,7 +34,7 @@ const AppHeader: React.FC = () => {
   return (
     <>
       <motion.header 
-        className={`fixed top-0 left-0 right-0 z-50 py-3 md:py-4 px-3 md:px-4 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 py-3 md:py-4 px-4 md:px-6 transition-all duration-300 ${
           isScrolled ? 'backdrop-blur-md bg-background/80 shadow-md' : 'bg-transparent'
         }`}
         initial={{ y: -100 }}
@@ -52,7 +53,8 @@ const AppHeader: React.FC = () => {
               <ThemeToggle />
               <button 
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 rounded-md bg-secondary sticky top-4 right-4"
+                className="p-2 rounded-md bg-secondary min-h-[44px] min-w-[44px] flex items-center justify-center"
+                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               >
                 {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
@@ -64,7 +66,7 @@ const AppHeader: React.FC = () => {
                   <Link 
                     key={item.label}
                     to={item.path}
-                    className="flex items-center gap-1.5 text-sm text-foreground/80 hover:text-primary transition-colors px-3 py-1.5 rounded-md hover:bg-primary/10"
+                    className="flex items-center gap-1.5 text-sm text-foreground/80 hover:text-primary transition-colors px-3 py-2 rounded-md hover:bg-primary/10 min-h-[40px]"
                   >
                     {item.icon}
                     {item.label}
@@ -80,19 +82,19 @@ const AppHeader: React.FC = () => {
       <AnimatePresence>
         {isMobile && isMobileMenuOpen && (
           <motion.div 
-            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-md pt-16"
+            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-md pt-16 overflow-y-auto"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
           >
             <div className="container mx-auto p-4">
-              <nav className="flex flex-col gap-3">
+              <nav className="flex flex-col gap-3 pb-safe">
                 {navItems.map((item) => (
                   <Link 
                     key={item.label}
                     to={item.path}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 text-base p-3 rounded-md border border-border/50 hover:bg-primary/5 hover:border-primary/30 transition-colors"
+                    className="flex items-center gap-3 text-base p-4 rounded-md border border-border/50 hover:bg-primary/5 hover:border-primary/30 transition-colors min-h-[44px]"
                   >
                     {item.icon}
                     {item.label}

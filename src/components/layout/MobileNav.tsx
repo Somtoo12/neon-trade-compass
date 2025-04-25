@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { BarChart, Book, Clock, Gauge, LineChart, Menu, PieChart, Scale, Compass, X, GamepadIcon, CalendarDays, ClipboardCheck } from 'lucide-react';
 import ThemeToggle from '../theme/ThemeToggle';
 import { Link, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 interface MobileNavProps {
   activeSection: string;
@@ -49,6 +50,10 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
     setIsOpen(false); // Close the menu when a section is selected
   };
 
+  const toggleAnimations = () => {
+    document.body.classList.toggle('reduce-animations');
+  };
+
   return (
     <>
       <div className={`fixed top-0 left-0 right-0 z-50 glassmorphism border-b border-border/40 shadow-lg transition-all duration-300 ${isScrolled ? 'bg-background/95' : 'bg-background/80'}`}>
@@ -57,6 +62,14 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
             PipCraft
           </Link>
           <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleAnimations}
+              className="text-xs border-accent/30 bg-background/50 backdrop-blur-sm"
+            >
+              Toggle Animations
+            </Button>
             <ThemeToggle />
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -70,7 +83,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
       </div>
 
       {isOpen && (
-        <div className="fixed inset-0 z-40 bg-background/95 backdrop-blur-sm pt-20 overflow-y-auto">
+        <div className="fixed inset-0 z-40 bg-background/95 backdrop-blur-sm pt-20 pb-safe overflow-y-auto">
           <nav className="container px-4 py-6">
             <ul className="space-y-2">
               {navItems.map((item) => (

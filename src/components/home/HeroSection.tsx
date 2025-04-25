@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -84,6 +85,13 @@ const HeroSection: React.FC = () => {
       title: animationsEnabled ? "Animations disabled" : "Animations enabled",
       duration: 2000,
     });
+    
+    // Update body class to control animations globally
+    if (animationsEnabled) {
+      document.body.classList.add('reduce-animations');
+    } else {
+      document.body.classList.remove('reduce-animations');
+    }
   };
   
   const toggleFocusMode = () => {
@@ -114,8 +122,25 @@ const HeroSection: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-[85vh] flex items-center justify-center px-3 md:px-4 overflow-hidden bg-background">
-      <div className="w-full max-w-7xl mx-auto relative z-10">
+    <div className="relative min-h-[85vh] flex items-center justify-center px-4 md:px-6 overflow-hidden bg-background">
+      <div className="w-full max-w-7xl mx-auto relative z-10 pt-16 md:pt-20">
+        {/* Animation Toggle */}
+        <motion.div 
+          className="absolute top-4 right-4 z-20"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+        >
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={toggleAnimations}
+            className="text-xs border-accent/30 bg-background/50 backdrop-blur-sm"
+          >
+            {animationsEnabled ? "Disable" : "Enable"} Animations
+          </Button>
+        </motion.div>
+
         <div className="absolute inset-0 opacity-10" style={{
           backgroundImage: `linear-gradient(to right, var(--neon-purple) 1px, transparent 1px),
             linear-gradient(to bottom, var(--neon-purple) 1px, transparent 1px)`,
@@ -124,9 +149,9 @@ const HeroSection: React.FC = () => {
           transformOrigin: 'center top'
         }} />
 
-        <div className="relative z-20 text-center space-y-4 md:space-y-6">
+        <div className="relative z-20 text-center space-y-4 md:space-y-6 px-4">
           <motion.h1 
-            className="text-3xl md:text-4xl lg:text-7xl font-bold font-poppins tracking-tight"
+            className="text-4xl md:text-5xl lg:text-7xl font-bold font-poppins tracking-tight"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
@@ -136,7 +161,7 @@ const HeroSection: React.FC = () => {
           </motion.h1>
 
           <motion.p 
-            className="text-base md:text-lg text-foreground/80 font-mono max-w-[90%] mx-auto"
+            className="text-base md:text-lg text-foreground/80 font-mono max-w-full md:max-w-[90%] mx-auto break-words"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
@@ -150,21 +175,21 @@ const HeroSection: React.FC = () => {
           </motion.p>
 
           <div className="flex flex-col sm:flex-row justify-center gap-3 px-4">
-            <Link to="/calculators">
+            <Link to="/calculators" className="w-full sm:w-auto">
               <Button 
                 size="lg"
-                className="w-full sm:w-auto bg-gradient-to-r from-[#7C3AED] to-[#6366F1] hover:opacity-90 transition-opacity"
+                className="w-full sm:w-auto bg-gradient-to-r from-[#7C3AED] to-[#6366F1] hover:opacity-90 transition-opacity min-h-[44px]"
               >
                 Explore PipCraft
                 <ArrowRight className="ml-2" />
               </Button>
             </Link>
             
-            <Link to="/focus-mode">
+            <Link to="/focus-mode" className="w-full sm:w-auto">
               <Button
                 variant="outline"
                 size="lg"
-                className="w-full sm:w-auto border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm"
+                className="w-full sm:w-auto border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm min-h-[44px]"
               >
                 <Music className="mr-2" />
                 Focus Mode
@@ -178,7 +203,7 @@ const HeroSection: React.FC = () => {
                     variant="outline"
                     size="lg"
                     onClick={showBookmarkInstructions}
-                    className="hidden md:inline-flex w-full sm:w-auto border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm"
+                    className="hidden md:inline-flex w-full sm:w-auto border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm min-h-[44px]"
                   >
                     <Star className="mr-2 h-4 w-4" />
                     Bookmark on Desktop
@@ -218,11 +243,11 @@ const HeroSection: React.FC = () => {
             </motion.div>
           )}
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 max-w-4xl mx-auto mt-8 px-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto mt-8 px-3">
             {toolGrid.map((tool, index) => (
               <Link to={tool.route} key={tool.name}>
                 <motion.div
-                  className="group relative p-4 md:p-6 rounded-xl backdrop-blur-sm bg-black/20 border border-white/10 transition-all hover:bg-black/30"
+                  className="group relative p-4 md:p-6 rounded-xl backdrop-blur-sm bg-black/20 border border-white/10 transition-all hover:bg-black/30 h-full"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}

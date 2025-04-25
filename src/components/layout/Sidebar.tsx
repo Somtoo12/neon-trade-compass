@@ -1,11 +1,14 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';  // Add Link import
-import { BarChart, Book, Clock, Gauge, LineChart, PieChart, Scale, Calculator, Compass, GamepadIcon, CalendarDays, ClipboardCheck } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { BarChart, Book, Clock, Gauge, LineChart, PieChart, Scale, Calculator, Compass, GamepadIcon, CalendarDays, ClipboardCheck, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface SidebarProps {
   activeSection: string;
   setActiveSection: (section: string) => void;
+  collapsed?: boolean;
+  toggleCollapsed?: () => void;
 }
 
 interface NavItem {
@@ -15,7 +18,12 @@ interface NavItem {
   path: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection }) => {
+const Sidebar: React.FC<SidebarProps> = ({ 
+  activeSection, 
+  setActiveSection, 
+  collapsed = false,
+  toggleCollapsed
+}) => {
   const navItems: NavItem[] = [
     { id: 'forex-calculator', label: 'Forex Pip Calculator', icon: <BarChart className="h-5 w-5" />, path: '/forex-calculator' },
     { id: 'risk-management', label: 'Risk Management', icon: <Scale className="h-5 w-5" />, path: '/risk-management' },
@@ -36,19 +44,37 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection }) =>
   };
 
   return (
-    <div className="w-64 lg:w-72 h-screen sticky top-0 glassmorphism overflow-y-auto p-4 border-r border-border/30">
-      <div className="mb-8">
-        <Link to="/" className="block text-center">  {/* Wrap logo in Link */}
-          <h1 className="text-2xl font-bold font-poppins bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
-            PipCraft
-          </h1>
-        </Link>
-        <div className="text-xs text-center text-muted-foreground mt-1">
-          Smart Tools. No Noise.
-        </div>
+    <div className={`h-screen sticky top-0 glassmorphism overflow-y-auto transition-all duration-300 ${
+      collapsed ? 'w-16' : 'w-64 lg:w-72'
+    } border-r border-border/30`}>
+      <div className="relative">
+        {/* Collapse/Expand Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-2 top-2 rounded-full p-1 h-6 w-6"
+          onClick={toggleCollapsed}
+        >
+          {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+        </Button>
       </div>
       
-      <nav>
+      <div className={`mb-8 p-4 ${collapsed ? 'text-center' : ''}`}>
+        <Link to="/" className="block text-center">
+          <h1 className={`text-2xl font-bold font-poppins bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent ${
+            collapsed ? 'text-xl' : ''
+          }`}>
+            {collapsed ? 'PC' : 'PipCraft'}
+          </h1>
+        </Link>
+        {!collapsed && (
+          <div className="text-xs text-center text-muted-foreground mt-1">
+            Smart Tools. No Noise.
+          </div>
+        )}
+      </div>
+      
+      <nav className="px-2">
         <ul className="space-y-1.5">
           {navItems.map((item) => (
             <li key={item.id}>
@@ -59,11 +85,11 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection }) =>
                   activeSection === item.id
                     ? 'bg-accent/20 text-accent neon-border neon-purple-glow'
                     : 'hover:bg-secondary text-foreground/80 hover:text-foreground'
-                }`}
+                } ${collapsed ? 'justify-center' : ''}`}
                 aria-selected={activeSection === item.id}
               >
                 {item.icon}
-                <span className="text-sm">{item.label}</span>
+                {!collapsed && <span className="text-sm">{item.label}</span>}
               </Link>
             </li>
           ))}
