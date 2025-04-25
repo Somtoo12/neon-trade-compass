@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
-import { Shield, Flame, HelpCircle } from 'lucide-react';
+import { Shield, Gauge, Flame, HelpCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import {
   Tooltip,
@@ -27,14 +27,20 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
 }) => {
   // Calculate risk adjusted metrics
   const conservativeRisk = 0.5;
+  const balancedRisk = 1.0;
   const aggressiveRisk = 2.0;
-  const currentRisk = currentStyle === 'conservative' ? conservativeRisk : aggressiveRisk;
+  
+  let currentRisk = balancedRisk;
+  if (currentStyle === 'conservative') currentRisk = conservativeRisk;
+  if (currentStyle === 'aggressive') currentRisk = aggressiveRisk;
   
   const conservativeProbability = Math.min(99, metrics.passProbability + 5).toFixed(0);
+  const balancedProbability = metrics.passProbability.toFixed(0);
   const aggressiveProbability = Math.max(1, metrics.passProbability - 15).toFixed(0);
   
-  const conservativeDays = Math.round(metrics.tradesNeeded / 2);
-  const aggressiveDays = Math.round(metrics.tradesNeeded / 4);
+  const conservativeDays = Math.round(metrics.tradesNeeded / 1.5);
+  const balancedDays = Math.round(metrics.tradesNeeded / 2);
+  const aggressiveDays = Math.round(metrics.tradesNeeded / 3);
 
   const handleRiskSliderChange = (values: number[]) => {
     if (onRiskPerTradeChange) {
@@ -47,26 +53,28 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
       <CardContent className="p-5">
         <h3 className="text-lg font-semibold mb-2">Choose Risk Style</h3>
         <p className="text-sm text-muted-foreground mb-4">
-          Choose your trading risk style below to see your suggested strategy.
+          Select your trading risk style to see your custom strategy.
         </p>
         
-        <div className="flex space-x-4 mb-6">
+        <div className="grid grid-cols-3 gap-2 mb-6">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button
+                <motion.button
                   onClick={() => onStyleChange('conservative')}
-                  className={`flex flex-1 flex-col items-center p-4 rounded-lg border transition-all ${
+                  className={`flex flex-col items-center p-3 rounded-lg border transition-all ${
                     currentStyle === 'conservative'
                       ? 'border-accent shadow-[0_0_15px_rgba(123,97,255,0.5)] bg-accent/10'
                       : 'border-border/50 bg-secondary/30 hover:bg-secondary/50'
                   }`}
+                  whileHover={{ scale: 1.03 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  <Shield className={`h-6 w-6 ${
+                  <Shield className={`h-5 w-5 ${
                     currentStyle === 'conservative' ? 'text-accent' : 'text-foreground/70'
                   }`} />
-                  <span className="mt-2 font-medium">Conservative</span>
-                </button>
+                  <span className="mt-1 text-sm font-medium">Conservative</span>
+                </motion.button>
               </TooltipTrigger>
               <TooltipContent>
                 <p>Lower risk per trade (0.25% to 0.5%). Slower but safer path to pass.</p>
@@ -77,22 +85,49 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button
+                <motion.button
+                  onClick={() => onStyleChange('balanced')}
+                  className={`flex flex-col items-center p-3 rounded-lg border transition-all ${
+                    currentStyle === 'balanced'
+                      ? 'border-accent shadow-[0_0_15px_rgba(123,97,255,0.5)] bg-accent/10'
+                      : 'border-border/50 bg-secondary/30 hover:bg-secondary/50'
+                  }`}
+                  whileHover={{ scale: 1.03 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Gauge className={`h-5 w-5 ${
+                    currentStyle === 'balanced' ? 'text-accent' : 'text-foreground/70'
+                  }`} />
+                  <span className="mt-1 text-sm font-medium">Balanced</span>
+                </motion.button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Moderate risk per trade (0.75% to 1.25%). Balanced approach between safety and speed.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <motion.button
                   onClick={() => onStyleChange('aggressive')}
-                  className={`flex flex-1 flex-col items-center p-4 rounded-lg border transition-all ${
+                  className={`flex flex-col items-center p-3 rounded-lg border transition-all ${
                     currentStyle === 'aggressive'
                       ? 'border-accent shadow-[0_0_15px_rgba(123,97,255,0.5)] bg-accent/10'
                       : 'border-border/50 bg-secondary/30 hover:bg-secondary/50'
                   }`}
+                  whileHover={{ scale: 1.03 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  <Flame className={`h-6 w-6 ${
+                  <Flame className={`h-5 w-5 ${
                     currentStyle === 'aggressive' ? 'text-accent' : 'text-foreground/70'
                   }`} />
-                  <span className="mt-2 font-medium">Aggressive</span>
-                </button>
+                  <span className="mt-1 text-sm font-medium">Aggressive</span>
+                </motion.button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Higher risk per trade (1% to 2%). Faster pass potential, but higher drawdown risk.</p>
+                <p>Higher risk per trade (1.5% to 2.5%). Faster pass potential, but higher drawdown risk.</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -110,7 +145,9 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
               <div className="text-sm mt-1">
                 {currentStyle === 'conservative' 
                   ? "Lower risk with higher consistency. Best for careful traders aiming to pass steadily."
-                  : "Higher risk, faster challenge pace. Best for confident traders targeting quick results."
+                  : currentStyle === 'balanced'
+                    ? "Balanced approach with moderate risk. Good for most traders seeking reliable results."
+                    : "Higher risk, faster challenge pace. Best for confident traders targeting quick results."
                 }
               </div>
             </div>
@@ -132,11 +169,11 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
                 </TooltipProvider>
               </div>
               <div className="text-xl font-semibold">
-                {currentStyle === 'conservative' ? conservativeRisk : aggressiveRisk}% per trade
+                {currentRisk}% per trade
               </div>
               <div className="mt-3">
                 <Slider
-                  value={[currentStyle === 'conservative' ? conservativeRisk : aggressiveRisk]}
+                  value={[currentRisk]}
                   max={3}
                   min={0.25}
                   step={0.25}
@@ -152,14 +189,22 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
             <div className="p-3 bg-secondary/30 rounded-lg">
               <div className="text-sm font-medium">Win/Loss Buffer</div>
               <div className="text-xl font-semibold">
-                {currentStyle === 'conservative' ? conservativeDays : aggressiveDays} trades
+                {currentStyle === 'conservative' 
+                  ? conservativeDays 
+                  : currentStyle === 'balanced' 
+                    ? balancedDays 
+                    : aggressiveDays} trades
               </div>
             </div>
             
             <div className="p-3 bg-secondary/30 rounded-lg">
               <div className="text-sm font-medium">Pass Probability</div>
               <div className="text-xl font-semibold">
-                {currentStyle === 'conservative' ? conservativeProbability : aggressiveProbability}%
+                {currentStyle === 'conservative' 
+                  ? conservativeProbability 
+                  : currentStyle === 'balanced' 
+                    ? balancedProbability 
+                    : aggressiveProbability}%
               </div>
             </div>
 
@@ -173,7 +218,9 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
               <div className="text-sm mt-1">
                 {currentStyle === 'conservative' 
                   ? `With conservative risk, you'll need approximately ${Math.ceil(conservativeDays / 3)} wins in ${conservativeDays} trades to stay on track.`
-                  : `With aggressive risk, you'll need approximately ${Math.ceil(aggressiveDays / 2)} wins in ${aggressiveDays} trades to reach your target.`
+                  : currentStyle === 'balanced'
+                    ? `With balanced risk, you'll need approximately ${Math.ceil(balancedDays / 2.5)} wins in ${balancedDays} trades to maintain progress.`
+                    : `With aggressive risk, you'll need approximately ${Math.ceil(aggressiveDays / 2)} wins in ${aggressiveDays} trades to reach your target quickly.`
                 }
               </div>
             </motion.div>

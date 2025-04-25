@@ -13,7 +13,7 @@ import ExportTools from './ExportTools';
 import GoalCalculator, { GoalInputs } from './GoalCalculator';
 import PassSummary from './PassSummary';
 
-export type RiskStyle = 'conservative' | 'aggressive';
+export type RiskStyle = 'conservative' | 'balanced' | 'aggressive';
 export type TraderData = {
   accountSize: number;
   profitTarget: number;
@@ -22,6 +22,8 @@ export type TraderData = {
   riskRewardRatio: number;
   riskPerTrade: number;
   tradesPerDay: number;
+  tradingStrategy?: string;
+  isAccelerated?: boolean;
 };
 
 export type StrategyMetrics = {
@@ -37,7 +39,7 @@ const ChallengeBlueprint: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [traderData, setTraderData] = useState<TraderData | null>(null);
   const [strategyMetrics, setStrategyMetrics] = useState<StrategyMetrics | null>(null);
-  const [riskStyle, setRiskStyle] = useState<RiskStyle>('conservative');
+  const [riskStyle, setRiskStyle] = useState<RiskStyle>('balanced');
   const [activeTab, setActiveTab] = useState('input');
   const [goalInputs, setGoalInputs] = useState<GoalInputs | null>(null);
   const [goalResults, setGoalResults] = useState({
@@ -97,8 +99,10 @@ const ChallengeBlueprint: React.FC = () => {
     
     // Simulating calculation delay
     setTimeout(() => {
-      // Example calculation (these would be more sophisticated in a real app)
-      const multiplier = style === 'conservative' ? 1.2 : 0.8; // Adjust based on risk style
+      // Apply different multipliers based on risk style
+      let multiplier = 1.0; // balanced
+      if (style === 'conservative') multiplier = 1.2;
+      if (style === 'aggressive') multiplier = 0.8;
       
       const tradesNeeded = Math.ceil((data.profitTarget / 100 * data.accountSize) / 
         (data.winRate / 100 * data.riskRewardRatio * data.riskPerTrade / 100 * data.accountSize - 
@@ -108,7 +112,12 @@ const ChallengeBlueprint: React.FC = () => {
       const dailyTargetPercent = dailyTargetAmount / data.accountSize * 100;
       
       const drawdownRisk = data.riskPerTrade * Math.sqrt(tradesNeeded) / 10 * multiplier;
-      const passProbability = Math.min(98, 100 - drawdownRisk * 2);
+      
+      // Adjust probability based on risk style and data.isAccelerated
+      let passProbability = Math.min(98, 100 - drawdownRisk * 2);
+      if (data.isAccelerated) {
+        passProbability = Math.max(30, passProbability - 15); // Higher risk with accelerated challenge
+      }
       
       // Generate mock equity curve data
       const equityCurveData = generateEquityCurve(data, style);
@@ -135,7 +144,11 @@ const ChallengeBlueprint: React.FC = () => {
     const points = [];
     let equity = 100; // Start at 100%
     const daysPerPoint = Math.max(1, Math.floor(data.passDays / 20));
-    const volatility = style === 'conservative' ? 0.5 : 1.2;
+    
+    // Adjust volatility based on risk style
+    let volatility = 0.8; // balanced
+    if (style === 'conservative') volatility = 0.5;
+    if (style === 'aggressive') volatility = 1.2;
     
     for (let i = 0; i <= data.passDays; i += daysPerPoint) {
       // Add some randomness to make it look realistic
@@ -213,12 +226,28 @@ const ChallengeBlueprint: React.FC = () => {
     
     // Update goal inputs if they exist
     if (goalInputs) {
+      let riskValue = 1.0; // balanced
+      if (style === 'conservative') riskValue = 0.5;
+      if (style === 'aggressive') riskValue = 2.0;
+      
       const updatedGoalInputs = {
         ...goalInputs,
-        riskPerTrade: style === 'conservative' ? 0.5 : 2.0
+        riskPerTrade: riskValue
       };
       setGoalInputs(updatedGoalInputs);
       calculateGoalResults(updatedGoalInputs);
+    }
+    
+    if (traderData) {
+      let riskValue = 1.0; // balanced
+      if (style === 'conservative') riskValue = 0.5;
+      if (style === 'aggressive') riskValue = 2.0;
+      
+      const updatedTraderData = {
+        ...traderData,
+        riskPerTrade: riskValue
+      };
+      setTraderData(updatedTraderData);
     }
   };
   
@@ -255,24 +284,24 @@ const ChallengeBlueprint: React.FC = () => {
       >
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
-            Challenge Blueprint
+            Challenge Masterplan
           </h1>
           <div className="text-sm px-3 py-1 bg-accent/10 border border-accent/30 rounded-full">
-            Prop Pass Planner
+            Prop Pass Strategist
           </div>
         </div>
         
         <p className="text-muted-foreground mb-8">
-          Design a realistic plan to pass any prop firm challenge based on your trading performance data.
+          Design a realistic strategy to pass any prop firm challenge based on your trading performance data.
         </p>
       </motion.div>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid grid-cols-4 mb-8">
-          <TabsTrigger value="input">Trader Input</TabsTrigger>
-          <TabsTrigger value="strategy" disabled={!strategyMetrics}>Strategy</TabsTrigger>
-          <TabsTrigger value="simulator" disabled={!strategyMetrics}>Simulator</TabsTrigger>
-          <TabsTrigger value="export" disabled={!strategyMetrics}>Export</TabsTrigger>
+          <TabsTrigger value="input">Trader Profile</TabsTrigger>
+          <TabsTrigger value="strategy" disabled={!strategyMetrics}>Strategy Blueprint</TabsTrigger>
+          <TabsTrigger value="simulator" disabled={!strategyMetrics}>Adaptive Simulator</TabsTrigger>
+          <TabsTrigger value="export" disabled={!strategyMetrics}>Export & Review</TabsTrigger>
         </TabsList>
         
         <TabsContent value="input">
@@ -349,7 +378,7 @@ const ChallengeBlueprint: React.FC = () => {
       </Tabs>
       
       <div className="mt-12 text-xs text-center text-muted-foreground">
-        <p>This blueprint is for educational use only. PipCraft is not responsible for trading outcomes.</p>
+        <p>This masterplan is for educational use only. PipCraft is not responsible for trading outcomes.</p>
       </div>
     </div>
   );

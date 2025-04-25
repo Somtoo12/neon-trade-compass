@@ -4,7 +4,8 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { ClipboardCheck, Flag } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { ClipboardCheck, Flag, HelpCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface GoalCalculatorProps {
@@ -45,11 +46,15 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
       [name]: numValue
     }));
 
-    // Auto-update calculations when user inputs change
-    onCalculate({
-      ...inputs,
-      [name]: numValue
-    });
+    // Auto-update calculations when user inputs change - debounced
+    const debounceTimer = setTimeout(() => {
+      onCalculate({
+        ...inputs,
+        [name]: numValue
+      });
+    }, 500);
+    
+    return () => clearTimeout(debounceTimer);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -71,10 +76,30 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <motion.form 
+          onSubmit={handleSubmit} 
+          className="space-y-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="targetPercent">Target (%)</Label>
+              <div className="flex items-center">
+                <Label htmlFor="targetPercent">Target (%)</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="ml-1">
+                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>The profit target percentage you need to reach</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <Input
                 id="targetPercent"
                 name="targetPercent"
@@ -88,7 +113,21 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="daysRemaining">Days Remaining</Label>
+              <div className="flex items-center">
+                <Label htmlFor="daysRemaining">Days Remaining</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="ml-1">
+                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Number of days left in your challenge</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <Input
                 id="daysRemaining"
                 name="daysRemaining"
@@ -101,7 +140,21 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="riskPerTrade">Risk Per Trade (%)</Label>
+              <div className="flex items-center">
+                <Label htmlFor="riskPerTrade">Risk Per Trade (%)</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="ml-1">
+                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>This is your risk % per trade, not the prop firm limit</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <Input
                 id="riskPerTrade"
                 name="riskPerTrade"
@@ -115,7 +168,21 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="winRate">Win Rate (%)</Label>
+              <div className="flex items-center">
+                <Label htmlFor="winRate">Win Rate (%)</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="ml-1">
+                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Your average trading win percentage</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <Input
                 id="winRate"
                 name="winRate"
@@ -128,7 +195,21 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
               />
             </div>
             <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="rewardRiskRatio">Reward-to-Risk Ratio</Label>
+              <div className="flex items-center">
+                <Label htmlFor="rewardRiskRatio">Reward-to-Risk Ratio</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="ml-1">
+                        <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Average reward:risk ratio (e.g. 1.5 means wins are 1.5x your losses)</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <Input
                 id="rewardRiskRatio"
                 name="rewardRiskRatio"
@@ -148,6 +229,7 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
+            whileHover={{ scale: 1.02 }}
           >
             <Button 
               type="submit" 
@@ -157,7 +239,7 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
               Calculate Pass Strategy
             </Button>
           </motion.div>
-        </form>
+        </motion.form>
       </CardContent>
     </Card>
   );

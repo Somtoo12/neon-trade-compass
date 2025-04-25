@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { motion } from 'framer-motion';
-import { CheckCircle, AlertTriangle, TrendingUp } from 'lucide-react';
+import { CheckCircle, AlertTriangle, TrendingUp, Gauge } from 'lucide-react';
 
 interface PassSummaryProps {
   tradesNeeded: number;
@@ -40,12 +40,22 @@ const PassSummary: React.FC<PassSummaryProps> = ({
             transition={{ duration: 0.4 }}
           >
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-secondary/30 p-3 rounded-lg">
+              <motion.div 
+                className="bg-secondary/30 p-3 rounded-lg"
+                initial={{ y: 10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.1 }}
+              >
                 <div className="text-sm text-muted-foreground">Total Trades Needed</div>
                 <div className="text-xl font-semibold mt-1">{Math.ceil(tradesNeeded)}</div>
-              </div>
+              </motion.div>
               
-              <div className="bg-secondary/30 p-3 rounded-lg">
+              <motion.div 
+                className="bg-secondary/30 p-3 rounded-lg"
+                initial={{ y: 10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
                 <div className="text-sm text-muted-foreground">Pass Probability</div>
                 <div className="text-xl font-semibold mt-1 flex items-center">
                   {passProbability.toFixed(0)}%
@@ -57,7 +67,7 @@ const PassSummary: React.FC<PassSummaryProps> = ({
                     <AlertTriangle className="h-4 w-4 text-red-500 ml-1" />
                   )}
                 </div>
-              </div>
+              </motion.div>
             </div>
             
             <motion.div
@@ -66,11 +76,16 @@ const PassSummary: React.FC<PassSummaryProps> = ({
               transition={{ delay: 0.2 }}
               className="p-4 bg-accent/10 rounded-lg border border-accent/20"
             >
-              <h4 className="font-medium">Your Pass Strategy</h4>
-              <p className="text-sm mt-2">
-                With your current settings, aim for <span className="font-semibold">{requiredWins} wins</span> in your next {Math.ceil(tradesNeeded)} trades.
-                That's about <span className="font-semibold">{dailyTrades} trades per day</span> to stay on track.
-              </p>
+              <div className="flex items-start">
+                <Gauge className="h-5 w-5 text-accent mr-2 mt-0.5" />
+                <div>
+                  <h4 className="font-medium">Your Pass Strategy</h4>
+                  <p className="text-sm mt-2">
+                    With your current settings, aim for <span className="font-semibold">{requiredWins} wins</span> in your next {Math.ceil(tradesNeeded)} trades.
+                    That's about <span className="font-semibold">{dailyTrades} trades per day</span> to stay on track.
+                  </p>
+                </div>
+              </div>
             </motion.div>
 
             <div className="space-y-2 mt-4">
@@ -78,7 +93,14 @@ const PassSummary: React.FC<PassSummaryProps> = ({
                 <span>Progress to Pass</span>
                 <span className="font-medium">Target: {passProbability.toFixed(0)}% probability</span>
               </div>
-              <Progress value={passProbability} className="h-2" />
+              <motion.div
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                style={{ transformOrigin: 'left' }}
+              >
+                <Progress value={passProbability} className="h-2" />
+              </motion.div>
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>High Risk</span>
                 <span>Low Risk</span>
