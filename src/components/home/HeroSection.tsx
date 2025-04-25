@@ -124,8 +124,6 @@ const HeroSection: React.FC = () => {
         }} />
 
         <div className="relative z-20 text-center space-y-4 md:space-y-6">
-          
-
           <motion.h1 
             className="text-3xl md:text-4xl lg:text-7xl font-bold font-poppins tracking-tight"
             initial={{ opacity: 0 }}
@@ -154,7 +152,7 @@ const HeroSection: React.FC = () => {
             <Link to="/calculators">
               <Button 
                 size="lg"
-                className="w-full sm:w-auto bg-gradient-to-r from-neon-purple via-neon-blue to-neon-purple bg-size-200 bg-pos-0 hover:bg-pos-100 transition-all duration-500"
+                className="w-full sm:w-auto bg-gradient-to-r from-[#7C3AED] to-[#6366F1] hover:opacity-90 transition-opacity"
               >
                 Explore PipCraft
                 <ArrowRight className="ml-2" />
@@ -165,12 +163,22 @@ const HeroSection: React.FC = () => {
               <Button
                 variant="outline"
                 size="lg"
-                className="w-full sm:w-auto border-accent/50 hover:border-accent"
+                className="w-full sm:w-auto border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm"
               >
                 <Music className="mr-2" />
                 Focus Mode
               </Button>
             </Link>
+
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={showBookmarkInstructions}
+              className="w-full sm:w-auto border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm"
+            >
+              <star className="mr-2 h-4 w-4" />
+              Bookmark on Desktop
+            </Button>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 max-w-4xl mx-auto mt-8 px-3">
