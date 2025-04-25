@@ -1,6 +1,6 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
+import SEO from '@/components/shared/SEO';
 
 // Import home page components
 import AppHeader from '@/components/home/AppHeader';
@@ -27,31 +27,37 @@ const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-hidden">
-      <ScrollToTop />
-      <AppHeader />
-      
-      {/* Hero Section - Redesigned with space theme */}
-      <HeroSection />
+    <>
+      <SEO 
+        title="PipCraft – All-in-One Trading Tools for Forex, Crypto & Futures"
+        description="Trade smarter with PipCraft — your free trading command center featuring pip calculators, risk managers, journals, economic calendars, and more."
+      />
+      <div className="min-h-screen bg-background text-foreground overflow-hidden">
+        <ScrollToTop />
+        <AppHeader />
+        
+        {/* Hero Section - Redesigned with space theme */}
+        <HeroSection />
 
-      {/* Tool Showcase - Auto-scrolling Banner */}
-      <ToolShowcase />
+        {/* Tool Showcase - Auto-scrolling Banner */}
+        <ToolShowcase />
 
-      {/* Bookmark Functionality */}
-      <BookmarkButtons />
+        {/* Bookmark Functionality */}
+        <BookmarkButtons />
 
-      {/* Tool Categories */}
-      <ToolCategories />
+        {/* Tool Categories */}
+        <ToolCategories />
 
-      {/* Featured Tools */}
-      <FeaturedTools />
+        {/* Featured Tools */}
+        <FeaturedTools />
 
-      {/* Game Center Teaser */}
-      <GameCenter />
+        {/* Game Center Teaser */}
+        <GameCenter />
 
-      {/* Footer */}
-      <Footer />
-    </div>
+        {/* Footer */}
+        <Footer />
+      </div>
+    </>
   );
 };
 
