@@ -1,7 +1,6 @@
 
-import { Request, Response } from "express";
+// Dynamic sitemap.xml for PipCrafts (public at /sitemap.xml)
 
-// List your important routes here. Add new ones if new pages are published:
 const PAGES = [
   "",
   "calculators",
@@ -21,20 +20,18 @@ const PAGES = [
   "terms",
   "privacy",
   "disclaimer",
-  // Sample blog post route
   "blog/command-center-2025",
   // Add more static/dynamic URLs here as you publish content
 ];
 
-// Set the site url:
 const SITE_URL = "https://pipcrafts.com";
 
-// Vite/Remix/Next.js: this file will be served at /sitemap.xml
-export default function handler(req: Request, res: Response) {
+// Vite/Netlify/Vercel API handler style: return a Response
+export async function GET() {
   const urls = PAGES.map(
     (path) => `
   <url>
-    <loc>${SITE_URL}/${path}</loc>
+    <loc>${SITE_URL}${path ? "/" + path : ""}</loc>
     <changefreq>weekly</changefreq>
     <priority>${path === "" ? "1.0" : "0.8"}</priority>
   </url>`
@@ -46,8 +43,15 @@ export default function handler(req: Request, res: Response) {
 >
   ${urls}
 </urlset>
-`;
+`.trim();
 
-  res.set("Content-Type", "application/xml");
-  res.send(sitemap);
+  return new Response(sitemap, {
+    headers: {
+      "Content-Type": "application/xml",
+      "Cache-Control": "public, max-age=3600",
+    },
+  });
 }
+
+// Optional compatibility export for some platforms:
+export default { GET };
