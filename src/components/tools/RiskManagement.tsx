@@ -1,14 +1,14 @@
 
 import React from 'react';
 import BasicRiskCalculator from '@/components/calculators/BasicRiskCalculator';
-import { Card } from '@/components/ui/card';
+import MaxLotSizeCalculator from '@/components/calculators/MaxLotSizeCalculator';
 
 const RiskManagement: React.FC = () => {
   return (
-    <Card className="p-6">
-      <h2 className="text-xl font-semibold mb-4 font-poppins">Risk Management Tools</h2>
+    <div className="space-y-6">
       <BasicRiskCalculator />
-    </Card>
+      <MaxLotSizeCalculator />
+    </div>
   );
 };
 
