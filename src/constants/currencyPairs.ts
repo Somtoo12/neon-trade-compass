@@ -13,6 +13,7 @@ export const cryptoPairs = [
 
 export const forexPairs = {
   majors: [
+    'XAU/USD', 'XAG/USD', // Metals at the top for easy access
     'EUR/USD', 'GBP/USD', 'USD/JPY', 'USD/CHF', 'USD/CAD', 
     'AUD/USD', 'NZD/USD'
   ],
@@ -21,6 +22,15 @@ export const forexPairs = {
     'AUD/JPY', 'EUR/CAD', 'GBP/CAD', 'CAD/JPY', 'EUR/NZD',
     'GBP/NZD', 'EUR/CHF', 'GBP/CHF', 'AUD/CAD', 'AUD/CHF',
     'AUD/NZD', 'CAD/CHF', 'NZD/JPY', 'NZD/CHF'
+  ],
+  indices: [
+    'US30', 'NAS100', 'SPX500'
+  ],
+  metals: [
+    'XAU/USD', 'XAG/USD'
+  ],
+  crypto: [
+    'BTC/USD', 'ETH/USD'
   ],
   exotics: [
     'EUR/TRY', 'USD/TRY', 'USD/MXN', 'USD/ZAR', 'USD/THB',

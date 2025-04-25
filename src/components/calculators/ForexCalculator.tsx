@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -18,8 +17,10 @@ const ForexCalculator: React.FC = () => {
   const [pipValue, setPipValue] = useState(0);
   const [totalPnL, setTotalPnL] = useState(0);
   
-  // Extract all pairs from the forexPairs object correctly
   const allPairs = [
+    ...(forexPairs.metals || []),
+    ...(forexPairs.indices || []),
+    ...(forexPairs.crypto || []),
     ...(forexPairs.majors || []),
     ...(forexPairs.minors || []),
     ...(forexPairs.exotics || [])
@@ -27,6 +28,15 @@ const ForexCalculator: React.FC = () => {
   
   const [searchTerm, setSearchTerm] = useState('');
   const filteredPairs = {
+    metals: forexPairs.metals ? forexPairs.metals.filter(pair => 
+      pair.toLowerCase().includes(searchTerm.toLowerCase())
+    ) : [],
+    indices: forexPairs.indices ? forexPairs.indices.filter(pair => 
+      pair.toLowerCase().includes(searchTerm.toLowerCase())
+    ) : [],
+    crypto: forexPairs.crypto ? forexPairs.crypto.filter(pair => 
+      pair.toLowerCase().includes(searchTerm.toLowerCase())
+    ) : [],
     majors: forexPairs.majors ? forexPairs.majors.filter(pair => 
       pair.toLowerCase().includes(searchTerm.toLowerCase())
     ) : [],
@@ -106,6 +116,33 @@ const ForexCalculator: React.FC = () => {
                   />
                 </div>
                 <ScrollArea className="h-[200px]">
+                  {filteredPairs.metals && filteredPairs.metals.length > 0 && (
+                    <SelectGroup>
+                      <SelectLabel>Metals</SelectLabel>
+                      {filteredPairs.metals.map((option) => (
+                        <SelectItem key={option} value={option}>{option}</SelectItem>
+                      ))}
+                    </SelectGroup>
+                  )}
+                  
+                  {filteredPairs.indices && filteredPairs.indices.length > 0 && (
+                    <SelectGroup>
+                      <SelectLabel>Indices</SelectLabel>
+                      {filteredPairs.indices.map((option) => (
+                        <SelectItem key={option} value={option}>{option}</SelectItem>
+                      ))}
+                    </SelectGroup>
+                  )}
+                  
+                  {filteredPairs.crypto && filteredPairs.crypto.length > 0 && (
+                    <SelectGroup>
+                      <SelectLabel>Crypto</SelectLabel>
+                      {filteredPairs.crypto.map((option) => (
+                        <SelectItem key={option} value={option}>{option}</SelectItem>
+                      ))}
+                    </SelectGroup>
+                  )}
+                  
                   {filteredPairs.majors && filteredPairs.majors.length > 0 && (
                     <SelectGroup>
                       <SelectLabel>Major Pairs</SelectLabel>
