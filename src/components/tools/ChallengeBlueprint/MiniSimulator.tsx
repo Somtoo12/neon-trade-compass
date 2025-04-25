@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { LineChart } from '@/components/ui/chart';
+import { ChartContainer } from '@/components/ui/chart';
+import { Line, LineChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ArrowUp, ArrowDown, RefreshCw, BarChart, Undo2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { StrategyMetrics, TraderData, RiskStyle } from './index';
@@ -212,18 +213,42 @@ const MiniSimulator: React.FC<MiniSimulatorProps> = ({
             transition={{ duration: 0.5 }}
             className="h-60 mt-4"
           >
-            <LineChart
-              data={chartData}
-              index="name"
-              categories={["equity"]}
-              colors={["#7b61ff"]}
-              valueFormatter={(value) => `$${value.toLocaleString()}`}
+            <ChartContainer
               className="h-full w-full"
-              showLegend={false}
-              showXAxis={true}
-              showYAxis={true}
-              yAxisWidth={65}
-            />
+              config={{
+                equity: {
+                  color: "#7b61ff"
+                }
+              }}
+            >
+              <LineChart
+                data={chartData}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <XAxis 
+                  dataKey="name" 
+                  tick={{ fontSize: 12 }}
+                  height={20}
+                />
+                <YAxis 
+                  tickFormatter={(value) => `$${value.toLocaleString()}`}
+                  tick={{ fontSize: 12 }}
+                  width={65}
+                />
+                <Tooltip
+                  formatter={(value: number) => [`$${value.toLocaleString()}`, 'Equity']}
+                  labelFormatter={(label) => `${label}`}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="equity" 
+                  stroke="#7b61ff" 
+                  strokeWidth={2} 
+                  dot={{ r: 3 }} 
+                  activeDot={{ r: 5 }}
+                />
+              </LineChart>
+            </ChartContainer>
           </motion.div>
           
           {/* Trade Stats */}

@@ -2,7 +2,8 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { AreaChart } from '@/components/ui/chart';
+import { ChartContainer } from '@/components/ui/chart';
+import { Area, AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { motion } from 'framer-motion';
 import { Loader2, TrendingUp, AlertTriangle, CheckCircle, Award } from 'lucide-react';
 import { StrategyMetrics, TraderData } from './index';
@@ -60,16 +61,41 @@ const StrategyBreakdown: React.FC<StrategyBreakdownProps> = ({ metrics, traderDa
                 transition={{ duration: 0.5 }}
                 className="h-64 mt-4"
               >
-                <AreaChart
-                  data={chartData}
-                  categories={['equity']}
-                  index="name"
-                  valueFormatter={(value) => `${value.toFixed(1)}%`}
-                  colors={["#7b61ff"]}
+                <ChartContainer
                   className="h-full w-full"
-                  showLegend={false}
-                  startEndOnly={true}
-                />
+                  config={{
+                    equity: {
+                      color: "#7b61ff"
+                    }
+                  }}
+                >
+                  <AreaChart
+                    data={chartData}
+                    margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                  >
+                    <XAxis 
+                      dataKey="name" 
+                      tickFormatter={(value) => value.replace('Day ', '')}
+                      tick={{ fontSize: 12 }}
+                      tickCount={5}
+                    />
+                    <YAxis 
+                      tickFormatter={(value) => `${value.toFixed(0)}%`}
+                      tick={{ fontSize: 12 }}
+                    />
+                    <Tooltip 
+                      formatter={(value: number) => [`${value.toFixed(1)}%`, 'Equity']} 
+                      labelFormatter={(label) => `${label}`}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="equity" 
+                      stroke="#7b61ff" 
+                      fill="#7b61ff" 
+                      fillOpacity={0.3} 
+                    />
+                  </AreaChart>
+                </ChartContainer>
                 <p className="text-xs text-center text-muted-foreground mt-2">
                   Projected Equity Curve ({traderData.passDays} Days)
                 </p>
