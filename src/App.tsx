@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import Calculators from "./pages/Calculators";
 import HomePage from "./pages/HomePage";
 import MaxLotSize from "./pages/MaxLotSize";
+import FocusMode from "./pages/FocusMode";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +22,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/focus-mode" element={<FocusMode />} />
             <Route path="/tools" element={<Index activeSection="daily-trade-tools" />} />
             <Route path="/forex-calculator" element={<Index activeSection="forex-calculator" />} />
             <Route path="/crypto-calculator" element={<Index activeSection="crypto-calculator" />} />

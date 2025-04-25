@@ -21,8 +21,8 @@ const HeroSection: React.FC = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const [typerText, setTyperText] = useState("Loading Pip Calculator...");
-  const [audioPlaying, setAudioPlaying] = useState(false);
   const [animationsEnabled, setAnimationsEnabled] = useState(true);
+  const [audioPlaying, setAudioPlaying] = useState(false);
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -114,7 +114,7 @@ const HeroSection: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-[90vh] flex items-center justify-center px-4 overflow-hidden bg-background">
+    <div className="relative min-h-[85vh] flex items-center justify-center px-4 overflow-hidden bg-background">
       {/* Command console container */}
       <div className="w-full max-w-7xl mx-auto relative z-10">
         {/* Grid background effect */}
@@ -131,7 +131,7 @@ const HeroSection: React.FC = () => {
           }}
         />
 
-        <div className="relative z-20 text-center space-y-8">
+        <div className="relative z-20 text-center space-y-6">
           {/* Badge and title */}
           <div className="space-y-4">
             <motion.div 
@@ -182,37 +182,16 @@ const HeroSection: React.FC = () => {
               </Button>
             </Link>
             
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => {
-                if (!audioRef.current) return;
-                if (audioPlaying) {
-                  audioRef.current.pause();
-                  toast({
-                    title: "Focus Mode Disabled",
-                    description: "Audio playback stopped",
-                  });
-                } else {
-                  audioRef.current.play().catch(() => {
-                    toast({
-                      title: "Playback Error",
-                      description: "Unable to play audio automatically",
-                      variant: "destructive",
-                    });
-                  });
-                  toast({
-                    title: "Focus Mode Enabled",
-                    description: "Playing trading focus playlist",
-                  });
-                }
-                setAudioPlaying(!audioPlaying);
-              }}
-              className="border-accent/50 hover:border-accent"
-            >
-              <Music className="mr-2" />
-              Focus Mode
-            </Button>
+            <Link to="/focus-mode">
+              <Button
+                variant="outline"
+                size="lg"
+                className="border-accent/50 hover:border-accent"
+              >
+                <Music className="mr-2" />
+                Focus Mode
+              </Button>
+            </Link>
             
             {isMobile ? (
               <Button
@@ -267,39 +246,22 @@ const HeroSection: React.FC = () => {
             ))}
           </div>
 
-          {/* Spotify zone */}
-          <div className="mt-8 max-w-md mx-auto">
-            <div className="rounded-xl p-4 backdrop-blur-sm bg-black/20 border border-white/10">
-              <h3 className="text-lg font-medium mb-3">
-                🚀 Trader Focus Soundtrack
-              </h3>
-              <iframe
-                src="https://open.spotify.com/embed/playlist/37i9dQZF1DX8Uebhn9wzrS"
-                width="100%"
-                height="80"
-                frameBorder="0"
-                allow="encrypted-media"
-                className="rounded-lg"
-              />
-            </div>
+          {/* Settings toggle - bottom right */}
+          <div className="absolute bottom-4 right-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setAnimationsEnabled(!animationsEnabled);
+                toast({
+                  title: animationsEnabled ? "Animations disabled" : "Animations enabled",
+                });
+              }}
+              className="text-xs opacity-60 hover:opacity-100"
+            >
+              {animationsEnabled ? "Disable" : "Enable"} Animations
+            </Button>
           </div>
-        </div>
-
-        {/* Settings toggle - bottom right */}
-        <div className="absolute bottom-4 right-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              setAnimationsEnabled(!animationsEnabled);
-              toast({
-                title: animationsEnabled ? "Animations disabled" : "Animations enabled",
-              });
-            }}
-            className="text-xs opacity-60 hover:opacity-100"
-          >
-            {animationsEnabled ? "Disable" : "Enable"} Animations
-          </Button>
         </div>
       </div>
     </div>
