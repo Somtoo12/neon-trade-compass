@@ -1,11 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Music, Calculator, BarChart2, Calendar, BrainCircuit, Clock, LineChart, Star } from 'lucide-react';
+import { ArrowRight, Music, Calculator, BarChart2, Calendar, BrainCircuit, Clock, LineChart, Star, Smartphone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 // Tool grid data
 const toolGrid = [
@@ -171,16 +171,52 @@ const HeroSection: React.FC = () => {
               </Button>
             </Link>
 
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={showBookmarkInstructions}
-              className="w-full sm:w-auto border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm"
-            >
-              <Star className="mr-2 h-4 w-4" />
-              Bookmark on Desktop
-            </Button>
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={showBookmarkInstructions}
+                    className="hidden md:inline-flex w-full sm:w-auto border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm"
+                  >
+                    <Star className="mr-2 h-4 w-4" />
+                    Bookmark on Desktop
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Add PipCraft to your desktop for quick access</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
+
+          {isMobile && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="px-4 mb-4"
+            >
+              <TooltipProvider delayDuration={300}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      onClick={showAddToHomeInstructions}
+                      className="w-full min-h-[44px] border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm animate-pulse"
+                    >
+                      <Smartphone className="mr-2 h-5 w-5" />
+                      Save to Home Screen
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Tap here to save PipCraft on your phone's home screen</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </motion.div>
+          )}
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 max-w-4xl mx-auto mt-8 px-3">
             {toolGrid.map((tool, index) => (
