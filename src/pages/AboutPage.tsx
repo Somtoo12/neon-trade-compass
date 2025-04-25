@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import SEO from '@/components/seo';
+import SEO from '@/components/shared/SEO';
 
 const AboutPage = () => {
   return (
@@ -37,3 +38,4 @@ const AboutPage = () => {
 };
 
 export default AboutPage;
+

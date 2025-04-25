@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import SEO from '@/components/seo';
+import SEO from '@/components/shared/SEO';
 
 const ContactPage = () => {
   return (
@@ -37,3 +38,4 @@ const ContactPage = () => {
 };
 
 export default ContactPage;
+
