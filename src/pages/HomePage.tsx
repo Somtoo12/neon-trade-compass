@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 
 // Import home page components
@@ -14,6 +14,18 @@ import ScrollToTop from '@/components/home/ScrollToTop';
 import BookmarkButtons from '@/components/home/BookmarkButtons';
 
 const HomePage: React.FC = () => {
+  // Force HTTPS for consistent access
+  React.useEffect(() => {
+    if (
+      typeof window !== 'undefined' &&
+      window.location.protocol === 'http:' &&
+      !window.location.hostname.includes('localhost') &&
+      !window.location.hostname.includes('127.0.0.1')
+    ) {
+      window.location.href = window.location.href.replace('http:', 'https:');
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-hidden">
       <ScrollToTop />
