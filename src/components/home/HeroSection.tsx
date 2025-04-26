@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -9,19 +10,18 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 // Tool grid data
 const toolGrid = [
-  { name: 'Pip Calculator', icon: Calculator, route: '/calculators', description: 'Fast forex calculations' },
-  { name: 'Risk Manager', icon: BarChart2, route: '/risk', description: 'Smart position sizing' },
-  { name: 'Max Lot Size', icon: LineChart, route: '/max-lot', description: 'Optimal trade sizing' },
-  { name: 'Calendar', icon: Calendar, route: '/calendar', description: 'Economic events' },
-  { name: 'Blueprint', icon: BrainCircuit, route: '/blueprint', description: 'Challenge planning' },
-  { name: 'Session Clock', icon: Clock, route: '/clock', description: 'Market hours' },
+  { name: 'Pip Calculator', icon: Calculator, description: 'Fast forex calculations' },
+  { name: 'Risk Manager', icon: BarChart2, description: 'Smart position sizing' },
+  { name: 'Max Lot Size', icon: LineChart, description: 'Optimal trade sizing' },
+  { name: 'Calendar', icon: Calendar, description: 'Economic events' },
+  { name: 'Blueprint', icon: BrainCircuit, description: 'Challenge planning' },
+  { name: 'Session Clock', icon: Clock, description: 'Market hours' },
 ];
 
 const HeroSection: React.FC = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const [typerText, setTyperText] = useState("Loading Pip Calculator...");
-  const [animationsEnabled, setAnimationsEnabled] = useState(true);
   const [audioPlaying, setAudioPlaying] = useState(false);
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
 
@@ -78,21 +78,6 @@ const HeroSection: React.FC = () => {
     window.prompt(`Use ${key}+D to bookmark this site in your browser`, document.title);
   };
   
-  const toggleAnimations = () => {
-    setAnimationsEnabled(!animationsEnabled);
-    toast({
-      title: animationsEnabled ? "Animations disabled" : "Animations enabled",
-      duration: 2000,
-    });
-    
-    // Update body class to control animations globally
-    if (animationsEnabled) {
-      document.body.classList.add('reduce-animations');
-    } else {
-      document.body.classList.remove('reduce-animations');
-    }
-  };
-  
   const toggleFocusMode = () => {
     if (!audioRef.current) return;
     
@@ -123,23 +108,6 @@ const HeroSection: React.FC = () => {
   return (
     <div className="relative min-h-[85vh] flex items-center justify-center px-4 md:px-6 overflow-hidden bg-background">
       <div className="w-full max-w-7xl mx-auto relative z-10 pt-16 md:pt-20">
-        {/* Animation Toggle */}
-        <motion.div 
-          className="absolute top-4 right-4 z-20"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-        >
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={toggleAnimations}
-            className="text-xs border-accent/30 bg-background/50 backdrop-blur-sm"
-          >
-            {animationsEnabled ? "Disable" : "Enable"} Animations
-          </Button>
-        </motion.div>
-
         <div className="absolute inset-0 opacity-10" style={{
           backgroundImage: `linear-gradient(to right, var(--neon-purple) 1px, transparent 1px),
             linear-gradient(to bottom, var(--neon-purple) 1px, transparent 1px)`,
@@ -244,20 +212,19 @@ const HeroSection: React.FC = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto mt-8 px-3">
             {toolGrid.map((tool, index) => (
-              <Link to={tool.route} key={tool.name}>
-                <motion.div
-                  className="group relative p-4 md:p-6 rounded-xl backdrop-blur-sm bg-black/20 border border-white/10 transition-all hover:bg-black/30 h-full"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ scale: 1.02 }}
-                >
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-neon-purple/5 to-neon-blue/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <tool.icon className="w-6 h-6 md:w-8 md:h-8 mb-2 md:mb-3 text-accent" />
-                  <h3 className="text-sm md:text-base font-medium mb-1">{tool.name}</h3>
-                  <p className="text-xs md:text-sm text-foreground/60">{tool.description}</p>
-                </motion.div>
-              </Link>
+              <motion.div
+                key={tool.name}
+                className="group relative p-4 md:p-6 rounded-xl backdrop-blur-sm bg-black/20 border border-white/10 transition-all hover:bg-black/30 h-full"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-neon-purple/5 to-neon-blue/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <tool.icon className="w-6 h-6 md:w-8 md:h-8 mb-2 md:mb-3 text-accent" />
+                <h3 className="text-sm md:text-base font-medium mb-1">{tool.name}</h3>
+                <p className="text-xs md:text-sm text-foreground/60">{tool.description}</p>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -265,8 +232,5 @@ const HeroSection: React.FC = () => {
     </div>
   );
 };
-
-// Developer note for images: If you add icons, logos, or screenshots, always compress and set descriptive alt like alt="PipCraft logo".
-// SEO note: The welcome/typerText messages and page content should be reviewed and updated regularly to ensure top Google rankings and prevent duplicate or stale content.
 
 export default HeroSection;
