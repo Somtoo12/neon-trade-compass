@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -105,36 +104,39 @@ const ChallengeBlueprint: React.FC = () => {
     setIsLoading(true);
     
     setTimeout(() => {
-      // Calculate the reward amount based on risk per trade and reward-to-risk ratio
       const rewardAmount = data.riskPerTrade * data.riskRewardRatio;
       
-      // Calculate how many winning trades are needed to hit the profit target
       const targetProfit = data.profitTarget / 100 * data.accountSize;
       const profitPerWin = (rewardAmount / 100) * data.accountSize;
       const winsNeeded = Math.ceil(targetProfit / profitPerWin);
       
-      // Calculate expected trades needed based on win rate
       const tradesNeeded = Math.ceil(winsNeeded / (data.winRate / 100));
       
-      // Apply risk style adjustments
-      let riskMultiplier = 1.0;
-      if (style === 'conservative') riskMultiplier = 0.7;
-      if (style === 'aggressive') riskMultiplier = 1.5;
+      let riskValue: number;
+      if (style === 'conservative') riskValue = 0.5;
+      else if (style === 'balanced') riskValue = 1.5;
+      else riskValue = 3.0;
       
-      // Calculate daily target metrics
+      const updatedData = {
+        ...data,
+        riskPerTrade: riskValue
+      };
+      
       const dailyTargetAmount = (data.profitTarget / 100 * data.accountSize) / data.passDays;
       const dailyTargetPercent = dailyTargetAmount / data.accountSize * 100;
       
-      // Calculate drawdown risk using more sophisticated approach
-      const maxConsecutiveLosses = Math.ceil(Math.log(0.05) / Math.log(1 - data.winRate / 100)); // 5% chance threshold
-      const worstCaseDrawdown = data.riskPerTrade * maxConsecutiveLosses * riskMultiplier;
-      const drawdownRisk = Math.min(worstCaseDrawdown, 15); // Cap at reasonable level
+      const maxConsecutiveLosses = Math.ceil(Math.log(0.05) / Math.log(1 - data.winRate / 100));
+      let worstCaseDrawdown = 0;
       
-      // Calculate pass probability using binomial distribution
+      if (style === 'conservative') worstCaseDrawdown = 0.5 * maxConsecutiveLosses;
+      else if (style === 'balanced') worstCaseDrawdown = 1.5 * maxConsecutiveLosses;
+      else worstCaseDrawdown = 3.0 * maxConsecutiveLosses;
+      
+      const drawdownRisk = Math.min(worstCaseDrawdown, 15);
+      
       const passProbability = calculatePassProbability(data.winRate / 100, tradesNeeded, winsNeeded);
       
-      // Generate equity curve data
-      const equityCurveData = generateEquityCurves(data, style);
+      const equityCurveData = generateEquityCurves(updatedData, style);
       
       setStrategyMetrics({
         tradesNeeded,
@@ -147,6 +149,8 @@ const ChallengeBlueprint: React.FC = () => {
         equityCurveData
       });
       
+      setTraderData(updatedData);
+      
       setIsLoading(false);
       
       if (activeTab === 'input') {
@@ -155,12 +159,9 @@ const ChallengeBlueprint: React.FC = () => {
     }, 800);
   };
 
-  // Calculate pass probability using binomial distribution
   const calculatePassProbability = (winRate: number, trades: number, winsNeeded: number) => {
-    // Simplified implementation of binomial CDF
     let probability = 0;
     
-    // We want P(X ≥ winsNeeded) = 1 - P(X < winsNeeded)
     for (let i = 0; i < winsNeeded; i++) {
       probability += binomialProbability(trades, i, winRate);
     }
@@ -168,13 +169,11 @@ const ChallengeBlueprint: React.FC = () => {
     return Math.min(99, Math.max(1, Math.round((1 - probability) * 100)));
   };
 
-  // Calculate binomial probability mass function
   const binomialProbability = (n: number, k: number, p: number) => {
     const combinations = factorial(n) / (factorial(k) * factorial(n - k));
     return combinations * Math.pow(p, k) * Math.pow(1 - p, n - k);
   };
 
-  // Helper function to calculate factorial
   const factorial = (n: number) => {
     if (n === 0 || n === 1) return 1;
     let result = 1;
@@ -193,12 +192,10 @@ const ChallengeBlueprint: React.FC = () => {
     const bestCurve: {x: number, y: number}[] = [];
     const worstCurve: {x: number, y: number}[] = [];
     
-    // Risk multipliers based on style
     let volatility = 1.0;
     if (style === 'conservative') volatility = 0.6;
     if (style === 'aggressive') volatility = 1.6;
     
-    // Setup initial points
     averageCurve.push({ x: 0, y: 100 });
     bestCurve.push({ x: 0, y: 100 });
     worstCurve.push({ x: 0, y: 100 });
@@ -211,15 +208,10 @@ const ChallengeBlueprint: React.FC = () => {
       (winRate * riskPerTrade * rewardRatio) - ((1 - winRate) * riskPerTrade)
     );
     
-    const stepsPerDay = 1; // How many points to plot per day
+    const stepsPerDay = 1;
     for (let day = 1; day <= data.passDays; day++) {
-      // Average case - follows expected value
       const avgEquity = 100 + (expectedDailyReturn * day);
-      
-      // Best case - 90th percentile performance
       const bestEquity = 100 + (expectedDailyReturn * day * 1.4) + (day * volatility * 0.3);
-      
-      // Worst case - 10th percentile performance
       const worstEquity = 100 + (expectedDailyReturn * day * 0.6) - (day * volatility * 0.4);
       
       if (day % stepsPerDay === 0 || day === data.passDays) {
@@ -229,7 +221,6 @@ const ChallengeBlueprint: React.FC = () => {
       }
     }
     
-    // Ensure final point reaches target
     if (data.passDays > 0) {
       const targetEquity = 100 + data.profitTarget;
       averageCurve[averageCurve.length - 1] = { x: data.passDays, y: targetEquity };
@@ -247,18 +238,14 @@ const ChallengeBlueprint: React.FC = () => {
     setIsLoading(true);
     
     setTimeout(() => {
-      // Calculate reward amount
       const rewardAmount = inputs.riskPerTrade * inputs.rewardRiskRatio;
       
-      // Calculate how many winning trades needed based on profit target
       const winsNeeded = Math.ceil(inputs.targetPercent / rewardAmount);
       
-      // Calculate expected number of trades based on win rate
       const tradesNeeded = Math.ceil(winsNeeded / (inputs.winRate / 100));
       
       const dailyTrades = Math.ceil(tradesNeeded / inputs.daysRemaining);
       
-      // Calculate pass probability using binomial distribution
       const passProbability = calculatePassProbability(inputs.winRate / 100, tradesNeeded, winsNeeded);
       
       setGoalResults({
@@ -287,9 +274,10 @@ const ChallengeBlueprint: React.FC = () => {
     setRiskStyle(style);
     
     if (goalInputs) {
-      let riskValue = 1.0;
+      let riskValue: number;
       if (style === 'conservative') riskValue = 0.5;
-      if (style === 'aggressive') riskValue = 2.0;
+      else if (style === 'balanced') riskValue = 1.5;
+      else riskValue = 3.0;
       
       const updatedGoalInputs = {
         ...goalInputs,
@@ -300,9 +288,10 @@ const ChallengeBlueprint: React.FC = () => {
     }
     
     if (traderData) {
-      let riskValue = 1.0;
+      let riskValue: number;
       if (style === 'conservative') riskValue = 0.5;
-      if (style === 'aggressive') riskValue = 2.0;
+      else if (style === 'balanced') riskValue = 1.5;
+      else riskValue = 3.0;
       
       const updatedTraderData = {
         ...traderData,
@@ -313,15 +302,6 @@ const ChallengeBlueprint: React.FC = () => {
   };
   
   const handleRiskPerTradeChange = (value: number) => {
-    if (goalInputs) {
-      const updatedGoalInputs = {
-        ...goalInputs,
-        riskPerTrade: value
-      };
-      setGoalInputs(updatedGoalInputs);
-      calculateGoalResults(updatedGoalInputs);
-    }
-    
     if (traderData) {
       const updatedTraderData = {
         ...traderData,
@@ -346,31 +326,31 @@ const ChallengeBlueprint: React.FC = () => {
         transition={{ duration: 0.5 }}
       >
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-[#00FEFC] via-[#50FF8D] to-[#FF50CD] bg-clip-text text-transparent font-['Space_Grotesk',sans-serif]">
             Challenge Masterplan
           </h1>
-          <div className="text-sm px-3 py-1 bg-accent/10 border border-accent/30 rounded-full">
-            Prop Pass Strategist
+          <div className="text-sm px-3 py-1 bg-[#00FEFC]/10 border border-[#00FEFC]/30 rounded-full text-[#00FEFC]">
+            Prop Pass Strategist 2050
           </div>
         </div>
         
-        <p className="text-muted-foreground mb-8">
+        <p className="text-[#8A9CB0] mb-8">
           Design a bulletproof strategy to pass any prop firm challenge based on mathematical precision and your trading performance.
         </p>
       </motion.div>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="mb-8">
-          <TabsTrigger value="input" className="text-xs md:text-sm">Trader Profile</TabsTrigger>
-          <TabsTrigger value="strategy" disabled={!strategyMetrics} className="text-xs md:text-sm">Strategy Blueprint</TabsTrigger>
-          <TabsTrigger value="simulator" disabled={!strategyMetrics} className="text-xs md:text-sm">Adaptive Simulator</TabsTrigger>
-          <TabsTrigger value="probability" disabled={!strategyMetrics} className="text-xs md:text-sm">Probability Engine</TabsTrigger>
-          <TabsTrigger value="export" disabled={!strategyMetrics} className="text-xs md:text-sm">Export & Review</TabsTrigger>
+        <TabsList className="mb-8 bg-[#0F1A2A] border border-[#00FEFC]/20">
+          <TabsTrigger value="input" className="text-xs md:text-sm data-[state=active]:bg-[#00FEFC]/20 data-[state=active]:text-[#00FEFC]">Trader Profile</TabsTrigger>
+          <TabsTrigger value="strategy" disabled={!strategyMetrics} className="text-xs md:text-sm data-[state=active]:bg-[#00FEFC]/20 data-[state=active]:text-[#00FEFC]">Strategy Blueprint</TabsTrigger>
+          <TabsTrigger value="simulator" disabled={!strategyMetrics} className="text-xs md:text-sm data-[state=active]:bg-[#00FEFC]/20 data-[state=active]:text-[#00FEFC]">Adaptive Simulator</TabsTrigger>
+          <TabsTrigger value="probability" disabled={!strategyMetrics} className="text-xs md:text-sm data-[state=active]:bg-[#00FEFC]/20 data-[state=active]:text-[#00FEFC]">Probability Engine</TabsTrigger>
+          <TabsTrigger value="export" disabled={!strategyMetrics} className="text-xs md:text-sm data-[state=active]:bg-[#00FEFC]/20 data-[state=active]:text-[#00FEFC]">Export Blueprint</TabsTrigger>
         </TabsList>
         
         <TabsContent value="input">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="border border-border/50 shadow-md bg-card/30 backdrop-blur-sm">
+            <Card className="border border-[#00FEFC]/20 shadow-lg bg-[#0F1A2A]/80 backdrop-blur-lg">
               <CardContent className="pt-6">
                 <TraderInputForm onSubmit={handleSubmit} initialData={traderData} />
               </CardContent>
@@ -452,7 +432,7 @@ const ChallengeBlueprint: React.FC = () => {
         </TabsContent>
       </Tabs>
       
-      <div className="mt-12 text-xs text-center text-muted-foreground">
+      <div className="mt-12 text-xs text-center text-[#8A9CB0]">
         <p>This masterplan is for educational use only. PipCraft is not responsible for trading outcomes.</p>
       </div>
     </div>
