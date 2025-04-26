@@ -1,5 +1,5 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -31,6 +31,7 @@
     --neon-green: #00ffb3;
     --neon-blue: #00c2ff;
     --neon-purple: #7b61ff;
+    --pulse-color: rgba(0, 255, 136, 0.7);
   }
   
   :root.light-mode {
@@ -65,17 +66,16 @@
   }
   
   html, body {
-    @apply bg-background text-foreground overflow-x-hidden;
-    font-family: 'Inter', sans-serif;
+    @apply bg-tactical-background text-foreground overflow-x-hidden;
+    font-family: 'Rajdhani', sans-serif;
     scroll-behavior: smooth;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Poppins', sans-serif;
-    @apply break-words;
+    font-family: 'Rajdhani', sans-serif;
+    @apply break-words font-bold;
   }
 
-  /* Ensure readable font sizes on mobile */
   body {
     font-size: 16px;
   }
@@ -85,18 +85,15 @@
     font-size: 16px !important;
   }
 
-  /* Improved focus styles for accessibility */
   :focus {
     outline: 2px solid hsl(var(--ring));
     outline-offset: 2px;
   }
   
-  /* Better touch targets */
   button, a {
     @apply cursor-pointer;
   }
 
-  /* Responsive headings */
   h1 {
     @apply text-2xl md:text-3xl lg:text-4xl;
   }
@@ -109,7 +106,6 @@
     @apply text-lg md:text-xl;
   }
   
-  /* Reduced animations mode */
   .reduce-animations * {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
@@ -117,12 +113,10 @@
     scroll-behavior: auto !important;
   }
   
-  /* Safari padding bottom fix */
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 20px);
   }
   
-  /* Safari padding top fix */
   .pt-safe {
     padding-top: env(safe-area-inset-top, 20px);
   }
@@ -149,7 +143,81 @@
     @apply ring-2 ring-neon-purple shadow-[0_0_15px_rgba(123,97,255,0.3)];
   }
 
-  /* Mobile optimized components */
+  .tactical-panel {
+    @apply bg-tactical-background-80 backdrop-blur-md border border-tactical-profit/20 rounded-lg shadow-lg;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+  }
+  
+  .tactical-text {
+    @apply font-rajdhani font-bold;
+  }
+  
+  .data-text {
+    @apply font-share-tech;
+  }
+  
+  .tactical-header {
+    @apply bg-gradient-to-r from-tactical-profit via-white to-tactical-profit bg-clip-text text-transparent font-bold uppercase tracking-wider;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+  }
+  
+  .profit-text {
+    @apply text-tactical-profit;
+  }
+  
+  .risk-text {
+    @apply text-tactical-risk;
+  }
+  
+  .cyber-grid-bg {
+    @apply bg-cyber-grid bg-tactical-background;
+    background-size: 20px 20px;
+  }
+  
+  .binary-indicator {
+    @apply inline-flex items-center justify-center w-8 h-8 rounded border;
+  }
+  
+  .binary-active {
+    @apply border-tactical-profit bg-tactical-profit/20 text-tactical-profit;
+  }
+  
+  .binary-inactive {
+    @apply border-white/20 bg-white/5 text-white/20;
+  }
+  
+  .combat-profile-card {
+    @apply border border-white/10 rounded-md p-3 transition-all;
+  }
+  
+  .combat-profile-active {
+    @apply border-tactical-profit bg-tactical-profit/10 shadow-tactical-glow;
+  }
+  
+  .tactical-progress-bg {
+    @apply bg-white/10;
+  }
+  
+  .tactical-progress-bar {
+    @apply bg-tactical-profit;
+  }
+  
+  .tactical-alert {
+    @apply border-l-4 border-tactical-risk bg-tactical-risk/10 p-3 text-sm;
+  }
+  
+  .tactical-success {
+    @apply border-l-4 border-tactical-profit bg-tactical-profit/10 p-3 text-sm;
+  }
+  
+  .tactical-divider {
+    @apply border-t border-white/10 my-4;
+  }
+  
+  .data-scan-animation {
+    @apply animate-data-scan bg-gradient-to-r from-transparent via-white/20 to-transparent bg-[length:200%_100%];
+  }
+
   .mobile-optimized-card {
     @apply p-3 md:p-6;
   }
@@ -170,7 +238,6 @@
     @apply flex flex-col md:flex-row;
   }
 
-  /* Background position utilities for gradient animations */
   .bg-pos-0 {
     background-position: 0% 50%;
   }
@@ -183,7 +250,6 @@
     background-size: 200% 200%;
   }
 
-  /* New glow borders for featured cards */
   .border-gradient-0 {
     border-image: linear-gradient(to right, var(--neon-green), var(--neon-blue)) 1;
   }
@@ -196,12 +262,10 @@
     border-image: linear-gradient(to right, var(--neon-purple), var(--neon-green)) 1;
   }
   
-  /* Spotify containers */
   .aspect-ratio-container {
     aspect-ratio: 16 / 9;
   }
   
-  /* Fix for iPhone bottom notch */
   @supports (padding: max(0px)) {
     .pb-safe {
       padding-bottom: max(env(safe-area-inset-bottom), 20px);
@@ -213,7 +277,6 @@
   }
 }
 
-/* Screenshot theme styles */
 .screenshot-light {
   background: #FFFFFF !important;
   color: #1A1F2C !important;
@@ -234,7 +297,6 @@
   border-color: #333 !important;
 }
 
-/* Load performance improvements */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
