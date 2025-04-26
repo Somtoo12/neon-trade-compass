@@ -86,8 +86,8 @@ export default {
           '50%': { borderColor: 'rgba(0, 254, 252, 0.8)' }
         },
         'pulse-text': {
-          '0%, 100%': { opacity: 0.7 },
-          '50%': { opacity: 1 }
+          '0%, 100%': { opacity: '0.7' },
+          '50%': { opacity: '1' }
         }
       },
       animation: {

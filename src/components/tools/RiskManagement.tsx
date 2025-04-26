@@ -3,11 +3,12 @@ import React from 'react';
 import BasicRiskCalculator from '@/components/calculators/BasicRiskCalculator';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { motion } from 'framer-motion';
+import { Trophy } from 'lucide-react';
 
 const RiskManagement: React.FC = () => {
   return (
     <div className="relative space-y-6">
-      {/* Background grid effect */}
+      {/* Cyber grid background effect */}
       <div 
         className="absolute inset-0 bg-cyber-grid bg-[size:50px_50px] opacity-10"
         style={{ backgroundPosition: '50%' }}
@@ -23,6 +24,7 @@ const RiskManagement: React.FC = () => {
               animate={{ opacity: 1 }}
               className="flex items-center space-x-2"
             >
+              <Trophy className="h-5 w-5 text-neon-cyan" />
               <span className="bg-gradient-to-r from-neon-cyan via-neon-blue to-neon-purple bg-clip-text text-transparent animate-pulse-text">
                 TACTICAL RISK CONSOLE v3.7
               </span>
