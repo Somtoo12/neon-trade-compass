@@ -1,4 +1,3 @@
-
 /**
  * OneSignal Web Push Notifications Setup
  * Documentation: https://documentation.onesignal.com/docs/web-push-quickstart
@@ -11,19 +10,47 @@ export const initializeOneSignal = () => {
     // Make sure OneSignal is available
     if (window.OneSignal) {
       window.OneSignal.init({
-        appId: "YOUR_ONESIGNAL_APP_ID", // Replace with your actual OneSignal App ID
+        appId: "d3c47d59-7e65-49d6-a331-4ae93e3423bb",
         allowLocalhostAsSecureOrigin: true, // For development only
+        promptOptions: {
+          slidedown: {
+            prompts: [
+              {
+                type: "push", // current types are "push" & "category"
+                autoPrompt: true,
+                text: {
+                  actionMessage: "Would you like to receive trading alerts and market updates?",
+                  acceptButton: "Allow",
+                  cancelButton: "Maybe Later"
+                },
+                delay: {
+                  pageViews: 1,
+                  timeDelay: 10
+                }
+              }
+            ]
+          }
+        },
         notifyButton: {
-          enable: true, // Set to false to hide the notify button
-          size: 'medium', // 'small', 'medium', or 'large'
-          theme: 'default', // 'default' or 'inverse'
-          position: 'bottom-right', // 'bottom-left', 'bottom-right'
+          enable: true,
+          size: 'medium',
+          theme: 'default',
+          position: 'bottom-right',
           offset: {
             bottom: '20px',
             right: '20px',
             left: '20px'
           },
-          showCredit: false
+          showCredit: false,
+          text: {
+            'tip.state.unsubscribed': 'Subscribe to notifications',
+            'tip.state.subscribed': "You're subscribed",
+            'tip.state.blocked': "You've blocked notifications",
+            'message.prenotify': 'Click to subscribe to notifications',
+            'message.action.subscribed': "Thanks for subscribing!",
+            'message.action.resubscribed': "You're subscribed to notifications",
+            'message.action.unsubscribed': "You won't receive notifications again",
+          }
         },
       });
     }
