@@ -19,7 +19,11 @@ interface StrategyBreakdownProps {
   isLoading: boolean;
 }
 
-const StrategyBreakdown: React.FC<StrategyBreakdownProps> = ({ metrics, traderData, isLoading }) => {
+const StrategyBreakdown: React.FC<StrategyBreakdownProps> = ({
+  metrics,
+  traderData,
+  isLoading
+}) => {
   const [animatedMetrics, setAnimatedMetrics] = useState({
     rewardAmount: 0,
     passProbability: 0,
@@ -360,7 +364,7 @@ const StrategyBreakdown: React.FC<StrategyBreakdownProps> = ({ metrics, traderDa
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
-                  className="h-64 mt-4"
+                  className="h-[400px] mt-4"
                 >
                   <div className="text-sm font-medium mb-2 flex items-center">
                     <TrendingUp className="h-4 w-4 text-neon-blue mr-2" />

@@ -77,7 +77,7 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
                   } group-hover:text-neon-green/80 transition-colors`} />
                   <span className={`text-base font-medium ${
                     currentStyle === 'conservative' ? 'text-neon-green' : ''
-                  } group-hover:text-neon-green/80`}>Conservative</span>
+                  } group-hover:text-neon-green/80`}>Low</span>
                   <div className={`mt-2 px-3 py-1 rounded-full text-xs ${
                     currentStyle === 'conservative' 
                       ? 'bg-neon-green/20 text-neon-green'
@@ -88,12 +88,11 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
                 </motion.button>
               </TooltipTrigger>
               <TooltipContent>
-                <p className="max-w-[200px] text-xs">Safer approach with lower risk per trade. Best for consistent growth.</p>
+                <p className="max-w-[200px] text-xs">Lower risk with higher consistency. Better chance of passing.</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
 
-          
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -113,7 +112,7 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
                   } group-hover:text-neon-blue/80 transition-colors`} />
                   <span className={`text-base font-medium ${
                     currentStyle === 'balanced' ? 'text-neon-blue' : ''
-                  } group-hover:text-neon-blue/80`}>Balanced</span>
+                  } group-hover:text-neon-blue/80`}>Medium</span>
                   <div className={`mt-2 px-3 py-1 rounded-full text-xs ${
                     currentStyle === 'balanced' 
                       ? 'bg-neon-blue/20 text-neon-blue'
@@ -129,7 +128,6 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
             </Tooltip>
           </TooltipProvider>
 
-          
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -149,7 +147,7 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
                   } group-hover:text-neon-purple/80 transition-colors`} />
                   <span className={`text-base font-medium ${
                     currentStyle === 'aggressive' ? 'text-neon-purple' : ''
-                  } group-hover:text-neon-purple/80`}>Aggressive</span>
+                  } group-hover:text-neon-purple/80`}>High</span>
                   <div className={`mt-2 px-3 py-1 rounded-full text-xs ${
                     currentStyle === 'aggressive' 
                       ? 'bg-neon-purple/20 text-neon-purple'
@@ -166,7 +164,6 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
           </TooltipProvider>
         </div>
 
-        
         <motion.div 
           key={currentStyle}
           initial={{ opacity: 0 }}
@@ -175,7 +172,7 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
         >
           <div className="space-y-4">
             <div className="p-3 bg-gradient-to-r from-black/40 to-black/20 backdrop-blur-sm rounded-lg border border-white/5">
-              <div className="text-sm font-medium">Risk Profile</div>
+              <div className="text-sm font-medium">Risk Setting</div>
               <div className="text-sm mt-1">
                 {currentStyle === 'conservative' 
                   ? "Lower risk with higher consistency. Better chance of passing with more trading days."

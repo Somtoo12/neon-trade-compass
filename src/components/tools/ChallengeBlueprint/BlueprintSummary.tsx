@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Trophy, TrendingUp, Target } from 'lucide-react';
@@ -43,24 +42,26 @@ const BlueprintSummary: React.FC<BlueprintSummaryProps> = ({
   return (
     <Card className="border-2 border-neon-blue shadow-lg bg-black/40 backdrop-blur-md">
       <CardContent className="p-4">
-        <h3 className="text-lg font-semibold mb-4 flex items-center bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-transparent">
+        <h3 className="text-lg font-semibold mb-3 flex items-center bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-transparent">
           <Trophy className="h-5 w-5 mr-2 text-neon-blue" />
           Blueprint Summary
         </h3>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.div 
-                  className="p-4 rounded-lg bg-black/60 border border-neon-cyan/30 hover:border-neon-cyan/50 transition-all"
+                  className="p-3 rounded-lg bg-black/60 border border-neon-cyan/30 hover:border-neon-cyan/50 transition-all"
                   whileHover={{ scale: 1.02 }}
                 >
-                  <div className="flex items-center mb-2">
-                    <Shield className="h-4 w-4 text-neon-cyan mr-2" />
-                    <span className="text-xs text-muted-foreground">RISK</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Shield className="h-4 w-4 text-neon-cyan mr-1.5" />
+                      <span className="text-xs text-muted-foreground">RISK</span>
+                    </div>
+                    <div className="text-base font-bold">{risk}%</div>
                   </div>
-                  <div className="text-xl font-bold">{risk}%</div>
                   <div className="text-xs text-muted-foreground mt-1">
                     {formatCurrency(accountSize * risk / 100)}
                   </div>
@@ -74,14 +75,16 @@ const BlueprintSummary: React.FC<BlueprintSummaryProps> = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.div 
-                  className="p-4 rounded-lg bg-black/60 border border-neon-green/30 hover:border-neon-green/50 transition-all"
+                  className="p-3 rounded-lg bg-black/60 border border-neon-green/30 hover:border-neon-green/50 transition-all"
                   whileHover={{ scale: 1.02 }}
                 >
-                  <div className="flex items-center mb-2">
-                    <Target className="h-4 w-4 text-neon-green mr-2" />
-                    <span className="text-xs text-muted-foreground">REWARD</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Target className="h-4 w-4 text-neon-green mr-1.5" />
+                      <span className="text-xs text-muted-foreground">REWARD</span>
+                    </div>
+                    <div className="text-base font-bold">{reward}%</div>
                   </div>
-                  <div className="text-xl font-bold">{reward}%</div>
                   <div className="text-xs text-muted-foreground mt-1">
                     {formatCurrency(accountSize * reward / 100)}
                   </div>
@@ -95,16 +98,18 @@ const BlueprintSummary: React.FC<BlueprintSummaryProps> = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.div 
-                  className="p-4 rounded-lg bg-black/60 border border-red-500/30 hover:border-red-500/50 transition-all"
+                  className="p-3 rounded-lg bg-black/60 border border-red-500/30 hover:border-red-500/50 transition-all"
                   whileHover={{ scale: 1.02 }}
                 >
-                  <div className="flex items-center mb-2">
-                    <TrendingUp className="h-4 w-4 text-red-400 mr-2" />
-                    <span className="text-xs text-muted-foreground">MAX LOSS</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <TrendingUp className="h-4 w-4 text-red-400 mr-1.5" />
+                      <span className="text-xs text-muted-foreground">DRAWDOWN</span>
+                    </div>
+                    <div className="text-base font-bold">{drawdown.toFixed(1)}%</div>
                   </div>
-                  <div className="text-xl font-bold">{drawdown}%</div>
                   <div className="text-xs text-muted-foreground mt-1">
-                    Loss Threshold
+                    Max Loss Limit
                   </div>
                 </motion.div>
               </TooltipTrigger>
@@ -116,15 +121,17 @@ const BlueprintSummary: React.FC<BlueprintSummaryProps> = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.div 
-                  className="p-4 rounded-lg bg-black/60 border border-neon-purple/30 hover:border-neon-purple/50 transition-all"
+                  className="p-3 rounded-lg bg-black/60 border border-neon-purple/30 hover:border-neon-purple/50 transition-all"
                   whileHover={{ scale: 1.02 }}
                 >
-                  <div className="flex items-center mb-2">
-                    <Trophy className={`h-4 w-4 mr-2 ${getSuccessColor(successRate)}`} />
-                    <span className="text-xs text-muted-foreground">SUCCESS</span>
-                  </div>
-                  <div className={`text-xl font-bold ${getSuccessColor(successRate)}`}>
-                    {successRate}%
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Trophy className={`h-4 w-4 mr-1.5 ${getSuccessColor(successRate)}`} />
+                      <span className="text-xs text-muted-foreground">SUCCESS</span>
+                    </div>
+                    <div className={`text-base font-bold ${getSuccessColor(successRate)}`}>
+                      {successRate}%
+                    </div>
                   </div>
                   <div className="text-xs text-muted-foreground mt-1">
                     Pass Probability
