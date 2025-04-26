@@ -213,21 +213,26 @@ const TradeJournal: React.FC = () => {
   return (
     <Card className="p-6 neo-card">
       {isMobile && (
-        <div className="w-full bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4 mb-6 text-center">
-          <p className="font-bold text-yellow-700 text-sm">
-            🖥️ For the best experience, we recommend using a PC or computer
-          </p>
+        <div className="w-full bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4 mb-6">
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-xl">🖥️</span>
+            <p className="font-medium text-yellow-700/90 text-sm">
+              For the best experience, we recommend using a PC or computer
+            </p>
+          </div>
         </div>
       )}
 
       <div className="space-y-8">
-        <div className="flex items-center justify-between">
-          <h3 className="text-2xl font-semibold">Trade Journal Tracker</h3>
-          <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
+            Trade Journal Tracker
+          </h3>
+          <div className="flex gap-2 w-full sm:w-auto">
             <Button 
               size="sm" 
               variant="outline" 
-              className="gap-1" 
+              className="flex-1 sm:flex-initial gap-1" 
               onClick={exportTradesAsCsv}
               disabled={filteredTrades.length === 0}
             >
@@ -236,7 +241,7 @@ const TradeJournal: React.FC = () => {
             <Button 
               size="sm" 
               variant="outline" 
-              className="gap-1 text-red-500 hover:text-red-600" 
+              className="flex-1 sm:flex-initial gap-1 text-red-500 hover:text-red-600" 
               onClick={() => setShowClearDialog(true)}
               disabled={trades.length === 0}
             >
@@ -246,11 +251,11 @@ const TradeJournal: React.FC = () => {
         </div>
         
         <Tabs defaultValue="entry" className="w-full">
-          <TabsList className="grid grid-cols-4">
-            <TabsTrigger value="entry">Trade Entry</TabsTrigger>
-            <TabsTrigger value="summary">Summaries</TabsTrigger>
-            <TabsTrigger value="log">Trade Log</TabsTrigger>
-            <TabsTrigger value="charts">Analytics</TabsTrigger>
+          <TabsList className="mb-8">
+            <TabsTrigger value="entry" className="text-xs md:text-sm">Trade Entry</TabsTrigger>
+            <TabsTrigger value="summary" className="text-xs md:text-sm">Summaries</TabsTrigger>
+            <TabsTrigger value="log" className="text-xs md:text-sm">Trade Log</TabsTrigger>
+            <TabsTrigger value="charts" className="text-xs md:text-sm">Analytics</TabsTrigger>
           </TabsList>
           
           <TabsContent value="entry" className="space-y-6">
