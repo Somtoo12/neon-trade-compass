@@ -1,20 +1,12 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Music, Calculator, BarChart2, Calendar, BrainCircuit, Clock, LineChart, Star, Smartphone, Bell } from 'lucide-react';
+import { ArrowRight, Music, Calculator, BarChart2, Calendar, BrainCircuit, Clock, LineChart, Star, Smartphone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { 
-  requestNotificationPermission, 
-  showNotificationPrompt, 
-  checkNotificationPermission,
-  getNotificationSupportMessage,
-  isOneSignalReady,
-  isIOSDevice,
-  areNotificationsSupported
-} from '@/utils/oneSignal';
 
 // Tool grid data
 const toolGrid = [
@@ -31,9 +23,6 @@ const HeroSection: React.FC = () => {
   const isMobile = useIsMobile();
   const [typerText, setTyperText] = useState("Loading Pip Calculator...");
   const [audioPlaying, setAudioPlaying] = useState(false);
-  const [notificationStatus, setNotificationStatus] = useState<string>('loading');
-  const [oneSignalLoaded, setOneSignalLoaded] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -67,49 +56,6 @@ const HeroSection: React.FC = () => {
         audioRef.current.pause();
         audioRef.current = null;
       }
-    };
-  }, []);
-  
-  // Check OneSignal availability and notification permissions
-  useEffect(() => {
-    // Detect iOS device
-    setIsIOS(isIOSDevice());
-    
-    // Check OneSignal initialization
-    const checkOneSignal = () => {
-      const isReady = isOneSignalReady();
-      setOneSignalLoaded(isReady);
-      return isReady;
-    };
-    
-    // Try immediately
-    if (checkOneSignal()) {
-      checkNotificationPermission().then(permission => {
-        setNotificationStatus(permission);
-      });
-    } else {
-      // If not available yet, set up polling
-      const intervalId = setInterval(() => {
-        if (checkOneSignal()) {
-          clearInterval(intervalId);
-          checkNotificationPermission().then(permission => {
-            setNotificationStatus(permission);
-          });
-        }
-      }, 1000);
-      
-      // Stop checking after 15 seconds
-      setTimeout(() => {
-        clearInterval(intervalId);
-        if (!oneSignalLoaded) {
-          console.log("OneSignal status check timeout exceeded");
-          setNotificationStatus(areNotificationsSupported() ? 'default' : 'unsupported');
-        }
-      }, 15000);
-    }
-    
-    return () => {
-      // Cleanup any intervals on unmount
     };
   }, []);
 
@@ -159,154 +105,6 @@ const HeroSection: React.FC = () => {
     setAudioPlaying(!audioPlaying);
   };
 
-  const handleNotificationRequest = async () => {
-    // Special handling for iOS
-    if (isIOS) {
-      toast({
-        title: "iOS Web Push Notification",
-        description: "iOS doesn't support web push directly. Please add this site to your home screen for the best experience.",
-        duration: 5000,
-      });
-      
-      showAddToHomeInstructions();
-      return;
-    }
-    
-    // First check if OneSignal is loaded
-    if (!oneSignalLoaded && !areNotificationsSupported()) {
-      toast({
-        title: "Service Unavailable",
-        description: "Notification service is not supported in your browser. Please try Chrome, Firefox or Edge.",
-        variant: "destructive",
-        duration: 3000,
-      });
-      return;
-    }
-
-    // If permissions already granted, show confirmation
-    const currentPermission = await checkNotificationPermission();
-    if (currentPermission === 'granted') {
-      setNotificationStatus('granted');
-      toast({
-        title: "Notifications Already Enabled",
-        description: "You're already set to receive persistent trading alerts",
-        duration: 3000,
-      });
-      return;
-    }
-    
-    // Show OneSignal's native prompt
-    const promptResult = await showNotificationPrompt();
-    
-    if (promptResult.success) {
-      // Check permission after prompt
-      const newPermission = await checkNotificationPermission();
-      setNotificationStatus(newPermission);
-      
-      if (newPermission === 'granted') {
-        toast({
-          title: "Notifications Enabled",
-          description: "You'll now receive persistent trading alerts and market updates",
-          duration: 3000,
-        });
-      }
-    } else if (promptResult.reason === 'ios_device') {
-      // iOS specific handling
-      toast({
-        title: "iOS Support",
-        description: "Add PipCraft to your home screen for the best experience",
-        duration: 5000,
-      });
-      showAddToHomeInstructions();
-    } else {
-      // If OneSignal prompt fails, try browser native
-      const result = await requestNotificationPermission();
-      
-      if (result.success) {
-        setNotificationStatus('granted');
-        toast({
-          title: "Notifications Enabled",
-          description: "You'll now receive persistent trading alerts and market updates",
-          duration: 3000,
-        });
-      } else {
-        const permission = await checkNotificationPermission();
-        setNotificationStatus(permission);
-        
-        if (result.reason === 'unsupported' || result.reason === 'ios_device') {
-          const message = await getNotificationSupportMessage();
-          toast({
-            title: "Notifications Not Supported",
-            description: message,
-            variant: "destructive",
-            duration: 5000,
-          });
-        } else if (permission === 'denied') {
-          toast({
-            title: "Notifications Blocked",
-            description: "Please enable notifications in your browser settings to receive alerts",
-            variant: "destructive",
-            duration: 5000,
-          });
-        } else {
-          toast({
-            title: "Notification Error",
-            description: result.message || "Failed to enable notifications",
-            variant: "destructive",
-            duration: 3000,
-          });
-        }
-      }
-    }
-  };
-
-  const renderNotificationButton = () => {
-    let buttonText = "Enable Trading Alerts";
-    let buttonVariant: "outline" | "default" = "outline";
-    let buttonClass = "w-full min-h-[44px] border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm";
-    
-    if (notificationStatus === 'loading') {
-      buttonText = "Loading Notifications...";
-    } else if (notificationStatus === 'granted') {
-      buttonText = "Trading Alerts Enabled";
-      buttonVariant = "default";
-      buttonClass = "w-full min-h-[44px] bg-green-600 hover:bg-green-700";
-    } else if (notificationStatus === 'denied') {
-      buttonText = "Notifications Blocked";
-      buttonClass = "w-full min-h-[44px] border-red-500 text-red-500 hover:bg-red-500/10";
-    } else if (notificationStatus === 'unsupported') {
-      buttonText = isIOS 
-        ? "Add to Home Screen for Alerts" 
-        : "Notifications Not Supported";
-      buttonClass = "w-full min-h-[44px] border-yellow-500 text-yellow-500 hover:bg-yellow-500/10";
-    } else if (notificationStatus === 'unavailable') {
-      buttonText = "Notification Service Unavailable";
-      buttonClass = "w-full min-h-[44px] border-yellow-500 text-yellow-500 hover:bg-yellow-500/10";
-    }
-
-    const handleButtonClick = () => {
-      if (isIOS && (notificationStatus === 'unsupported' || notificationStatus === 'default')) {
-        showAddToHomeInstructions();
-      } else {
-        handleNotificationRequest();
-      }
-    };
-
-    return (
-      <Button
-        variant={buttonVariant}
-        size="lg"
-        onClick={handleButtonClick}
-        className={`${buttonClass} ${notificationStatus === 'default' ? 'animate-pulse' : ''}`}
-        disabled={notificationStatus === 'loading' || (notificationStatus === 'unavailable' && !isIOS)}
-      >
-        <Bell className="mr-2 h-5 w-5" />
-        {buttonText}
-      </Button>
-    );
-  };
-
-  
   return (
     <div className="relative min-h-[85vh] flex items-center justify-center px-4 md:px-6 overflow-hidden bg-background">
       <div className="w-full max-w-7xl mx-auto relative z-10 pt-16 md:pt-20">
@@ -391,28 +189,24 @@ const HeroSection: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               className="px-4 mb-4"
             >
-              <div className="flex flex-col gap-3">
-                <TooltipProvider delayDuration={300}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        onClick={showAddToHomeInstructions}
-                        className="w-full min-h-[44px] border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm"
-                      >
-                        <Smartphone className="mr-2 h-5 w-5" />
-                        Save to Home Screen
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Tap here to save PipCraft on your phone's home screen</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                
-                {renderNotificationButton()}
-              </div>
+              <TooltipProvider delayDuration={300}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      onClick={showAddToHomeInstructions}
+                      className="w-full min-h-[44px] border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm animate-pulse"
+                    >
+                      <Smartphone className="mr-2 h-5 w-5" />
+                      Save to Home Screen
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Tap here to save PipCraft on your phone's home screen</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </motion.div>
           )}
 

@@ -17,102 +17,8 @@
       gtag('config', 'G-EJWTCMX08H');
     </script>
 
-    <!-- OneSignal Web SDK - Fixed initialization -->
-    <script>
-      // Pre-define OneSignalDeferred array to capture early calls
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      window.OneSignal = window.OneSignal || {};
-    </script>
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" async></script>
-
-    <script>
-      // Initialize OneSignal with fixed configuration
-      window.OneSignalDeferred.push(function() {
-        try {
-          console.log("Re-initializing OneSignal with App ID: d3c47d59-7e65-49d6-a331-4ae93e3423bb");
-          OneSignal.init({
-            appId: "d3c47d59-7e65-49d6-a331-4ae93e3423bb",
-            safari_web_id: "web.onesignal.auto.0c986762-3fda-40b6-9e3c-ff179e4c9954",
-            allowLocalhostAsSecureOrigin: true,
-            serviceWorkerPath: "/OneSignalSDKWorker.js",
-            serviceWorkerUpdaterPath: "/OneSignalSDKUpdaterWorker.js", 
-            autoResubscribe: true, // Re-subscribe users if they previously unsubscribed
-            notifyButton: {
-              enable: true,
-              size: 'medium',
-              theme: 'default',
-              position: 'bottom-right',
-            },
-            persistNotification: true, // Ensures notifications stay until user interaction
-            promptOptions: {
-              slidedown: {
-                prompts: [{
-                  type: "push",
-                  autoPrompt: true,
-                  text: {
-                    actionMessage: "Get instant alerts for market movements and trading opportunities!",
-                    acceptButton: "Allow",
-                    cancelButton: "Later"
-                  },
-                  delay: {
-                    pageViews: 1,
-                    timeDelay: 5
-                  }
-                }]
-              }
-            },
-            welcomeNotification: {
-              title: "PipCraft Alerts Enabled",
-              message: "Thanks for subscribing to trading notifications!",
-            },
-            // Force notifications to persist until user interaction
-            notificationDisplayOptions: {
-              requireInteraction: true
-            }
-          });
-          
-          console.log("OneSignal re-initialization complete!");
-          
-          // Debug event handlers
-          OneSignal.Notifications.addEventListener('permissionChange', function(permission) {
-            console.log('OneSignal: Permission changed to', permission);
-          });
-          
-          OneSignal.Notifications.addEventListener('permissionPromptDisplay', function() {
-            console.log('OneSignal: Prompt displayed');
-          });
-
-          OneSignal.Notifications.addEventListener('click', function(event) {
-            console.log('OneSignal: Notification clicked', event);
-          });
-
-          // Force a check of subscription on page load and log status
-          setTimeout(function() {
-            OneSignal.User.PushSubscription.getStatus().then(function(status) {
-              console.log('OneSignal: Current subscription status:', status);
-            });
-            
-            // Check if we have a user ID
-            OneSignal.User.getUser().then(function(user) {
-              console.log('OneSignal: User data:', user);
-              if (user) {
-                console.log('OneSignal: User ID:', user.id);
-              }
-            });
-          }, 3000);
-          
-          // Send a test notification after successful subscription
-          OneSignal.User.PushSubscription.addEventListener('change', function(event) {
-            console.log('OneSignal: Subscription changed:', event);
-            if (event.current.optedIn && event.current.id) {
-              console.log('OneSignal: Successfully subscribed with ID:', event.current.id);
-            }
-          });
-        } catch (error) {
-          console.error("Error initializing OneSignal:", error);
-        }
-      });
-    </script>
+    <!-- OneSignal Web SDK -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 
     <!-- Favicon: Clean "PC" in green & white circle -->
     <link rel="icon" href="/lovable-uploads/9f011f2b-33e0-475a-8687-70b7270354e8.png" type="image/png" />
@@ -140,18 +46,11 @@
     <meta name="google-site-verification" content="6CgL4XfCGRKjZvRu-H19HF4h98NEPsbsglcDFHNKsF0" />
 
     <link rel="canonical" href="https://pipcrafts.com/" />
-    
-    <!-- Web App Manifest for PWA support (helps with iOS) -->
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="apple-mobile-web-app-title" content="PipCraft" />
-    <link rel="apple-touch-icon" href="/lovable-uploads/9f011f2b-33e0-475a-8687-70b7270354e8.png" />
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
   </head>
 
   <body>
     <div id="root"></div>
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

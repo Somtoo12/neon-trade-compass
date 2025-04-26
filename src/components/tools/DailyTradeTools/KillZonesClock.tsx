@@ -2,13 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { BellRing, Info } from 'lucide-react';
-import { 
-  requestNotificationPermission, 
-  checkNotificationPermission, 
-  isIOSDevice,
-  getNotificationSupportMessage 
-} from '@/utils/oneSignal';
+import { BellRing } from 'lucide-react';
 
 interface TimeBlock {
   name: string;
@@ -22,8 +16,7 @@ const KillZonesClock: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [enableAlerts, setEnableAlerts] = useState(false);
   const [hasShownAlert, setHasShownAlert] = useState(false);
-  const [notificationsPermission, setNotificationsPermission] = useState<string>('default');
-  const [isIOS, setIsIOS] = useState(false);
+  const [notificationsPermission, setNotificationsPermission] = useState<NotificationPermission>('default');
   const { toast } = useToast();
   
   const timeBlocks: TimeBlock[] = [
@@ -40,78 +33,49 @@ const KillZonesClock: React.FC = () => {
     const savedEnableAlerts = localStorage.getItem('killZonesEnableAlerts');
     if (savedEnableAlerts) setEnableAlerts(savedEnableAlerts === 'true');
     
-    setIsIOS(isIOSDevice());
-    
-    checkNotificationPermission().then(permission => {
-      setNotificationsPermission(permission);
-    });
-    
-    const intervalId = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 60000);
-    
-    return () => clearInterval(intervalId);
+    if ('Notification' in window) {
+      setNotificationsPermission(Notification.permission);
+    }
   }, []);
   
   useEffect(() => {
     localStorage.setItem('killZonesEnableAlerts', enableAlerts.toString());
   }, [enableAlerts]);
   
-  const requestPermissionAndEnableAlerts = async () => {
-    if (isIOS) {
+  const requestNotificationPermission = async () => {
+    if (!('Notification' in window)) {
       toast({
-        title: "iOS Notification Support",
-        description: "iOS devices don't support web push notifications. Add this site to your home screen for the best experience.",
-        duration: 5000,
+        title: "Notifications Not Supported",
+        description: "Your browser doesn't support notifications. Please use a modern browser.",
       });
-      
       return;
     }
-    
-    const result = await requestNotificationPermission();
-    
-    if (result.success) {
-      setNotificationsPermission('granted');
-      setEnableAlerts(true);
-      
-      toast({
-        title: "Session Alerts Enabled",
-        description: "You'll be notified before important trading sessions. Notifications will remain visible until dismissed.",
-      });
-    } else {
-      const permission = await checkNotificationPermission();
+
+    try {
+      const permission = await Notification.requestPermission();
       setNotificationsPermission(permission);
       
-      if (result.reason === 'unsupported') {
-        const message = await getNotificationSupportMessage();
+      if (permission === 'granted') {
         toast({
-          title: "Notifications Not Supported",
-          description: message,
-          variant: "destructive",
+          title: "Notifications Enabled",
+          description: "You'll be notified before important trading sessions.",
         });
       } else {
         toast({
           title: "Notifications Disabled",
-          description: result.message || "Enable browser notifications to receive session alerts.",
-          variant: "destructive",
+          description: "Enable browser notifications to receive session alerts while multitasking.",
         });
       }
+    } catch (error) {
+      console.error('Error requesting notification permission:', error);
     }
   };
 
   const sendNotification = (title: string, body: string) => {
     if (notificationsPermission === 'granted' && enableAlerts) {
-      if ('Notification' in window) {
-        new Notification(title, {
-          body,
-          icon: '/favicon.ico',
-          requireInteraction: true
-        });
-      }
-      
-      toast({
-        title,
-        description: body,
+      new Notification(title, {
+        body,
+        icon: '/favicon.ico',
       });
     } else {
       toast({
@@ -200,13 +164,11 @@ const KillZonesClock: React.FC = () => {
               id="enable-alerts"
               checked={enableAlerts}
               onCheckedChange={(checked) => {
-                if (checked && notificationsPermission !== 'granted') {
-                  requestPermissionAndEnableAlerts();
-                } else {
-                  setEnableAlerts(checked);
+                setEnableAlerts(checked);
+                if (checked && notificationsPermission === 'default') {
+                  requestNotificationPermission();
                 }
               }}
-              disabled={notificationsPermission === 'denied' || notificationsPermission === 'unsupported'}
             />
             <Label htmlFor="enable-alerts">Enable alerts</Label>
           </div>
@@ -217,27 +179,6 @@ const KillZonesClock: React.FC = () => {
         <div className="text-sm text-muted-foreground flex items-center gap-2">
           <BellRing className="h-4 w-4" />
           Notifications active – you'll be alerted 5 mins before key sessions
-        </div>
-      )}
-      
-      {notificationsPermission === 'denied' && (
-        <div className="text-sm text-red-500 flex items-center gap-2">
-          <BellRing className="h-4 w-4" />
-          Notifications blocked - please enable them in your browser settings
-        </div>
-      )}
-      
-      {isIOS && (
-        <div className="text-sm text-yellow-500 flex items-center gap-2 p-2 border border-yellow-600 rounded-md bg-yellow-500/10">
-          <Info className="h-4 w-4 flex-shrink-0" />
-          <span>iOS doesn't support web notifications. Add this site to your home screen for the best experience.</span>
-        </div>
-      )}
-      
-      {!isIOS && notificationsPermission === 'unsupported' && (
-        <div className="text-sm text-yellow-500 flex items-center gap-2">
-          <BellRing className="h-4 w-4" />
-          Your device/browser doesn't support web notifications
         </div>
       )}
       
