@@ -5,7 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import { ChartContainer } from '@/components/ui/chart';
 import { Area, AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { motion } from 'framer-motion';
-import { Loader2, TrendingUp, AlertTriangle, CheckCircle, Award, Shield, Gauge, Flame, Target } from 'lucide-react';
+import { Loader2, TrendingUp, AlertTriangle, CheckCircle, Award, Shield, Gauge, Flame, Target, Trophy } from 'lucide-react';
 import {
   TooltipProvider,
   Tooltip as UITooltip,
