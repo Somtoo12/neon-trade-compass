@@ -23,17 +23,14 @@ export interface GoalInputs {
 
 const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialData }) => {
   const [inputs, setInputs] = useState<GoalInputs>({
-    targetPercent: initialData?.targetPercent || 10,
-    daysRemaining: initialData?.daysRemaining || 14,
-    riskPerTrade: initialData?.riskPerTrade || 1,
-    winRate: initialData?.winRate || 60,
-    rewardRiskRatio: initialData?.rewardRiskRatio || 1.5,
+    targetPercent: initialData?.targetPercent || null,
+    daysRemaining: initialData?.daysRemaining || null,
+    riskPerTrade: initialData?.riskPerTrade || null,
+    winRate: initialData?.winRate || null,
+    rewardRiskRatio: initialData?.rewardRiskRatio || null,
   });
   
-  const rewardPercentage = inputs.riskPerTrade * inputs.rewardRiskRatio;
-
   const [lastValidInputs, setLastValidInputs] = useState(inputs);
-  
   const debounceTimerRef = React.useRef<number | null>(null);
 
   useEffect(() => {
@@ -46,67 +43,53 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
   const validateNumericInput = (value: string, min: number, max: number): number | null => {
     if (value === '') return null;
     const numValue = parseFloat(value);
-    if (isNaN(numValue)) return null;
-    return Math.max(min, Math.min(max, numValue));
+    if (isNaN(numValue) || numValue < min || numValue > max) return null;
+    return numValue;
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     
-    try {
-      if (value === '') {
-        const newInputs = {
-          ...inputs,
-          [name]: null
-        };
-        setInputs(newInputs);
+    let validatedValue: number | null = null;
+    
+    switch (name) {
+      case 'targetPercent':
+        validatedValue = validateNumericInput(value, 0.1, 100);
+        break;
+      case 'daysRemaining':
+        validatedValue = validateNumericInput(value, 1, 60);
+        break;
+      case 'riskPerTrade':
+        validatedValue = validateNumericInput(value, 0.1, 5);
+        break;
+      case 'winRate':
+        validatedValue = validateNumericInput(value, 1, 99);
+        break;
+      case 'rewardRiskRatio':
+        validatedValue = validateNumericInput(value, 0.1, 5);
+        break;
+      default:
         return;
-      }
+    }
 
-      let validatedValue: number | null = null;
+    const newInputs = {
+      ...inputs,
+      [name]: validatedValue
+    };
+    
+    setInputs(newInputs);
+    
+    if (Object.values(newInputs).every(val => val !== null)) {
+      setLastValidInputs(newInputs as GoalInputs);
       
-      switch (name) {
-        case 'targetPercent':
-          validatedValue = validateNumericInput(value, 1, 100);
-          break;
-        case 'daysRemaining':
-          validatedValue = validateNumericInput(value, 1, 60);
-          break;
-        case 'riskPerTrade':
-          validatedValue = validateNumericInput(value, 0.1, 5);
-          break;
-        case 'winRate':
-          validatedValue = validateNumericInput(value, 1, 99);
-          break;
-        case 'rewardRiskRatio':
-          validatedValue = validateNumericInput(value, 0.1, 10);
-          break;
-        default:
-          validatedValue = parseFloat(value);
+      if (debounceTimerRef.current !== null) {
+        window.clearTimeout(debounceTimerRef.current);
       }
       
-      const newInputs = {
-        ...inputs,
-        [name]: validatedValue
-      };
-      
-      setInputs(newInputs);
-      
-      if (Object.values(newInputs).every(val => val !== null)) {
-        setLastValidInputs(newInputs as GoalInputs);
-
-        if (debounceTimerRef.current !== null) {
-          window.clearTimeout(debounceTimerRef.current);
-        }
-        
-        debounceTimerRef.current = window.setTimeout(() => {
-          onCalculate(newInputs as GoalInputs);
-          debounceTimerRef.current = null;
-        }, 500);
-      }
-    } catch (error) {
-      console.error("Error processing input:", error);
-      setInputs(lastValidInputs);
+      debounceTimerRef.current = window.setTimeout(() => {
+        onCalculate(newInputs as GoalInputs);
+        debounceTimerRef.current = null;
+      }, 500);
     }
   };
 
@@ -119,10 +102,8 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      onCalculate(inputs);
-    } catch (error) {
-      console.error("Error submitting form:", error);
+    if (Object.values(inputs).every(val => val !== null)) {
+      onCalculate(inputs as GoalInputs);
     }
   };
 
@@ -142,11 +123,11 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
 
   const getFieldTooltip = (field: keyof GoalInputs): string => {
     const tooltips: Record<keyof GoalInputs, string> = {
-      targetPercent: 'The profit target percentage you need to reach',
-      daysRemaining: 'Number of days left in your challenge',
-      riskPerTrade: 'This is your risk % per trade, not the prop firm limit',
-      winRate: 'Your average trading win percentage',
-      rewardRiskRatio: 'Average reward:risk ratio (e.g. 1.5 means wins are 1.5x your losses)'
+      targetPercent: 'Enter your target profit percentage (0.1% - 100%)',
+      daysRemaining: 'Number of days left in your challenge (1-60)',
+      riskPerTrade: 'Risk percentage per trade (0.1% - 5%)',
+      winRate: 'Your expected win rate percentage (1% - 99%)',
+      rewardRiskRatio: 'Reward to risk ratio (0.1 - 5)'
     };
     return tooltips[field];
   };
@@ -162,13 +143,13 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
       <CardContent>
         <motion.form 
           onSubmit={handleSubmit} 
-          className="space-y-4"
+          className="space-y-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
         >
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {Object.entries(inputs).map(([key, value]) => (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            {['targetPercent', 'daysRemaining', 'winRate'].map((key) => (
               <div key={key} className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
@@ -176,7 +157,7 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="ml-1">
+                          <div className="ml-1 cursor-help">
                             <HelpCircle className="h-4 w-4 text-muted-foreground" />
                           </div>
                         </TooltipTrigger>
@@ -186,7 +167,7 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-                  {value !== null && (
+                  {inputs[key as keyof GoalInputs] !== null && (
                     <Button 
                       type="button" 
                       variant="ghost" 
@@ -201,20 +182,68 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
                 <Input
                   id={key}
                   name={key}
-                  type="text"
-                  value={value === null ? '' : value}
+                  type="number"
+                  step="0.1"
+                  value={inputs[key as keyof GoalInputs] === null ? '' : inputs[key as keyof GoalInputs]}
                   onChange={handleChange}
                   className="bg-secondary/30"
-                  step={key === 'riskPerTrade' || key === 'rewardRiskRatio' ? 0.1 : 1}
+                  min={key === 'daysRemaining' ? 1 : 0.1}
+                  max={key === 'winRate' ? 99 : 100}
                 />
-                {key === 'riskPerTrade' && value !== null && (
+              </div>
+            ))}
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+            {['riskPerTrade', 'rewardRiskRatio'].map((key) => (
+              <div key={key} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Label htmlFor={key}>{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="ml-1 cursor-help">
+                            <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{getFieldTooltip(key as keyof GoalInputs)}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  {inputs[key as keyof GoalInputs] !== null && (
+                    <Button 
+                      type="button" 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => handleClearField(key as keyof GoalInputs)}
+                      className="h-6 w-6 p-0"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+                <Input
+                  id={key}
+                  name={key}
+                  type="number"
+                  step="0.1"
+                  value={inputs[key as keyof GoalInputs] === null ? '' : inputs[key as keyof GoalInputs]}
+                  onChange={handleChange}
+                  className="bg-secondary/30"
+                  min={0.1}
+                  max={5}
+                />
+                {key === 'riskPerTrade' && inputs.riskPerTrade !== null && (
                   <p className="text-xs text-muted-foreground">
-                    You risk {value}% per trade
+                    Risk {inputs.riskPerTrade}% per trade
                   </p>
                 )}
-                {key === 'rewardRiskRatio' && value !== null && inputs.riskPerTrade !== null && (
+                {key === 'rewardRiskRatio' && inputs.rewardRiskRatio !== null && inputs.riskPerTrade !== null && (
                   <p className="text-xs text-muted-foreground">
-                    Each win gains {(value * inputs.riskPerTrade).toFixed(3)}% ({value}× your {inputs.riskPerTrade}% risk)
+                    Each win gains {(inputs.rewardRiskRatio * inputs.riskPerTrade).toFixed(2)}% ({inputs.rewardRiskRatio}× your {inputs.riskPerTrade}% risk)
                   </p>
                 )}
               </div>
@@ -222,7 +251,7 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
           </div>
           
           <motion.div 
-            className="pt-2"
+            className="flex justify-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
@@ -230,10 +259,10 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
           >
             <Button 
               type="submit" 
-              className="w-full bg-accent hover:bg-accent/90"
+              className="w-full max-w-md bg-accent hover:bg-accent/90 text-lg py-6"
               disabled={Object.values(inputs).some(val => val === null)}
             >
-              <ClipboardCheck className="mr-2 h-4 w-4" />
+              <ClipboardCheck className="mr-2 h-5 w-5" />
               Calculate Pass Strategy
             </Button>
           </motion.div>
