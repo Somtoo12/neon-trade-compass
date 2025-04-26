@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -40,11 +39,9 @@ const ProbabilityEngine: React.FC<ProbabilityEngineProps> = ({
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulationCount, setSimulationCount] = useState(1000);
   
-  // Run simulation when requested
   const runSimulation = () => {
     setIsSimulating(true);
     
-    // Start simulation in a timeout to allow UI to update
     setTimeout(() => {
       const result = simulateChallenges(simulationCount);
       setSimulationResult(result);
@@ -57,7 +54,6 @@ const ProbabilityEngine: React.FC<ProbabilityEngineProps> = ({
     }, 300);
   };
   
-  // Main simulation function
   const simulateChallenges = (count: number): SimulationResult => {
     let successCount = 0;
     let maxDrawdownObserved = 0;
@@ -83,7 +79,6 @@ const ProbabilityEngine: React.FC<ProbabilityEngineProps> = ({
       "20+": 0
     };
     
-    // Apply risk style modifiers
     let riskMultiplier = 1.0;
     let volatilityMultiplier = 1.0;
     
@@ -95,7 +90,6 @@ const ProbabilityEngine: React.FC<ProbabilityEngineProps> = ({
       volatilityMultiplier = 1.3;
     }
     
-    // Run the simulations
     for (let i = 0; i < count; i++) {
       const { success, maxDrawdown, daysToTarget } = simulateSingleChallenge(
         traderData.winRate / 100,
@@ -112,7 +106,6 @@ const ProbabilityEngine: React.FC<ProbabilityEngineProps> = ({
         daysToTargetSum += daysToTarget;
         completedChallenges++;
         
-        // Categorize days to target
         if (daysToTarget <= 3) daysBuckets["1-3"]++;
         else if (daysToTarget <= 6) daysBuckets["4-6"]++;
         else if (daysToTarget <= 10) daysBuckets["7-10"]++;
@@ -124,7 +117,6 @@ const ProbabilityEngine: React.FC<ProbabilityEngineProps> = ({
       maxDrawdownObserved = Math.max(maxDrawdownObserved, maxDrawdown);
       drawdownSum += maxDrawdown;
       
-      // Categorize drawdown
       if (maxDrawdown <= 1) drawdownBuckets["0-1%"]++;
       else if (maxDrawdown <= 2) drawdownBuckets["1-2%"]++;
       else if (maxDrawdown <= 3) drawdownBuckets["2-3%"]++;
@@ -133,7 +125,6 @@ const ProbabilityEngine: React.FC<ProbabilityEngineProps> = ({
       else drawdownBuckets["8%+"]++;
     }
     
-    // Convert buckets to array format for charts
     const drawdownDistribution = Object.entries(drawdownBuckets).map(([range, count]) => ({
       range,
       count: (count / count) * 100
@@ -154,7 +145,6 @@ const ProbabilityEngine: React.FC<ProbabilityEngineProps> = ({
     };
   };
   
-  // Simulate a single challenge
   const simulateSingleChallenge = (
     winRate: number,
     riskPerTrade: number,
@@ -164,21 +154,18 @@ const ProbabilityEngine: React.FC<ProbabilityEngineProps> = ({
     tradesPerDay: number,
     volatility: number
   ): { success: boolean; maxDrawdown: number; daysToTarget: number } => {
-    let equity = 100; // Start at 100%
+    let equity = 100;
     let maxEquity = 100;
     let maxDrawdown = 0;
     let day = 0;
     
-    // Continue until we hit the profit target or run out of days
     while (equity < 100 + profitTarget && day < maxDays) {
       day++;
       
-      // Simulate trades for this day
       const dailyTrades = Math.floor(Math.random() * (tradesPerDay + 1));
       for (let i = 0; i < dailyTrades; i++) {
         const isWin = Math.random() < winRate;
         
-        // Apply some randomness to results based on volatility
         const randomFactor = 1 + ((Math.random() - 0.5) * 0.4 * volatility);
         
         if (isWin) {
@@ -187,12 +174,10 @@ const ProbabilityEngine: React.FC<ProbabilityEngineProps> = ({
           equity -= riskPerTrade * randomFactor;
         }
         
-        // Update maximum equity and drawdown
         maxEquity = Math.max(maxEquity, equity);
         const currentDrawdown = ((maxEquity - equity) / maxEquity) * 100;
         maxDrawdown = Math.max(maxDrawdown, currentDrawdown);
         
-        // If we've hit the target, we're done
         if (equity >= 100 + profitTarget) {
           break;
         }
@@ -207,9 +192,9 @@ const ProbabilityEngine: React.FC<ProbabilityEngineProps> = ({
   };
   
   const getDrawdownColor = (value: number) => {
-    if (value <= 15) return "#10b981"; // Green
-    if (value <= 35) return "#f59e0b"; // Amber
-    return "#ef4444"; // Red
+    if (value <= 15) return "#10b981";
+    if (value <= 35) return "#f59e0b";
+    return "#ef4444";
   };
   
   return (
@@ -229,7 +214,6 @@ const ProbabilityEngine: React.FC<ProbabilityEngineProps> = ({
             </div>
           ) : simulationResult ? (
             <div className="space-y-6">
-              {/* Main Results */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -264,7 +248,6 @@ const ProbabilityEngine: React.FC<ProbabilityEngineProps> = ({
                 </div>
               </motion.div>
               
-              {/* Drawdown Distribution Chart */}
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -273,7 +256,12 @@ const ProbabilityEngine: React.FC<ProbabilityEngineProps> = ({
               >
                 <h3 className="text-sm font-medium">Drawdown Distribution</h3>
                 <div className="h-64">
-                  <ChartContainer className="h-full w-full">
+                  <ChartContainer 
+                    className="h-full w-full"
+                    config={{
+                      count: { color: "#8884d8" }
+                    }}
+                  >
                     <BarChart
                       data={simulationResult.drawdownDistribution}
                       margin={{ top: 5, right: 20, left: 0, bottom: 25 }}
@@ -302,7 +290,6 @@ const ProbabilityEngine: React.FC<ProbabilityEngineProps> = ({
                 </div>
               </motion.div>
               
-              {/* Days to Target Distribution Chart */}
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -311,7 +298,12 @@ const ProbabilityEngine: React.FC<ProbabilityEngineProps> = ({
               >
                 <h3 className="text-sm font-medium">Days to Reach Target Distribution</h3>
                 <div className="h-64">
-                  <ChartContainer className="h-full w-full">
+                  <ChartContainer 
+                    className="h-full w-full"
+                    config={{
+                      count: { color: "#10b981" }
+                    }}
+                  >
                     <BarChart
                       data={simulationResult.daysToTargetDistribution}
                       margin={{ top: 5, right: 20, left: 0, bottom: 25 }}

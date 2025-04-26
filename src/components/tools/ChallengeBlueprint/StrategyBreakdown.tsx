@@ -188,7 +188,7 @@ const StrategyBreakdown: React.FC<StrategyBreakdownProps> = ({ metrics, traderDa
                   <div className="bg-secondary/30 p-4 rounded-lg backdrop-blur-sm">
                     <div className="text-sm text-muted-foreground">Wins Required</div>
                     <div className="text-xl font-semibold mt-1">{metrics.winsNeeded}</div>
-                    <div className="text-xs text-muted-foreground mt-1">{metrics.winsNeeded * rewardAmountPct.toFixed(1)}% total gain</div>
+                    <div className="text-xs text-muted-foreground mt-1">{(metrics.winsNeeded * rewardAmountPct).toFixed(1)}% total gain</div>
                   </div>
                   
                   {/* Daily Target */}
