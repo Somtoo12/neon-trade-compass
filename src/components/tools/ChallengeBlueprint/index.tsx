@@ -12,6 +12,7 @@ import ExportTools from './ExportTools';
 import GoalCalculator, { GoalInputs } from './GoalCalculator';
 import PassSummary from './PassSummary';
 import InfoCard from './InfoCard';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export type RiskStyle = 'conservative' | 'balanced' | 'aggressive';
 export type TraderData = {
@@ -48,6 +49,7 @@ const ChallengeBlueprint: React.FC = () => {
     requiredWins: 0,
     dailyTrades: 0
   });
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     const savedRiskStyle = localStorage.getItem('challengeBlueprint_riskStyle');
@@ -279,11 +281,11 @@ const ChallengeBlueprint: React.FC = () => {
       </motion.div>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-4 mb-8">
-          <TabsTrigger value="input">Trader Profile</TabsTrigger>
-          <TabsTrigger value="strategy" disabled={!strategyMetrics}>Strategy Blueprint</TabsTrigger>
-          <TabsTrigger value="simulator" disabled={!strategyMetrics}>Adaptive Simulator</TabsTrigger>
-          <TabsTrigger value="export" disabled={!strategyMetrics}>Export & Review</TabsTrigger>
+        <TabsList className="mb-8">
+          <TabsTrigger value="input" className="text-xs md:text-sm">Trader Profile</TabsTrigger>
+          <TabsTrigger value="strategy" disabled={!strategyMetrics} className="text-xs md:text-sm">Strategy Blueprint</TabsTrigger>
+          <TabsTrigger value="simulator" disabled={!strategyMetrics} className="text-xs md:text-sm">Adaptive Simulator</TabsTrigger>
+          <TabsTrigger value="export" disabled={!strategyMetrics} className="text-xs md:text-sm">Export & Review</TabsTrigger>
         </TabsList>
         
         <TabsContent value="input">
