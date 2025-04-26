@@ -1,20 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
 import { BarChart, Book, Clock, Gauge, LineChart, Menu, PieChart, Scale, Compass, X, GamepadIcon, CalendarDays, ClipboardCheck } from 'lucide-react';
 import ThemeToggle from '../theme/ThemeToggle';
 import { Link, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 
 interface MobileNavProps {
   activeSection: string;
   setActiveSection: (section: string) => void;
-}
-
-interface NavItem {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
-  path: string;
 }
 
 const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }) => {
@@ -36,7 +27,6 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
     { id: 'trader-games', label: 'Trader Game Center', icon: <GamepadIcon className="h-5 w-5" />, path: '/trader-games' },
   ];
 
-  // Handle scroll events for sticky header behavior
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
@@ -47,11 +37,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
 
   const handleNavClick = (section: string) => {
     setActiveSection(section);
-    setIsOpen(false); // Close the menu when a section is selected
-  };
-
-  const toggleAnimations = () => {
-    document.body.classList.toggle('reduce-animations');
+    setIsOpen(false);
   };
 
   return (
@@ -62,14 +48,6 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
             PipCraft
           </Link>
           <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={toggleAnimations}
-              className="text-xs border-accent/30 bg-background/50 backdrop-blur-sm"
-            >
-              Toggle Animations
-            </Button>
             <ThemeToggle />
             <button
               onClick={() => setIsOpen(!isOpen)}

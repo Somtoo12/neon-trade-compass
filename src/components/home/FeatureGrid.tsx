@@ -1,6 +1,4 @@
-
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Calculator, 
@@ -10,7 +8,6 @@ import {
   Clock,
   FileText
 } from 'lucide-react';
-
 import { Card } from '@/components/ui/card';
 
 interface FeatureCardProps {
@@ -18,7 +15,6 @@ interface FeatureCardProps {
   title: string;
   description: string;
   animatedPreview: React.ReactNode;
-  path: string;
   index: number;
 }
 
@@ -27,7 +23,6 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   title, 
   description, 
   animatedPreview, 
-  path, 
   index 
 }) => {
   return (
@@ -37,24 +32,22 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
-      <Link to={path} className="block h-full">
-        <Card className="h-full overflow-hidden border border-white/10 backdrop-blur-sm bg-card/30 hover:shadow-[0_0_15px_rgba(123,97,255,0.3)] transition-all duration-500">
-          <div className="p-5 flex flex-col h-full">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="bg-accent/20 p-2.5 rounded-lg text-accent">
-                {icon}
-              </div>
-              <h3 className="font-medium text-lg">{title}</h3>
+      <Card className="h-full overflow-hidden border border-white/10 backdrop-blur-sm bg-card/30 hover:shadow-[0_0_15px_rgba(123,97,255,0.3)] transition-all duration-500">
+        <div className="p-5 flex flex-col h-full">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="bg-accent/20 p-2.5 rounded-lg text-accent">
+              {icon}
             </div>
-
-            <p className="text-muted-foreground text-sm mb-4">{description}</p>
-            
-            <div className="flex-1 relative mb-4 rounded-lg overflow-hidden bg-background/50">
-              {animatedPreview}
-            </div>
+            <h3 className="font-medium text-lg">{title}</h3>
           </div>
-        </Card>
-      </Link>
+
+          <p className="text-muted-foreground text-sm mb-4">{description}</p>
+          
+          <div className="flex-1 relative mb-4 rounded-lg overflow-hidden bg-background/50">
+            {animatedPreview}
+          </div>
+        </div>
+      </Card>
     </motion.div>
   );
 };
@@ -65,7 +58,6 @@ const FeatureGrid: React.FC = () => {
       icon: <Calculator className="h-5 w-5" />,
       title: "Pip Calculator",
       description: "Instant profit/loss calculations for all major currency pairs.",
-      path: "/forex-calculator",
       animatedPreview: (
         <div className="p-3 h-[120px] flex items-center justify-center">
           <motion.div 
@@ -90,7 +82,6 @@ const FeatureGrid: React.FC = () => {
       icon: <Scale className="h-5 w-5" />,
       title: "Risk Manager",
       description: "Smart risk management tools for optimal trading decisions.",
-      path: "/risk-management",
       animatedPreview: (
         <div className="p-3 h-[120px] flex items-center justify-center">
           <motion.div 
@@ -122,7 +113,6 @@ const FeatureGrid: React.FC = () => {
       icon: <LineChart className="h-5 w-5" />,
       title: "Max Lot Size",
       description: "Calculate optimal position sizes based on your risk parameters.",
-      path: "/max-lot-size",
       animatedPreview: (
         <div className="p-3 h-[120px] flex items-center justify-center">
           <motion.div 
@@ -155,7 +145,6 @@ const FeatureGrid: React.FC = () => {
       icon: <Calendar className="h-5 w-5" />,
       title: "Economic Calendar",
       description: "Stay informed with real-time economic event tracking.",
-      path: "/economic-calendar",
       animatedPreview: (
         <div className="p-3 h-[120px] flex items-center justify-center">
           <motion.div className="flex flex-col items-center">
@@ -192,7 +181,6 @@ const FeatureGrid: React.FC = () => {
       icon: <FileText className="h-5 w-5" />,
       title: "Blueprint",
       description: "Master prop firm challenges with precision planning.",
-      path: "/challenge-blueprint",
       animatedPreview: (
         <div className="p-3 h-[120px] flex items-center justify-center">
           <motion.div className="w-full">
@@ -213,7 +201,6 @@ const FeatureGrid: React.FC = () => {
       icon: <Clock className="h-5 w-5" />,
       title: "Session Clock",
       description: "Track forex sessions worldwide with precision timing.",
-      path: "/session-clock",
       animatedPreview: (
         <div className="p-3 h-[120px] flex items-center justify-center">
           <motion.div 
@@ -249,7 +236,6 @@ const FeatureGrid: React.FC = () => {
           title={feature.title}
           description={feature.description}
           animatedPreview={feature.animatedPreview}
-          path={feature.path}
           index={index}
         />
       ))}
