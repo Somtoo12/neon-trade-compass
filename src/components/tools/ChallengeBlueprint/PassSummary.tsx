@@ -79,7 +79,7 @@ const PassSummary: React.FC<PassSummaryProps> = ({
     <Card className="tactical-panel border-white/10">
       <CardHeader className="pb-2 flex flex-row items-center justify-between">
         <div className="tactical-header text-xl flex items-center tracking-wider">
-          <span className="mr-2">&gt;&gt;_</span>
+          <span className="mr-2">{'>>'}_</span>
           TACTICAL TRADING TERMINAL
         </div>
         <div className="data-text text-xs text-white/70">v14.5.2050</div>
