@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -56,6 +57,7 @@ export default {
 					green: '#00ffb3',
 					purple: '#7b61ff',
 					blue: '#00c2ff',
+					cyan: '#00FEFC',
 				},
 			},
 			borderRadius: {
@@ -79,6 +81,14 @@ export default {
 				'float': {
 					'0%, 100%': { transform: 'translateY(0)' },
 					'50%': { transform: 'translateY(-5px)' },
+				},
+				'pulse-border': {
+					'0%, 100%': { borderColor: 'rgba(0, 254, 252, 0.3)' },
+					'50%': { borderColor: 'rgba(0, 254, 252, 0.8)' }
+				},
+				'pulse-text': {
+					'0%, 100%': { opacity: 0.7 },
+					'50%': { opacity: 1 }
 				}
 			},
 			animation: {
@@ -86,12 +96,19 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'pulse-glow': 'pulse-glow 2s infinite',
 				'float': 'float 3s ease-in-out infinite',
+				'pulse-border': 'pulse-border 2s infinite',
+				'pulse-text': 'pulse-text 1.5s infinite',
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+				'cyber-grid': 'linear-gradient(rgba(0, 254, 252, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 254, 252, 0.1) 1px, transparent 1px)',
 			},
 			boxShadow: {
 				'glow': '0 0 10px rgba(var(--primary), 0.3)',
+				'neon-cyan': '0 0 10px rgba(0, 254, 252, 0.5)',
+				'neon-blue': '0 0 10px rgba(0, 194, 255, 0.5)',
+				'neon-purple': '0 0 10px rgba(123, 97, 255, 0.5)',
+				'neon-green': '0 0 10px rgba(0, 255, 179, 0.5)',
 			}
 		}
 	},
