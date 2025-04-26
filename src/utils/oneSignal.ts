@@ -34,13 +34,13 @@ export const initializeOneSignal = () => {
       }
     }, 500);
     
-    // Timeout after 10 seconds to prevent infinite checking
+    // Timeout after 15 seconds to prevent infinite checking
     setTimeout(() => {
       clearInterval(intervalId);
       if (!isOneSignalInitialized) {
         console.error('OneSignal failed to initialize within timeout period');
       }
-    }, 10000);
+    }, 15000);
   }
 };
 
@@ -58,6 +58,15 @@ export const areNotificationsSupported = () => {
     'Notification' in window && 
     'serviceWorker' in navigator && 
     'PushManager' in window
+  );
+};
+
+// Function to check if the device is iOS
+export const isIOSDevice = () => {
+  return (
+    typeof window !== 'undefined' && 
+    /iPad|iPhone|iPod/.test(navigator.userAgent) && 
+    !window.MSStream
   );
 };
 
@@ -89,6 +98,15 @@ export const requestNotificationPermission = async () => {
         success: false, 
         reason: 'unsupported',
         message: 'Push notifications are not supported on this device or browser'
+      };
+    }
+    
+    // iOS specific handling - can't support web push notifications
+    if (isIOSDevice()) {
+      return {
+        success: false,
+        reason: 'ios_device',
+        message: 'iOS devices require you to add this site to your home screen to receive notifications'
       };
     }
     
@@ -133,6 +151,15 @@ export const showNotificationPrompt = async () => {
       };
     }
     
+    // iOS specific handling
+    if (isIOSDevice()) {
+      return {
+        success: false,
+        reason: 'ios_device',
+        message: 'iOS devices require you to add this site to your home screen to receive notifications'
+      };
+    }
+    
     // Check if OneSignal is ready
     const { error, message, oneSignal } = safelyAccessOneSignal();
     if (error) {
@@ -171,16 +198,10 @@ export const showNotificationPrompt = async () => {
 export const getNotificationSupportMessage = async () => {
   if (!areNotificationsSupported()) {
     // Device or browser doesn't support notifications
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      navigator.userAgent
-    );
-    
-    if (isMobile) {
-      if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        return "Apple iOS devices don't support web push notifications. Please use our app for alerts.";
-      } else {
-        return "Please use Chrome browser on Android for notifications or install our app.";
-      }
+    if (isIOSDevice()) {
+      return "iOS devices don't support web push directly. Add this site to your Home Screen for the best experience.";
+    } else if (/Android/i.test(navigator.userAgent)) {
+      return "Please use Chrome browser on Android for notifications or add to Home Screen.";
     } else {
       return "Your browser doesn't support web push notifications. Try Chrome, Firefox, or Edge.";
     }
@@ -196,7 +217,7 @@ export const getNotificationSupportMessage = async () => {
     return "Please allow notifications when prompted to receive trading alerts.";
   }
   
-  return "Notifications are enabled. You'll receive trading alerts.";
+  return "Notifications are enabled. You'll receive persistent trading alerts.";
 };
 
 // Type declaration to prevent TypeScript errors

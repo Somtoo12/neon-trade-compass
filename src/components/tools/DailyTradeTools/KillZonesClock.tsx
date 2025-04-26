@@ -2,8 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { BellRing } from 'lucide-react';
-import { requestNotificationPermission, checkNotificationPermission } from '@/utils/oneSignal';
+import { BellRing, Info } from 'lucide-react';
+import { 
+  requestNotificationPermission, 
+  checkNotificationPermission, 
+  isIOSDevice,
+  getNotificationSupportMessage 
+} from '@/utils/oneSignal';
 
 interface TimeBlock {
   name: string;
@@ -18,6 +23,7 @@ const KillZonesClock: React.FC = () => {
   const [enableAlerts, setEnableAlerts] = useState(false);
   const [hasShownAlert, setHasShownAlert] = useState(false);
   const [notificationsPermission, setNotificationsPermission] = useState<string>('default');
+  const [isIOS, setIsIOS] = useState(false);
   const { toast } = useToast();
   
   const timeBlocks: TimeBlock[] = [
@@ -33,6 +39,8 @@ const KillZonesClock: React.FC = () => {
   useEffect(() => {
     const savedEnableAlerts = localStorage.getItem('killZonesEnableAlerts');
     if (savedEnableAlerts) setEnableAlerts(savedEnableAlerts === 'true');
+    
+    setIsIOS(isIOSDevice());
     
     checkNotificationPermission().then(permission => {
       setNotificationsPermission(permission);
@@ -50,6 +58,16 @@ const KillZonesClock: React.FC = () => {
   }, [enableAlerts]);
   
   const requestPermissionAndEnableAlerts = async () => {
+    if (isIOS) {
+      toast({
+        title: "iOS Notification Support",
+        description: "iOS devices don't support web push notifications. Add this site to your home screen for the best experience.",
+        duration: 5000,
+      });
+      
+      return;
+    }
+    
     const result = await requestNotificationPermission();
     
     if (result.success) {
@@ -58,16 +76,17 @@ const KillZonesClock: React.FC = () => {
       
       toast({
         title: "Session Alerts Enabled",
-        description: "You'll be notified before important trading sessions.",
+        description: "You'll be notified before important trading sessions. Notifications will remain visible until dismissed.",
       });
     } else {
       const permission = await checkNotificationPermission();
       setNotificationsPermission(permission);
       
       if (result.reason === 'unsupported') {
+        const message = await getNotificationSupportMessage();
         toast({
           title: "Notifications Not Supported",
-          description: "Your device or browser doesn't support notifications. Try Chrome, Firefox or Edge.",
+          description: message,
           variant: "destructive",
         });
       } else {
@@ -86,6 +105,7 @@ const KillZonesClock: React.FC = () => {
         new Notification(title, {
           body,
           icon: '/favicon.ico',
+          requireInteraction: true
         });
       }
       
@@ -207,7 +227,14 @@ const KillZonesClock: React.FC = () => {
         </div>
       )}
       
-      {notificationsPermission === 'unsupported' && (
+      {isIOS && (
+        <div className="text-sm text-yellow-500 flex items-center gap-2 p-2 border border-yellow-600 rounded-md bg-yellow-500/10">
+          <Info className="h-4 w-4 flex-shrink-0" />
+          <span>iOS doesn't support web notifications. Add this site to your home screen for the best experience.</span>
+        </div>
+      )}
+      
+      {!isIOS && notificationsPermission === 'unsupported' && (
         <div className="text-sm text-yellow-500 flex items-center gap-2">
           <BellRing className="h-4 w-4" />
           Your device/browser doesn't support web notifications

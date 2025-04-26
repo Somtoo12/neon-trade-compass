@@ -11,7 +11,9 @@ import {
   showNotificationPrompt, 
   checkNotificationPermission,
   getNotificationSupportMessage,
-  isOneSignalReady
+  isOneSignalReady,
+  isIOSDevice,
+  areNotificationsSupported
 } from '@/utils/oneSignal';
 
 // Tool grid data
@@ -31,6 +33,7 @@ const HeroSection: React.FC = () => {
   const [audioPlaying, setAudioPlaying] = useState(false);
   const [notificationStatus, setNotificationStatus] = useState<string>('loading');
   const [oneSignalLoaded, setOneSignalLoaded] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -69,6 +72,9 @@ const HeroSection: React.FC = () => {
   
   // Check OneSignal availability and notification permissions
   useEffect(() => {
+    // Detect iOS device
+    setIsIOS(isIOSDevice());
+    
     // Check OneSignal initialization
     const checkOneSignal = () => {
       const isReady = isOneSignalReady();
@@ -92,14 +98,14 @@ const HeroSection: React.FC = () => {
         }
       }, 1000);
       
-      // Stop checking after 10 seconds
+      // Stop checking after 15 seconds
       setTimeout(() => {
         clearInterval(intervalId);
         if (!oneSignalLoaded) {
-          console.error("OneSignal failed to initialize within timeout period");
-          setNotificationStatus('unavailable');
+          console.log("OneSignal status check timeout exceeded");
+          setNotificationStatus(areNotificationsSupported() ? 'default' : 'unsupported');
         }
-      }, 10000);
+      }, 15000);
     }
     
     return () => {
@@ -154,11 +160,23 @@ const HeroSection: React.FC = () => {
   };
 
   const handleNotificationRequest = async () => {
+    // Special handling for iOS
+    if (isIOS) {
+      toast({
+        title: "iOS Web Push Notification",
+        description: "iOS doesn't support web push directly. Please add this site to your home screen for the best experience.",
+        duration: 5000,
+      });
+      
+      showAddToHomeInstructions();
+      return;
+    }
+    
     // First check if OneSignal is loaded
-    if (!oneSignalLoaded) {
+    if (!oneSignalLoaded && !areNotificationsSupported()) {
       toast({
         title: "Service Unavailable",
-        description: "Notification service is still loading, please try again in a few moments",
+        description: "Notification service is not supported in your browser. Please try Chrome, Firefox or Edge.",
         variant: "destructive",
         duration: 3000,
       });
@@ -171,7 +189,7 @@ const HeroSection: React.FC = () => {
       setNotificationStatus('granted');
       toast({
         title: "Notifications Already Enabled",
-        description: "You're already set to receive trading alerts",
+        description: "You're already set to receive persistent trading alerts",
         duration: 3000,
       });
       return;
@@ -188,10 +206,18 @@ const HeroSection: React.FC = () => {
       if (newPermission === 'granted') {
         toast({
           title: "Notifications Enabled",
-          description: "You'll now receive trading alerts and market updates",
+          description: "You'll now receive persistent trading alerts and market updates",
           duration: 3000,
         });
       }
+    } else if (promptResult.reason === 'ios_device') {
+      // iOS specific handling
+      toast({
+        title: "iOS Support",
+        description: "Add PipCraft to your home screen for the best experience",
+        duration: 5000,
+      });
+      showAddToHomeInstructions();
     } else {
       // If OneSignal prompt fails, try browser native
       const result = await requestNotificationPermission();
@@ -200,14 +226,14 @@ const HeroSection: React.FC = () => {
         setNotificationStatus('granted');
         toast({
           title: "Notifications Enabled",
-          description: "You'll now receive trading alerts and market updates",
+          description: "You'll now receive persistent trading alerts and market updates",
           duration: 3000,
         });
       } else {
         const permission = await checkNotificationPermission();
         setNotificationStatus(permission);
         
-        if (result.reason === 'unsupported') {
+        if (result.reason === 'unsupported' || result.reason === 'ios_device') {
           const message = await getNotificationSupportMessage();
           toast({
             title: "Notifications Not Supported",
@@ -239,7 +265,7 @@ const HeroSection: React.FC = () => {
     let buttonVariant: "outline" | "default" = "outline";
     let buttonClass = "w-full min-h-[44px] border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm";
     
-    if (notificationStatus === 'loading' || !oneSignalLoaded) {
+    if (notificationStatus === 'loading') {
       buttonText = "Loading Notifications...";
     } else if (notificationStatus === 'granted') {
       buttonText = "Trading Alerts Enabled";
@@ -249,20 +275,30 @@ const HeroSection: React.FC = () => {
       buttonText = "Notifications Blocked";
       buttonClass = "w-full min-h-[44px] border-red-500 text-red-500 hover:bg-red-500/10";
     } else if (notificationStatus === 'unsupported') {
-      buttonText = "Notifications Not Supported";
+      buttonText = isIOS 
+        ? "Add to Home Screen for Alerts" 
+        : "Notifications Not Supported";
       buttonClass = "w-full min-h-[44px] border-yellow-500 text-yellow-500 hover:bg-yellow-500/10";
     } else if (notificationStatus === 'unavailable') {
       buttonText = "Notification Service Unavailable";
       buttonClass = "w-full min-h-[44px] border-yellow-500 text-yellow-500 hover:bg-yellow-500/10";
     }
 
+    const handleButtonClick = () => {
+      if (isIOS && (notificationStatus === 'unsupported' || notificationStatus === 'default')) {
+        showAddToHomeInstructions();
+      } else {
+        handleNotificationRequest();
+      }
+    };
+
     return (
       <Button
         variant={buttonVariant}
         size="lg"
-        onClick={handleNotificationRequest}
+        onClick={handleButtonClick}
         className={`${buttonClass} ${notificationStatus === 'default' ? 'animate-pulse' : ''}`}
-        disabled={notificationStatus === 'loading' || notificationStatus === 'unavailable' || !oneSignalLoaded}
+        disabled={notificationStatus === 'loading' || (notificationStatus === 'unavailable' && !isIOS)}
       >
         <Bell className="mr-2 h-5 w-5" />
         {buttonText}
@@ -270,6 +306,7 @@ const HeroSection: React.FC = () => {
     );
   };
 
+  
   return (
     <div className="relative min-h-[85vh] flex items-center justify-center px-4 md:px-6 overflow-hidden bg-background">
       <div className="w-full max-w-7xl mx-auto relative z-10 pt-16 md:pt-20">
