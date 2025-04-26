@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { ClipboardCheck, Flag, HelpCircle, Clear } from 'lucide-react';
+import { ClipboardCheck, Flag, HelpCircle, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface GoalCalculatorProps {
@@ -193,7 +194,7 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
                       onClick={() => handleClearField(key as keyof GoalInputs)}
                       className="h-6 w-6 p-0"
                     >
-                      <Clear className="h-4 w-4" />
+                      <X className="h-4 w-4" />
                     </Button>
                   )}
                 </div>
