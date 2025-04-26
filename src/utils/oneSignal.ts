@@ -302,18 +302,13 @@ export const getOneSignalDebugInfo = async () => {
     
     // Get service worker registration info
     let serviceWorkerInfo = 'No Service Worker API';
-    
     if ('serviceWorker' in navigator) {
       const registrations = await navigator.serviceWorker.getRegistrations();
-      // Fix TypeScript error by creating an array of objects instead of assigning directly to serviceWorkerInfo
-      const serviceWorkerData = registrations.map(reg => ({
+      serviceWorkerInfo = registrations.map(reg => ({
         scope: reg.scope,
         scriptURL: reg.active?.scriptURL || 'inactive',
         state: reg.active?.state || 'unknown'
       }));
-      
-      // Convert to string representation for debugging display
-      serviceWorkerInfo = JSON.stringify(serviceWorkerData);
     }
     
     // Get user subscription info
@@ -326,7 +321,7 @@ export const getOneSignalDebugInfo = async () => {
       isEnabled,
       hasId: !!userData?.id,
       userId: userData?.id || 'none',
-      subscriptionInfo,
+      subscriptionStatus: subscriptionInfo,
       serviceWorkerInfo,
       appId: "d3c47d59-7e65-49d6-a331-4ae93e3423bb" // For verification
     };
