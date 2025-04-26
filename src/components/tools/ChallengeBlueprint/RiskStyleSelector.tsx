@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
@@ -191,11 +190,12 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
                   max={3}
                   min={0.25}
                   step={0.25}
-                  className="w-full"
-                  onValueChange={handleRiskSliderChange}
+                  className="w-full opacity-50 cursor-not-allowed"
+                  disabled
+                  onValueChange={() => {}}
                 />
                 <div className="text-xs text-muted-foreground mt-1">
-                  Customize risk level (0.25% - 3%)
+                  Risk level is view-only
                 </div>
               </div>
             </div>
@@ -249,4 +249,3 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
 };
 
 export default RiskStyleSelector;
-
