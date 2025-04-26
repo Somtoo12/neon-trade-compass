@@ -3,6 +3,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { BellRing } from 'lucide-react';
+import { requestNotificationPermission, checkNotificationPermission } from '@/utils/oneSignal';
 
 interface TimeBlock {
   name: string;
@@ -16,7 +17,7 @@ const KillZonesClock: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [enableAlerts, setEnableAlerts] = useState(false);
   const [hasShownAlert, setHasShownAlert] = useState(false);
-  const [notificationsPermission, setNotificationsPermission] = useState<NotificationPermission>('default');
+  const [notificationsPermission, setNotificationsPermission] = useState<string>('default');
   const { toast } = useToast();
   
   const timeBlocks: TimeBlock[] = [
@@ -33,49 +34,64 @@ const KillZonesClock: React.FC = () => {
     const savedEnableAlerts = localStorage.getItem('killZonesEnableAlerts');
     if (savedEnableAlerts) setEnableAlerts(savedEnableAlerts === 'true');
     
-    if ('Notification' in window) {
-      setNotificationsPermission(Notification.permission);
-    }
+    checkNotificationPermission().then(permission => {
+      setNotificationsPermission(permission);
+    });
+    
+    const intervalId = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+    
+    return () => clearInterval(intervalId);
   }, []);
   
   useEffect(() => {
     localStorage.setItem('killZonesEnableAlerts', enableAlerts.toString());
   }, [enableAlerts]);
   
-  const requestNotificationPermission = async () => {
-    if (!('Notification' in window)) {
+  const requestPermissionAndEnableAlerts = async () => {
+    const result = await requestNotificationPermission();
+    
+    if (result.success) {
+      setNotificationsPermission('granted');
+      setEnableAlerts(true);
+      
       toast({
-        title: "Notifications Not Supported",
-        description: "Your browser doesn't support notifications. Please use a modern browser.",
+        title: "Session Alerts Enabled",
+        description: "You'll be notified before important trading sessions.",
       });
-      return;
-    }
-
-    try {
-      const permission = await Notification.requestPermission();
+    } else {
+      const permission = await checkNotificationPermission();
       setNotificationsPermission(permission);
       
-      if (permission === 'granted') {
+      if (result.reason === 'unsupported') {
         toast({
-          title: "Notifications Enabled",
-          description: "You'll be notified before important trading sessions.",
+          title: "Notifications Not Supported",
+          description: "Your device or browser doesn't support notifications. Try Chrome, Firefox or Edge.",
+          variant: "destructive",
         });
       } else {
         toast({
           title: "Notifications Disabled",
-          description: "Enable browser notifications to receive session alerts while multitasking.",
+          description: result.message || "Enable browser notifications to receive session alerts.",
+          variant: "destructive",
         });
       }
-    } catch (error) {
-      console.error('Error requesting notification permission:', error);
     }
   };
 
   const sendNotification = (title: string, body: string) => {
     if (notificationsPermission === 'granted' && enableAlerts) {
-      new Notification(title, {
-        body,
-        icon: '/favicon.ico',
+      if ('Notification' in window) {
+        new Notification(title, {
+          body,
+          icon: '/favicon.ico',
+        });
+      }
+      
+      toast({
+        title,
+        description: body,
       });
     } else {
       toast({
@@ -164,11 +180,13 @@ const KillZonesClock: React.FC = () => {
               id="enable-alerts"
               checked={enableAlerts}
               onCheckedChange={(checked) => {
-                setEnableAlerts(checked);
-                if (checked && notificationsPermission === 'default') {
-                  requestNotificationPermission();
+                if (checked && notificationsPermission !== 'granted') {
+                  requestPermissionAndEnableAlerts();
+                } else {
+                  setEnableAlerts(checked);
                 }
               }}
+              disabled={notificationsPermission === 'denied' || notificationsPermission === 'unsupported'}
             />
             <Label htmlFor="enable-alerts">Enable alerts</Label>
           </div>
@@ -179,6 +197,20 @@ const KillZonesClock: React.FC = () => {
         <div className="text-sm text-muted-foreground flex items-center gap-2">
           <BellRing className="h-4 w-4" />
           Notifications active – you'll be alerted 5 mins before key sessions
+        </div>
+      )}
+      
+      {notificationsPermission === 'denied' && (
+        <div className="text-sm text-red-500 flex items-center gap-2">
+          <BellRing className="h-4 w-4" />
+          Notifications blocked - please enable them in your browser settings
+        </div>
+      )}
+      
+      {notificationsPermission === 'unsupported' && (
+        <div className="text-sm text-yellow-500 flex items-center gap-2">
+          <BellRing className="h-4 w-4" />
+          Your device/browser doesn't support web notifications
         </div>
       )}
       

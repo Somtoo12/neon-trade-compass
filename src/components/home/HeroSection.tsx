@@ -6,7 +6,12 @@ import { ArrowRight, Music, Calculator, BarChart2, Calendar, BrainCircuit, Clock
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { requestNotificationPermission, showNotificationPrompt } from '@/utils/oneSignal';
+import { 
+  requestNotificationPermission, 
+  showNotificationPrompt, 
+  checkNotificationPermission,
+  getNotificationSupportMessage
+} from '@/utils/oneSignal';
 
 // Tool grid data
 const toolGrid = [
@@ -23,6 +28,7 @@ const HeroSection: React.FC = () => {
   const isMobile = useIsMobile();
   const [typerText, setTyperText] = useState("Loading Pip Calculator...");
   const [audioPlaying, setAudioPlaying] = useState(false);
+  const [notificationStatus, setNotificationStatus] = useState<string>('loading');
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -106,21 +112,73 @@ const HeroSection: React.FC = () => {
   };
 
   const handleNotificationRequest = async () => {
-    const granted = await requestNotificationPermission();
-    if (granted) {
+    const result = await requestNotificationPermission();
+    
+    if (result.success) {
+      setNotificationStatus('granted');
       toast({
         title: "Notifications Enabled",
         description: "You'll now receive trading alerts and market updates",
         duration: 3000,
       });
     } else {
-      toast({
-        title: "Notifications Disabled",
-        description: "Enable notifications to receive trading alerts",
-        variant: "destructive",
-        duration: 3000,
-      });
+      const permission = await checkNotificationPermission();
+      setNotificationStatus(permission);
+      
+      if (result.reason === 'unsupported') {
+        const message = await getNotificationSupportMessage();
+        toast({
+          title: "Notifications Not Supported",
+          description: message,
+          variant: "destructive",
+          duration: 5000,
+        });
+      } else if (result.reason === 'denied') {
+        toast({
+          title: "Notifications Blocked",
+          description: "Please enable notifications in your browser settings to receive alerts",
+          variant: "destructive",
+          duration: 5000,
+        });
+      } else {
+        toast({
+          title: "Notification Error",
+          description: result.message || "Failed to enable notifications",
+          variant: "destructive",
+          duration: 3000,
+        });
+      }
     }
+  };
+
+  const renderNotificationButton = () => {
+    let buttonText = "Enable Trading Alerts";
+    let buttonVariant: "outline" | "default" = "outline";
+    let buttonClass = "w-full min-h-[44px] border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm";
+    
+    if (notificationStatus === 'granted') {
+      buttonText = "Trading Alerts Enabled";
+      buttonVariant = "default";
+      buttonClass = "w-full min-h-[44px] bg-green-600 hover:bg-green-700";
+    } else if (notificationStatus === 'denied') {
+      buttonText = "Notifications Blocked";
+      buttonClass = "w-full min-h-[44px] border-red-500 text-red-500 hover:bg-red-500/10";
+    } else if (notificationStatus === 'unsupported') {
+      buttonText = "Notifications Not Supported";
+      buttonClass = "w-full min-h-[44px] border-yellow-500 text-yellow-500 hover:bg-yellow-500/10";
+    }
+
+    return (
+      <Button
+        variant={buttonVariant}
+        size="lg"
+        onClick={handleNotificationRequest}
+        className={`${buttonClass} ${notificationStatus === 'default' ? 'animate-pulse' : ''}`}
+      >
+        <Bell className="mr-2 h-5 w-5" />
+        {buttonText}
+      </Button>
+    );
   };
 
   return (
@@ -227,15 +285,7 @@ const HeroSection: React.FC = () => {
                   </Tooltip>
                 </TooltipProvider>
                 
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={handleNotificationRequest}
-                  className="w-full min-h-[44px] border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm animate-pulse"
-                >
-                  <Bell className="mr-2 h-5 w-5" />
-                  Enable Trading Alerts
-                </Button>
+                {renderNotificationButton()}
               </div>
             </motion.div>
           )}

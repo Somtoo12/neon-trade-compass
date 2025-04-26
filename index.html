@@ -24,6 +24,7 @@
       OneSignalDeferred.push(async function(OneSignal) {
         await OneSignal.init({
           appId: "d3c47d59-7e65-49d6-a331-4ae93e3423bb",
+          allowLocalhostAsSecureOrigin: true,
           promptOptions: {
             slidedown: {
               prompts: [{
@@ -41,6 +42,15 @@
               }]
             }
           }
+        });
+        
+        // Initialize event handlers
+        OneSignal.Notifications.addEventListener('permissionChange', function(permission) {
+          console.log('OneSignal: Permission changed to', permission);
+        });
+        
+        OneSignal.Notifications.addEventListener('permissionPromptDisplay', function() {
+          console.log('OneSignal: Prompt displayed');
         });
       });
     </script>
