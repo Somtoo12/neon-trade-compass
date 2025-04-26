@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Music, Calculator, BarChart2, Calendar, BrainCircuit, Clock, LineChart, Star, Smartphone } from 'lucide-react';
+import { ArrowRight, Music, Calculator, BellRing, Telegram, Star } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -178,6 +177,31 @@ const HeroSection: React.FC = () => {
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Add PipCraft to your desktop for quick access</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <a
+                    href="https://t.me/pipcraftstelegram"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto"
+                  >
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="w-full sm:w-auto bg-gradient-to-r from-[#ea384c] to-[#F97316] hover:opacity-90 text-white border-none min-h-[44px]"
+                    >
+                      <BellRing className="mr-2 h-4 w-4" />
+                      Red Folder News Alerts
+                    </Button>
+                  </a>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Join our Telegram channel for market alerts</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

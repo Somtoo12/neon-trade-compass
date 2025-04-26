@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import SEO from '@/components/shared/SEO';
+import FloatingTelegramButton from '@/components/shared/FloatingTelegramButton';
 
 // Import home page components
 import AppHeader from '@/components/home/AppHeader';
@@ -59,6 +60,7 @@ const HomePage: React.FC = () => {
 
         {/* Footer */}
         <Footer />
+        <FloatingTelegramButton />
       </div>
     </>
   );
