@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -12,7 +11,7 @@ import InsightsPanel from './InsightsPanel';
 import ExportTools from './ExportTools';
 import GoalCalculator, { GoalInputs } from './GoalCalculator';
 import PassSummary from './PassSummary';
-import InfoCard from './InfoCard';
+// import InfoCard from './InfoCard';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ProbabilityEngine from './ProbabilityEngine';
 
@@ -338,8 +337,6 @@ const ChallengeBlueprint: React.FC = () => {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6">
-      <InfoCard />
-      
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
