@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -23,7 +22,7 @@ const tools = [
     name: 'Forex Pip Calculator',
     icon: <Calculator className="h-6 w-6 text-neon-green" />,
     summary: 'Calculate pip values for any position size',
-    path: '/forex-calculator'
+    path: '/forex-calculator'  // Existing route matches current App.tsx
   },
   {
     name: 'Risk Management',
@@ -35,9 +34,9 @@ const tools = [
     name: 'Max Lot Size',
     icon: <Scale className="h-6 w-6 text-neon-purple" />,
     summary: 'Calculate optimal position sizes for your risk',
-    path: '/max-lot-size'
+    path: '/max-lot-size'  // Existing route matches current App.tsx
   },
-  {
+    {
     name: 'Trade Journal',
     icon: <BookOpen className="h-6 w-6 text-neon-green" />,
     summary: 'Track your trades and analyze performance',
@@ -47,7 +46,7 @@ const tools = [
     name: 'Challenge Blueprint',
     icon: <ClipboardCheck className="h-6 w-6 text-neon-blue" />,
     summary: 'Master prop firm challenges with precision',
-    path: '/challenge-blueprint'
+    path: '/challenge-blueprint'  // Existing route matches current App.tsx
   },
   {
     name: 'Daily Trade Tools',
@@ -59,13 +58,13 @@ const tools = [
     name: 'Session Clock',
     icon: <Clock className="h-6 w-6 text-neon-green" />,
     summary: 'Track trading sessions around the world',
-    path: '/session-clock'
+    path: '/session-clock'  // Existing route matches current App.tsx
   },
   {
     name: 'Economic Calendar',
     icon: <Calendar className="h-6 w-6 text-neon-blue" />,
     summary: 'Stay ahead of market-moving events',
-    path: '/economic-calendar'
+    path: '/economic-calendar'  // Existing route matches current App.tsx
   },
   {
     name: 'Futures Calculator',
