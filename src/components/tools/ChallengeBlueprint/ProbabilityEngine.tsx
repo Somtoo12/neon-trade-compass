@@ -259,8 +259,7 @@ const ProbabilityEngine: React.FC<ProbabilityEngineProps> = ({
                   <ChartContainer 
                     className="h-full w-full"
                     config={{
-                      trades: { color: "#00FEFC" },
-                      cumulative: { color: "#FF50CD" }
+                      count: { color: "#8884d8" }
                     }}
                   >
                     <BarChart
@@ -302,7 +301,7 @@ const ProbabilityEngine: React.FC<ProbabilityEngineProps> = ({
                   <ChartContainer 
                     className="h-full w-full"
                     config={{
-                      drawdown: { color: "#FF50CD" }
+                      count: { color: "#10b981" }
                     }}
                   >
                     <BarChart

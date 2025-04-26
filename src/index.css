@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -70,7 +71,7 @@
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', 'Poppins', sans-serif;
+    font-family: 'Poppins', sans-serif;
     @apply break-words;
   }
 
@@ -134,18 +135,6 @@
   
   .glassmorphism {
     @apply bg-black/10 backdrop-blur-md border border-white/10 rounded-xl;
-  }
-  
-  .neo-glassmorphism {
-    @apply bg-[#0F1A2A]/80 backdrop-blur-lg border border-[#00FEFC]/20 rounded-xl shadow-lg;
-  }
-
-  .text-neon-glow {
-    text-shadow: 0 0 10px rgba(0, 254, 252, 0.7);
-  }
-  
-  .border-neon {
-    box-shadow: 0 0 10px rgba(0, 254, 252, 0.4), inset 0 0 10px rgba(0, 254, 252, 0.2);
   }
   
   .neon-glow {
