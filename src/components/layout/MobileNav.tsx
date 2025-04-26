@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { BarChart, Book, Clock, Gauge, LineChart, Menu, PieChart, Scale, Compass, X, GamepadIcon, CalendarDays, ClipboardCheck } from 'lucide-react';
 import ThemeToggle from '../theme/ThemeToggle';
@@ -6,6 +7,13 @@ import { Link, useLocation } from 'react-router-dom';
 interface MobileNavProps {
   activeSection: string;
   setActiveSection: (section: string) => void;
+}
+
+interface NavItem {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  path: string;
 }
 
 const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }) => {
