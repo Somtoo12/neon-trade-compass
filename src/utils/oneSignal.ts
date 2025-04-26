@@ -25,6 +25,25 @@ export const requestNotificationPermission = async () => {
   return false;
 };
 
+// Function to show OneSignal slidedown prompt
+export const showNotificationPrompt = () => {
+  if (typeof window !== 'undefined' && window.OneSignal) {
+    try {
+      // Check if the user has already subscribed
+      window.OneSignal.Notifications.areEnabled().then((isEnabled: boolean) => {
+        if (!isEnabled) {
+          console.log("Showing OneSignal notification prompt");
+          window.OneSignal.Notifications.showSlidedownPrompt();
+        } else {
+          console.log("User already subscribed to notifications");
+        }
+      });
+    } catch (error) {
+      console.error("Error showing notification prompt:", error);
+    }
+  }
+};
+
 // Type declaration to prevent TypeScript errors
 declare global {
   interface Window {

@@ -1,12 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Music, Calculator, BarChart2, Calendar, BrainCircuit, Clock, LineChart, Star, Smartphone } from 'lucide-react';
+import { ArrowRight, Music, Calculator, BarChart2, Calendar, BrainCircuit, Clock, LineChart, Star, Smartphone, Bell } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { requestNotificationPermission, showNotificationPrompt } from '@/utils/oneSignal';
 
 // Tool grid data
 const toolGrid = [
@@ -105,6 +105,24 @@ const HeroSection: React.FC = () => {
     setAudioPlaying(!audioPlaying);
   };
 
+  const handleNotificationRequest = async () => {
+    const granted = await requestNotificationPermission();
+    if (granted) {
+      toast({
+        title: "Notifications Enabled",
+        description: "You'll now receive trading alerts and market updates",
+        duration: 3000,
+      });
+    } else {
+      toast({
+        title: "Notifications Disabled",
+        description: "Enable notifications to receive trading alerts",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
+  };
+
   return (
     <div className="relative min-h-[85vh] flex items-center justify-center px-4 md:px-6 overflow-hidden bg-background">
       <div className="w-full max-w-7xl mx-auto relative z-10 pt-16 md:pt-20">
@@ -189,24 +207,36 @@ const HeroSection: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               className="px-4 mb-4"
             >
-              <TooltipProvider delayDuration={300}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      onClick={showAddToHomeInstructions}
-                      className="w-full min-h-[44px] border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm animate-pulse"
-                    >
-                      <Smartphone className="mr-2 h-5 w-5" />
-                      Save to Home Screen
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Tap here to save PipCraft on your phone's home screen</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <div className="flex flex-col gap-3">
+                <TooltipProvider delayDuration={300}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        onClick={showAddToHomeInstructions}
+                        className="w-full min-h-[44px] border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm"
+                      >
+                        <Smartphone className="mr-2 h-5 w-5" />
+                        Save to Home Screen
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Tap here to save PipCraft on your phone's home screen</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={handleNotificationRequest}
+                  className="w-full min-h-[44px] border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm animate-pulse"
+                >
+                  <Bell className="mr-2 h-5 w-5" />
+                  Enable Trading Alerts
+                </Button>
+              </div>
             </motion.div>
           )}
 

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -23,6 +24,23 @@
       OneSignalDeferred.push(async function(OneSignal) {
         await OneSignal.init({
           appId: "d3c47d59-7e65-49d6-a331-4ae93e3423bb",
+          promptOptions: {
+            slidedown: {
+              prompts: [{
+                type: "push",
+                autoPrompt: true,
+                text: {
+                  actionMessage: "Get instant alerts for market movements and trading opportunities!",
+                  acceptButton: "Allow",
+                  cancelButton: "Later"
+                },
+                delay: {
+                  pageViews: 1,
+                  timeDelay: 10
+                }
+              }]
+            }
+          }
         });
       });
     </script>
