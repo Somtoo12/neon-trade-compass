@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -28,7 +27,6 @@ const StrategyBreakdown: React.FC<StrategyBreakdownProps> = ({ metrics, traderDa
     dailyTargetPercent: 0
   });
   
-  // Animation effect for metrics
   useEffect(() => {
     if (!isLoading && metrics) {
       const animationDuration = 1500; // ms
@@ -71,7 +69,6 @@ const StrategyBreakdown: React.FC<StrategyBreakdownProps> = ({ metrics, traderDa
     }).format(value);
   };
   
-  // Format data for the chart
   const chartData = metrics?.equityCurveData?.average.map((point, index) => {
     return {
       name: `Day ${point.x}`,
@@ -81,11 +78,9 @@ const StrategyBreakdown: React.FC<StrategyBreakdownProps> = ({ metrics, traderDa
     };
   }) || [];
   
-  // Calculate reward amount in both percentage and dollar terms
   const rewardAmountPct = metrics?.rewardAmount || 0;
   const rewardAmountDollar = (rewardAmountPct / 100) * (traderData?.accountSize || 0);
   
-  // Calculate risk amount in dollar terms
   const riskAmountDollar = ((traderData?.riskPerTrade || 0) / 100) * (traderData?.accountSize || 0);
   
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -136,107 +131,151 @@ const StrategyBreakdown: React.FC<StrategyBreakdownProps> = ({ metrics, traderDa
             </div>
           ) : (
             <div className="flex flex-col lg:flex-row gap-6">
-              {/* Left Section - Stats and Chart */}
               <div className="lg:w-3/5 space-y-6">
-                {/* Strategy Overview */}
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5 }}
-                  className="p-4 bg-gradient-to-r from-neon-purple/10 to-neon-blue/10 rounded-lg border border-neon-blue/30 mb-4"
+                  className="p-4 bg-gradient-to-r from-background/80 to-background/40 rounded-lg border border-neon-blue/30 backdrop-blur-md"
                 >
-                  <div className="text-lg font-semibold mb-2 bg-gradient-to-r from-neon-cyan to-neon-blue bg-clip-text text-transparent">
+                  <div className="text-lg font-medium mb-4 bg-gradient-to-r from-neon-cyan to-neon-blue bg-clip-text text-transparent flex items-center">
+                    <Trophy className="h-5 w-5 mr-2 text-neon-cyan" />
                     Blueprint Summary
                   </div>
                   
-                  {/* Stats Grid */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {/* Risk */}
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: 0.1 }}
-                      className="p-3 bg-gradient-to-br from-black/60 to-black/20 backdrop-blur-sm rounded-lg border border-neon-cyan/20 overflow-hidden relative"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-br from-neon-cyan/5 to-transparent"></div>
-                      <div className="relative flex items-center mb-1">
-                        <Shield className="h-4 w-4 text-neon-cyan mr-2" />
-                        <span className="text-xs text-muted-foreground">RISK</span>
-                      </div>
-                      <div className="text-lg font-semibold flex items-baseline">
-                        {traderData.riskPerTrade}%
-                        <span className="text-xs ml-1 text-muted-foreground">
-                          (${riskAmountDollar.toFixed(0)})
-                        </span>
-                      </div>
-                    </motion.div>
-                    
-                    {/* Reward */}
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: 0.2 }}
-                      className="p-3 bg-gradient-to-br from-black/60 to-black/20 backdrop-blur-sm rounded-lg border border-neon-green/20 overflow-hidden relative"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-br from-neon-green/5 to-transparent"></div>
-                      <div className="relative flex items-center mb-1">
-                        <Trophy className="h-4 w-4 text-neon-green mr-2" />
-                        <span className="text-xs text-muted-foreground">REWARD</span>
-                      </div>
-                      <div className="text-lg font-semibold flex items-baseline">
-                        {animatedMetrics.rewardAmount.toFixed(2)}%
-                        <span className="text-xs ml-1 text-muted-foreground">
-                          (${rewardAmountDollar.toFixed(0)})
-                        </span>
-                      </div>
-                    </motion.div>
-                    
-                    {/* Drawdown */}
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: 0.3 }}
-                      className="p-3 bg-gradient-to-br from-black/60 to-black/20 backdrop-blur-sm rounded-lg border border-red-500/20 overflow-hidden relative"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent"></div>
-                      <div className="relative flex items-center mb-1">
-                        <TrendingUp className="h-4 w-4 text-red-400 mr-2" />
-                        <span className="text-xs text-muted-foreground">DRAWDOWN</span>
-                      </div>
-                      <div className="text-lg font-semibold">
-                        {animatedMetrics.drawdownRisk.toFixed(1)}%
-                      </div>
-                    </motion.div>
-                    
-                    {/* Pass Probability */}
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: 0.4 }}
-                      className="p-3 bg-gradient-to-br from-black/60 to-black/20 backdrop-blur-sm rounded-lg border border-neon-purple/20 overflow-hidden relative"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/5 to-transparent"></div>
-                      <div className="relative flex items-center mb-1">
-                        <CheckCircle className="h-4 w-4 text-neon-purple mr-2" />
-                        <span className="text-xs text-muted-foreground">SUCCESS</span>
-                      </div>
-                      <div className="text-lg font-semibold flex items-center">
-                        {animatedMetrics.passProbability}%
-                        {metrics.passProbability >= 80 ? (
-                          <CheckCircle className="h-3 w-3 text-neon-green ml-1" />
-                        ) : metrics.passProbability >= 60 ? (
-                          <TrendingUp className="h-3 w-3 text-amber-500 ml-1" />
-                        ) : (
-                          <AlertTriangle className="h-3 w-3 text-red-500 ml-1" />
-                        )}
-                      </div>
-                    </motion.div>
+                    <TooltipProvider>
+                      <UITooltip>
+                        <TooltipTrigger asChild>
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: 0.1 }}
+                            className="group relative p-3 bg-gradient-to-br from-background/60 to-background/20 backdrop-blur-sm rounded-lg border border-neon-cyan/20 hover:border-neon-cyan/40 transition-all duration-300"
+                          >
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-br from-neon-cyan/5 to-transparent transition-opacity rounded-lg" />
+                            <div className="relative">
+                              <div className="flex items-center mb-1">
+                                <Shield className="h-4 w-4 text-neon-cyan mr-2" />
+                                <span className="text-xs text-muted-foreground font-medium">RISK</span>
+                              </div>
+                              <div className="text-xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+                                {traderData.riskPerTrade}%
+                              </div>
+                              <div className="text-xs text-muted-foreground mt-1 opacity-80">
+                                ${(traderData.accountSize * traderData.riskPerTrade / 100).toFixed(0)}
+                              </div>
+                            </div>
+                          </motion.div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="text-xs max-w-[200px]">Maximum risk per trade based on account size</p>
+                        </TooltipContent>
+                      </UITooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                      <UITooltip>
+                        <TooltipTrigger asChild>
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: 0.2 }}
+                            className="group relative p-3 bg-gradient-to-br from-background/60 to-background/20 backdrop-blur-sm rounded-lg border border-neon-green/20 hover:border-neon-green/40 transition-all duration-300"
+                          >
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-br from-neon-green/5 to-transparent transition-opacity rounded-lg" />
+                            <div className="relative">
+                              <div className="flex items-center mb-1">
+                                <Trophy className="h-4 w-4 text-neon-green mr-2" />
+                                <span className="text-xs text-muted-foreground font-medium">REWARD</span>
+                              </div>
+                              <div className="text-xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+                                {(metrics.rewardAmount).toFixed(2)}%
+                              </div>
+                              <div className="text-xs text-muted-foreground mt-1 opacity-80">
+                                ${(traderData.accountSize * metrics.rewardAmount / 100).toFixed(0)}
+                              </div>
+                            </div>
+                          </motion.div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="text-xs max-w-[200px]">Expected reward based on your risk/reward ratio</p>
+                        </TooltipContent>
+                      </UITooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                      <UITooltip>
+                        <TooltipTrigger asChild>
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: 0.3 }}
+                            className="group relative p-3 bg-gradient-to-br from-background/60 to-background/20 backdrop-blur-sm rounded-lg border border-red-500/20 hover:border-red-500/40 transition-all duration-300"
+                          >
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-br from-red-500/5 to-transparent transition-opacity rounded-lg" />
+                            <div className="relative">
+                              <div className="flex items-center mb-1">
+                                <TrendingUp className="h-4 w-4 text-red-400 mr-2" />
+                                <span className="text-xs text-muted-foreground font-medium">DRAWDOWN</span>
+                              </div>
+                              <div className="text-xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+                                {metrics.drawdownRisk.toFixed(1)}%
+                              </div>
+                              <div className="text-xs text-muted-foreground mt-1 opacity-80">
+                                Max Loss Threshold
+                              </div>
+                            </div>
+                          </motion.div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="text-xs max-w-[200px]">Maximum expected drawdown based on win rate</p>
+                        </TooltipContent>
+                      </UITooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                      <UITooltip>
+                        <TooltipTrigger asChild>
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: 0.4 }}
+                            className="group relative p-3 bg-gradient-to-br from-background/60 to-background/20 backdrop-blur-sm rounded-lg border border-neon-purple/20 hover:border-neon-purple/40 transition-all duration-300"
+                          >
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-br from-neon-purple/5 to-transparent transition-opacity rounded-lg" />
+                            <div className="relative">
+                              <div className="flex items-center mb-1">
+                                <CheckCircle className="h-4 w-4 text-neon-purple mr-2" />
+                                <span className="text-xs text-muted-foreground font-medium">SUCCESS</span>
+                              </div>
+                              <div className="flex items-center">
+                                <div className="text-xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+                                  {metrics.passProbability}%
+                                </div>
+                                {metrics.passProbability >= 80 ? (
+                                  <CheckCircle className="h-3 w-3 text-neon-green ml-1" />
+                                ) : metrics.passProbability >= 60 ? (
+                                  <TrendingUp className="h-3 w-3 text-amber-500 ml-1" />
+                                ) : (
+                                  <AlertTriangle className="h-3 w-3 text-red-500 ml-1" />
+                                )}
+                              </div>
+                              <div className="text-xs text-muted-foreground mt-1 opacity-80">
+                                Pass Probability
+                              </div>
+                            </div>
+                          </motion.div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="text-xs max-w-[200px]">Statistical probability of passing the challenge</p>
+                        </TooltipContent>
+                      </UITooltip>
+                    </TooltipProvider>
                   </div>
                 </motion.div>
-                
-                {/* Additional Stats */}
+
                 <div className="grid grid-cols-3 gap-4">
-                  {/* Trades Needed */}
                   <TooltipProvider>
                     <UITooltip>
                       <TooltipTrigger asChild>
@@ -262,7 +301,6 @@ const StrategyBreakdown: React.FC<StrategyBreakdownProps> = ({ metrics, traderDa
                     </UITooltip>
                   </TooltipProvider>
                   
-                  {/* Wins Required */}
                   <TooltipProvider>
                     <UITooltip>
                       <TooltipTrigger asChild>
@@ -288,7 +326,6 @@ const StrategyBreakdown: React.FC<StrategyBreakdownProps> = ({ metrics, traderDa
                     </UITooltip>
                   </TooltipProvider>
                   
-                  {/* Daily Target */}
                   <TooltipProvider>
                     <UITooltip>
                       <TooltipTrigger asChild>
@@ -319,7 +356,6 @@ const StrategyBreakdown: React.FC<StrategyBreakdownProps> = ({ metrics, traderDa
                   </TooltipProvider>
                 </div>
 
-                {/* Equity Curve Chart */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -331,7 +367,6 @@ const StrategyBreakdown: React.FC<StrategyBreakdownProps> = ({ metrics, traderDa
                     <span>Equity Projection</span>
                   </div>
                   <div className="relative h-full">
-                    {/* Glow effect behind chart */}
                     <div className="absolute inset-0 bg-neon-blue/5 rounded-lg filter blur-md"></div>
                     
                     <ChartContainer
@@ -405,7 +440,6 @@ const StrategyBreakdown: React.FC<StrategyBreakdownProps> = ({ metrics, traderDa
                   </div>
                 </motion.div>
 
-                {/* Daily Progress Tracker */}
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -437,7 +471,6 @@ const StrategyBreakdown: React.FC<StrategyBreakdownProps> = ({ metrics, traderDa
                 </motion.div>
               </div>
               
-              {/* Right Section - Daily Task */}
               <div className="lg:w-2/5 lg:pl-4 lg:border-l lg:border-neon-blue/20 space-y-6">
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
@@ -544,7 +577,6 @@ const StrategyBreakdown: React.FC<StrategyBreakdownProps> = ({ metrics, traderDa
                   </div>
                 </motion.div>
                 
-                {/* Trading Instructions */}
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -586,4 +618,3 @@ const StrategyBreakdown: React.FC<StrategyBreakdownProps> = ({ metrics, traderDa
 };
 
 export default StrategyBreakdown;
-
