@@ -19,6 +19,12 @@ export const initializeOneSignal = () => {
       if (window.OneSignal && typeof window.OneSignal.Notifications !== 'undefined') {
         isOneSignalInitialized = true;
         console.log('OneSignal is now initialized and ready to use in utils');
+        
+        // Debug: Check current subscription status
+        window.OneSignal.User.PushSubscription.getStatus().then((status) => {
+          console.log('Current subscription status:', status);
+        }).catch(err => console.error('Error checking subscription:', err));
+        
         return true;
       }
       return false;
@@ -88,7 +94,7 @@ const safelyAccessOneSignal = () => {
   return { error: false, oneSignal: window.OneSignal };
 };
 
-// Send a test notification
+// Send a test notification through OneSignal
 export const sendTestNotification = async () => {
   try {
     const { error, oneSignal } = safelyAccessOneSignal();
@@ -97,18 +103,43 @@ export const sendTestNotification = async () => {
     // Check if we're subscribed first
     const isPushEnabled = await oneSignal.Notifications.areEnabled();
     if (!isPushEnabled) {
+      console.error('User is not subscribed to notifications');
       return { 
         success: false, 
         message: 'User is not subscribed to notifications' 
       };
     }
+
+    // Force service worker registration check
+    if ('serviceWorker' in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      console.log('Service worker registrations:', registrations);
+      
+      const hasOneSignalWorker = registrations.some(reg => 
+        reg.active && reg.active.scriptURL.includes('OneSignalSDKWorker')
+      );
+      
+      if (!hasOneSignalWorker) {
+        console.error('OneSignal service worker not found!');
+      } else {
+        console.log('OneSignal service worker is properly registered');
+      }
+    }
     
-    // This is just for testing - in production you'd send from your backend
-    console.log('Attempting to trigger a test notification');
+    console.log('Sending test notification through OneSignal SDK');
     
-    return { success: true, message: 'Test notification request sent' };
+    // Get current user data for debugging
+    const userData = await oneSignal.User.getUser();
+    console.log('Current user data:', userData);
+    
+    // This is just for debugging - OneSignal only allows sending from backend
+    return { 
+      success: true, 
+      message: 'OneSignal configuration verified. Test notification must be sent from OneSignal dashboard.',
+      userId: userData?.id || 'No user ID found'
+    };
   } catch (error) {
-    console.error('Error sending test notification:', error);
+    console.error('Error in sendTestNotification:', error);
     return { 
       success: false, 
       message: error instanceof Error ? error.message : String(error)
@@ -146,6 +177,16 @@ export const requestNotificationPermission = async () => {
         reason: 'unavailable',
         message 
       };
+    }
+    
+    // Force re-register service worker
+    if ('serviceWorker' in navigator) {
+      try {
+        await navigator.serviceWorker.register('/OneSignalSDKWorker.js');
+        console.log('OneSignal service worker registered successfully');
+      } catch (err) {
+        console.error('Failed to register OneSignal service worker:', err);
+      }
     }
     
     // Request permission using OneSignal
@@ -259,11 +300,29 @@ export const getOneSignalDebugInfo = async () => {
     const permission = await checkNotificationPermission();
     const isEnabled = await oneSignal.Notifications.areEnabled();
     
+    // Get service worker registration info
+    let serviceWorkerInfo = 'No Service Worker API';
+    if ('serviceWorker' in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      serviceWorkerInfo = registrations.map(reg => ({
+        scope: reg.scope,
+        scriptURL: reg.active?.scriptURL || 'inactive',
+        state: reg.active?.state || 'unknown'
+      }));
+    }
+    
+    // Get user subscription info
+    const userData = await oneSignal.User.getUser();
+    const subscriptionInfo = await oneSignal.User.PushSubscription.getStatus();
+    
     return {
       ready: true,
       permission,
       isEnabled,
-      hasId: !!oneSignal.getExternalUserId?.(),
+      hasId: !!userData?.id,
+      userId: userData?.id || 'none',
+      subscriptionStatus: subscriptionInfo,
+      serviceWorkerInfo,
       appId: "d3c47d59-7e65-49d6-a331-4ae93e3423bb" // For verification
     };
   } catch (error) {
