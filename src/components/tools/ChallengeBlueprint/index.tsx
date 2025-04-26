@@ -11,7 +11,7 @@ import InsightsPanel from './InsightsPanel';
 import ExportTools from './ExportTools';
 import GoalCalculator, { GoalInputs } from './GoalCalculator';
 import PassSummary from './PassSummary';
-// import InfoCard from './InfoCard';
+import BlueprintSummary from './BlueprintSummary';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ProbabilityEngine from './ProbabilityEngine';
 
@@ -397,11 +397,20 @@ const ChallengeBlueprint: React.FC = () => {
           {strategyMetrics && traderData && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
-                <StrategyBreakdown 
-                  metrics={strategyMetrics} 
-                  traderData={traderData}
-                  isLoading={isLoading} 
+                <BlueprintSummary
+                  risk={traderData.riskPerTrade}
+                  reward={strategyMetrics.rewardAmount}
+                  drawdown={strategyMetrics.drawdownRisk}
+                  successRate={strategyMetrics.passProbability}
+                  accountSize={traderData.accountSize}
                 />
+                <div className="mt-6">
+                  <StrategyBreakdown 
+                    metrics={strategyMetrics} 
+                    traderData={traderData}
+                    isLoading={isLoading} 
+                  />
+                </div>
               </div>
               <div>
                 <RiskStyleSelector 

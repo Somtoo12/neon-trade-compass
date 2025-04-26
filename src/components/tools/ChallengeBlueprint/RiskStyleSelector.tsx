@@ -52,13 +52,10 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
       <div className="absolute inset-0 bg-gradient-to-r from-neon-purple/10 via-neon-blue/5 to-neon-cyan/10" />
       
       <CardContent className="p-5 relative z-10">
-        <h3 className="text-lg font-semibold mb-2 bg-gradient-to-r from-neon-cyan to-neon-blue bg-clip-text text-transparent flex items-center">
+        <h3 className="text-lg font-semibold mb-4 bg-gradient-to-r from-neon-cyan to-neon-blue bg-clip-text text-transparent flex items-center">
           <Gauge className="h-5 w-5 mr-2 text-neon-cyan" />
           Risk Style Selection
         </h3>
-        <p className="text-sm text-muted-foreground mb-4">
-          Select your preferred trading risk approach for optimal strategy.
-        </p>
         
         <div className="grid grid-cols-3 gap-3 mb-6">
           <TooltipProvider>
@@ -66,85 +63,109 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
               <TooltipTrigger asChild>
                 <motion.button
                   onClick={() => onStyleChange('conservative')}
-                  className={`relative flex flex-col items-center p-4 rounded-lg border transition-all ${
+                  className={`relative group flex flex-col items-center p-4 rounded-lg border transition-all ${
                     currentStyle === 'conservative'
-                      ? 'border-neon-green shadow-[0_0_15px_rgba(0,255,179,0.3)] bg-gradient-to-b from-neon-green/10 to-neon-green/5'
+                      ? 'border-neon-green shadow-[0_0_15px_rgba(0,255,179,0.3)] bg-gradient-to-b from-neon-green/10 to-transparent'
                       : 'border-border/50 bg-black/30 hover:bg-black/40'
                   }`}
-                  whileHover={{ scale: 1.03 }}
+                  whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <Shield className={`h-6 w-6 mb-2 ${
-                    currentStyle === 'conservative' ? 'text-neon-green' : 'text-foreground/70'
-                  }`} />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-b from-neon-green/5 to-transparent transition-opacity rounded-lg" />
+                  <Shield className={`h-8 w-8 mb-2 ${
+                    currentStyle === 'conservative' ? 'text-neon-green' : 'text-muted-foreground'
+                  } group-hover:text-neon-green/80 transition-colors`} />
                   <span className={`text-base font-medium ${
                     currentStyle === 'conservative' ? 'text-neon-green' : ''
-                  }`}>Conservative</span>
-                  <span className="mt-1 text-xs text-muted-foreground">{conservativeRisk}% risk</span>
+                  } group-hover:text-neon-green/80`}>Conservative</span>
+                  <div className={`mt-2 px-3 py-1 rounded-full text-xs ${
+                    currentStyle === 'conservative' 
+                      ? 'bg-neon-green/20 text-neon-green'
+                      : 'bg-muted text-muted-foreground'
+                  }`}>
+                    0.5% risk
+                  </div>
                 </motion.button>
               </TooltipTrigger>
               <TooltipContent>
-                <p className="max-w-[200px] text-xs">Lower risk per trade (0.25% to 0.5%). Slower but safer path to pass.</p>
+                <p className="max-w-[200px] text-xs">Safer approach with lower risk per trade. Best for consistent growth.</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
+
           
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.button
                   onClick={() => onStyleChange('balanced')}
-                  className={`relative flex flex-col items-center p-4 rounded-lg border transition-all ${
+                  className={`relative group flex flex-col items-center p-4 rounded-lg border transition-all ${
                     currentStyle === 'balanced'
-                      ? 'border-neon-blue shadow-[0_0_15px_rgba(0,194,255,0.3)] bg-gradient-to-b from-neon-blue/10 to-neon-blue/5'
+                      ? 'border-neon-blue shadow-[0_0_15px_rgba(0,194,255,0.3)] bg-gradient-to-b from-neon-blue/10 to-transparent'
                       : 'border-border/50 bg-black/30 hover:bg-black/40'
                   }`}
-                  whileHover={{ scale: 1.03 }}
+                  whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <Gauge className={`h-6 w-6 mb-2 ${
-                    currentStyle === 'balanced' ? 'text-neon-blue' : 'text-foreground/70'
-                  }`} />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-b from-neon-blue/5 to-transparent transition-opacity rounded-lg" />
+                  <Gauge className={`h-8 w-8 mb-2 ${
+                    currentStyle === 'balanced' ? 'text-neon-blue' : 'text-muted-foreground'
+                  } group-hover:text-neon-blue/80 transition-colors`} />
                   <span className={`text-base font-medium ${
                     currentStyle === 'balanced' ? 'text-neon-blue' : ''
-                  }`}>Balanced</span>
-                  <span className="mt-1 text-xs text-muted-foreground">{balancedRisk}% risk</span>
+                  } group-hover:text-neon-blue/80`}>Balanced</span>
+                  <div className={`mt-2 px-3 py-1 rounded-full text-xs ${
+                    currentStyle === 'balanced' 
+                      ? 'bg-neon-blue/20 text-neon-blue'
+                      : 'bg-muted text-muted-foreground'
+                  }`}>
+                    1.0% risk
+                  </div>
                 </motion.button>
               </TooltipTrigger>
               <TooltipContent>
-                <p className="max-w-[200px] text-xs">Moderate risk per trade (0.75% to 1.25%). Balanced approach between safety and speed.</p>
+                <p className="max-w-[200px] text-xs">Moderate risk for steady growth. Suitable for most traders.</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
+
           
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.button
                   onClick={() => onStyleChange('aggressive')}
-                  className={`relative flex flex-col items-center p-4 rounded-lg border transition-all ${
+                  className={`relative group flex flex-col items-center p-4 rounded-lg border transition-all ${
                     currentStyle === 'aggressive'
-                      ? 'border-neon-purple shadow-[0_0_15px_rgba(123,97,255,0.3)] bg-gradient-to-b from-neon-purple/10 to-neon-purple/5'
+                      ? 'border-neon-purple shadow-[0_0_15px_rgba(123,97,255,0.3)] bg-gradient-to-b from-neon-purple/10 to-transparent'
                       : 'border-border/50 bg-black/30 hover:bg-black/40'
                   }`}
-                  whileHover={{ scale: 1.03 }}
+                  whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <Flame className={`h-6 w-6 mb-2 ${
-                    currentStyle === 'aggressive' ? 'text-neon-purple' : 'text-foreground/70'
-                  }`} />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-b from-neon-purple/5 to-transparent transition-opacity rounded-lg" />
+                  <Flame className={`h-8 w-8 mb-2 ${
+                    currentStyle === 'aggressive' ? 'text-neon-purple' : 'text-muted-foreground'
+                  } group-hover:text-neon-purple/80 transition-colors`} />
                   <span className={`text-base font-medium ${
                     currentStyle === 'aggressive' ? 'text-neon-purple' : ''
-                  }`}>Aggressive</span>
-                  <span className="mt-1 text-xs text-muted-foreground">{aggressiveRisk}% risk</span>
+                  } group-hover:text-neon-purple/80`}>Aggressive</span>
+                  <div className={`mt-2 px-3 py-1 rounded-full text-xs ${
+                    currentStyle === 'aggressive' 
+                      ? 'bg-neon-purple/20 text-neon-purple'
+                      : 'bg-muted text-muted-foreground'
+                  }`}>
+                    2.0% risk
+                  </div>
                 </motion.button>
               </TooltipTrigger>
               <TooltipContent>
-                <p className="max-w-[200px] text-xs">Higher risk per trade (1.5% to 2.5%). Faster pass potential, but higher drawdown risk.</p>
+                <p className="max-w-[200px] text-xs">Higher risk for faster growth. Only for experienced traders.</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
+
         
         <motion.div 
           key={currentStyle}
