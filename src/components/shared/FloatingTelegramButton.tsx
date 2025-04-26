@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Telegram } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const FloatingTelegramButton: React.FC = () => {
@@ -20,7 +20,7 @@ const FloatingTelegramButton: React.FC = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
-            <Telegram className="w-6 h-6 text-white" />
+            <MessageCircle className="w-6 h-6 text-white" />
           </motion.a>
         </TooltipTrigger>
         <TooltipContent>
