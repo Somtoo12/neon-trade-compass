@@ -104,35 +104,27 @@ const ChallengeBlueprint: React.FC = () => {
     setIsLoading(true);
     
     setTimeout(() => {
-      // Calculate the reward amount based on risk per trade and reward-to-risk ratio
       const rewardAmount = data.riskPerTrade * data.riskRewardRatio;
       
-      // Calculate how many winning trades are needed to hit the profit target
       const targetProfit = data.profitTarget / 100 * data.accountSize;
       const profitPerWin = (rewardAmount / 100) * data.accountSize;
       const winsNeeded = Math.ceil(targetProfit / profitPerWin);
       
-      // Calculate expected trades needed based on win rate
       const tradesNeeded = Math.ceil(winsNeeded / (data.winRate / 100));
       
-      // Apply risk style adjustments
       let riskMultiplier = 1.0;
       if (style === 'conservative') riskMultiplier = 0.7;
       if (style === 'aggressive') riskMultiplier = 1.5;
       
-      // Calculate daily target metrics
       const dailyTargetAmount = (data.profitTarget / 100 * data.accountSize) / data.passDays;
       const dailyTargetPercent = dailyTargetAmount / data.accountSize * 100;
       
-      // Calculate drawdown risk using more sophisticated approach
-      const maxConsecutiveLosses = Math.ceil(Math.log(0.05) / Math.log(1 - data.winRate / 100)); // 5% chance threshold
+      const maxConsecutiveLosses = Math.ceil(Math.log(0.05) / Math.log(1 - data.winRate / 100));
       const worstCaseDrawdown = data.riskPerTrade * maxConsecutiveLosses * riskMultiplier;
-      const drawdownRisk = Math.min(worstCaseDrawdown, 15); // Cap at reasonable level
+      const drawdownRisk = Math.min(worstCaseDrawdown, 15);
       
-      // Calculate pass probability using binomial distribution
       const passProbability = calculatePassProbability(data.winRate / 100, tradesNeeded, winsNeeded);
       
-      // Generate equity curve data
       const equityCurveData = generateEquityCurves(data, style);
       
       setStrategyMetrics({
@@ -154,12 +146,9 @@ const ChallengeBlueprint: React.FC = () => {
     }, 800);
   };
 
-  // Calculate pass probability using binomial distribution
   const calculatePassProbability = (winRate: number, trades: number, winsNeeded: number) => {
-    // Simplified implementation of binomial CDF
     let probability = 0;
     
-    // We want P(X ≥ winsNeeded) = 1 - P(X < winsNeeded)
     for (let i = 0; i < winsNeeded; i++) {
       probability += binomialProbability(trades, i, winRate);
     }
@@ -167,13 +156,11 @@ const ChallengeBlueprint: React.FC = () => {
     return Math.min(99, Math.max(1, Math.round((1 - probability) * 100)));
   };
 
-  // Calculate binomial probability mass function
   const binomialProbability = (n: number, k: number, p: number) => {
     const combinations = factorial(n) / (factorial(k) * factorial(n - k));
     return combinations * Math.pow(p, k) * Math.pow(1 - p, n - k);
   };
 
-  // Helper function to calculate factorial
   const factorial = (n: number) => {
     if (n === 0 || n === 1) return 1;
     let result = 1;
@@ -192,12 +179,10 @@ const ChallengeBlueprint: React.FC = () => {
     const bestCurve: {x: number, y: number}[] = [];
     const worstCurve: {x: number, y: number}[] = [];
     
-    // Risk multipliers based on style
     let volatility = 1.0;
     if (style === 'conservative') volatility = 0.6;
     if (style === 'aggressive') volatility = 1.6;
     
-    // Setup initial points
     averageCurve.push({ x: 0, y: 100 });
     bestCurve.push({ x: 0, y: 100 });
     worstCurve.push({ x: 0, y: 100 });
@@ -210,15 +195,12 @@ const ChallengeBlueprint: React.FC = () => {
       (winRate * riskPerTrade * rewardRatio) - ((1 - winRate) * riskPerTrade)
     );
     
-    const stepsPerDay = 1; // How many points to plot per day
+    const stepsPerDay = 1;
     for (let day = 1; day <= data.passDays; day++) {
-      // Average case - follows expected value
       const avgEquity = 100 + (expectedDailyReturn * day);
       
-      // Best case - 90th percentile performance
       const bestEquity = 100 + (expectedDailyReturn * day * 1.4) + (day * volatility * 0.3);
       
-      // Worst case - 10th percentile performance
       const worstEquity = 100 + (expectedDailyReturn * day * 0.6) - (day * volatility * 0.4);
       
       if (day % stepsPerDay === 0 || day === data.passDays) {
@@ -228,7 +210,6 @@ const ChallengeBlueprint: React.FC = () => {
       }
     }
     
-    // Ensure final point reaches target
     if (data.passDays > 0) {
       const targetEquity = 100 + data.profitTarget;
       averageCurve[averageCurve.length - 1] = { x: data.passDays, y: targetEquity };
@@ -246,35 +227,44 @@ const ChallengeBlueprint: React.FC = () => {
     setIsLoading(true);
     
     setTimeout(() => {
-      // Calculate reward amount
-      const rewardAmount = inputs.riskPerTrade * inputs.rewardRiskRatio;
-      
-      // Calculate how many winning trades needed based on profit target
-      const winsNeeded = Math.ceil(inputs.targetPercent / rewardAmount);
-      
-      // Calculate expected number of trades based on win rate
-      const tradesNeeded = Math.ceil(winsNeeded / (inputs.winRate / 100));
-      
-      const dailyTrades = Math.ceil(tradesNeeded / inputs.daysRemaining);
-      
-      // Calculate pass probability using binomial distribution
-      const passProbability = calculatePassProbability(inputs.winRate / 100, tradesNeeded, winsNeeded);
-      
-      setGoalResults({
-        tradesNeeded: Math.ceil(tradesNeeded),
-        winsNeeded,
-        passProbability,
-        requiredWins: winsNeeded,
-        dailyTrades
-      });
-      
-      setIsLoading(false);
-      
-      toast({
-        title: "Pass plan calculated",
-        description: `You need ${winsNeeded} wins in about ${tradesNeeded} trades to reach your target.`,
-        duration: 3000,
-      });
+      try {
+        const rewardAmount = (inputs.riskPerTrade || 1) * (inputs.rewardRiskRatio || 1.5);
+        
+        const targetPercent = inputs.targetPercent || 10;
+        const winsNeeded = Math.ceil(targetPercent / rewardAmount);
+        
+        const winRate = inputs.winRate || 50;
+        const tradesNeeded = Math.ceil(winsNeeded / (winRate / 100));
+        
+        const daysRemaining = inputs.daysRemaining || 14;
+        const dailyTrades = Math.ceil(tradesNeeded / daysRemaining);
+        
+        const passProbability = calculatePassProbability(winRate / 100, tradesNeeded, winsNeeded);
+        
+        setGoalResults({
+          tradesNeeded: Math.ceil(tradesNeeded),
+          winsNeeded,
+          passProbability,
+          requiredWins: winsNeeded,
+          dailyTrades
+        });
+        
+        setIsLoading(false);
+        
+        toast({
+          title: "Pass plan calculated",
+          description: `You need ${winsNeeded} wins in about ${tradesNeeded} trades to reach your target.`,
+          duration: 3000,
+        });
+      } catch (error) {
+        console.error("Error calculating goal results:", error);
+        setIsLoading(false);
+        toast({
+          title: "Calculation Error",
+          description: "There was a problem processing your request. Please check your inputs.",
+          variant: "destructive",
+        });
+      }
     }, 500);
   };
 
@@ -310,23 +300,44 @@ const ChallengeBlueprint: React.FC = () => {
       setTraderData(updatedTraderData);
     }
   };
-  
+
   const handleRiskPerTradeChange = (value: number) => {
-    if (goalInputs) {
-      const updatedGoalInputs = {
-        ...goalInputs,
-        riskPerTrade: value
-      };
-      setGoalInputs(updatedGoalInputs);
-      calculateGoalResults(updatedGoalInputs);
-    }
-    
-    if (traderData) {
-      const updatedTraderData = {
-        ...traderData,
-        riskPerTrade: value
-      };
-      setTraderData(updatedTraderData);
+    try {
+      if (typeof value !== 'number' || isNaN(value)) {
+        console.error("Invalid risk per trade value:", value);
+        return;
+      }
+      
+      const safeValue = Math.max(0.1, Math.min(5, value));
+      
+      if (goalInputs) {
+        const updatedGoalInputs = {
+          ...goalInputs,
+          riskPerTrade: safeValue
+        };
+        setGoalInputs(updatedGoalInputs);
+        
+        try {
+          calculateGoalResults(updatedGoalInputs);
+        } catch (error) {
+          console.error("Error calculating goal results:", error);
+          toast({
+            title: "Calculation Error",
+            description: "There was a problem processing your request. Please try again.",
+            variant: "destructive",
+          });
+        }
+      }
+      
+      if (traderData) {
+        const updatedTraderData = {
+          ...traderData,
+          riskPerTrade: safeValue
+        };
+        setTraderData(updatedTraderData);
+      }
+    } catch (error) {
+      console.error("Error in handleRiskPerTradeChange:", error);
     }
   };
 

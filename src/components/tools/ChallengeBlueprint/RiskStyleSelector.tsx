@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
@@ -33,17 +34,36 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
   if (currentStyle === 'conservative') currentRisk = conservativeRisk;
   if (currentStyle === 'aggressive') currentRisk = aggressiveRisk;
   
-  const conservativeProbability = Math.min(99, metrics.passProbability + 5).toFixed(0);
-  const balancedProbability = metrics.passProbability.toFixed(0);
-  const aggressiveProbability = Math.max(1, metrics.passProbability - 15).toFixed(0);
+  // Use safe calculations with fallbacks to prevent NaN or undefined values
+  const safeMetrics = {
+    passProbability: metrics?.passProbability || 50,
+    tradesNeeded: metrics?.tradesNeeded || 10
+  };
   
-  const conservativeDays = Math.round(metrics.tradesNeeded / 1.5);
-  const balancedDays = Math.round(metrics.tradesNeeded / 2);
-  const aggressiveDays = Math.round(metrics.tradesNeeded / 3);
+  const conservativeProbability = Math.min(99, (safeMetrics.passProbability + 5)).toFixed(0);
+  const balancedProbability = safeMetrics.passProbability.toFixed(0);
+  const aggressiveProbability = Math.max(1, (safeMetrics.passProbability - 15)).toFixed(0);
+  
+  const conservativeDays = Math.round(safeMetrics.tradesNeeded / 1.5) || 10;
+  const balancedDays = Math.round(safeMetrics.tradesNeeded / 2) || 7;
+  const aggressiveDays = Math.round(safeMetrics.tradesNeeded / 3) || 5;
 
   const handleRiskSliderChange = (values: number[]) => {
-    if (onRiskPerTradeChange) {
-      onRiskPerTradeChange(values[0]);
+    try {
+      if (onRiskPerTradeChange && values[0] !== undefined) {
+        onRiskPerTradeChange(values[0]);
+      }
+    } catch (error) {
+      console.error("Error in risk slider change:", error);
+    }
+  };
+
+  // Helper function to safely handle button clicks
+  const handleStyleChange = (style: RiskStyle) => {
+    try {
+      onStyleChange(style);
+    } catch (error) {
+      console.error("Error changing risk style:", error);
     }
   };
 
@@ -62,7 +82,7 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.button
-                  onClick={() => onStyleChange('conservative')}
+                  onClick={() => handleStyleChange('conservative')}
                   className={`relative group flex flex-col items-center p-4 rounded-lg border transition-all ${
                     currentStyle === 'conservative'
                       ? 'border-neon-green shadow-[0_0_15px_rgba(0,255,179,0.3)] bg-gradient-to-b from-neon-green/10 to-transparent'
@@ -97,7 +117,7 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.button
-                  onClick={() => onStyleChange('balanced')}
+                  onClick={() => handleStyleChange('balanced')}
                   className={`relative group flex flex-col items-center p-4 rounded-lg border transition-all ${
                     currentStyle === 'balanced'
                       ? 'border-neon-blue shadow-[0_0_15px_rgba(0,194,255,0.3)] bg-gradient-to-b from-neon-blue/10 to-transparent'
@@ -132,7 +152,7 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.button
-                  onClick={() => onStyleChange('aggressive')}
+                  onClick={() => handleStyleChange('aggressive')}
                   className={`relative group flex flex-col items-center p-4 rounded-lg border transition-all ${
                     currentStyle === 'aggressive'
                       ? 'border-neon-purple shadow-[0_0_15px_rgba(123,97,255,0.3)] bg-gradient-to-b from-neon-purple/10 to-transparent'
@@ -210,7 +230,6 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
                   step={0.25}
                   className="w-full opacity-50 cursor-not-allowed"
                   disabled
-                  onValueChange={() => {}}
                 />
                 <div className="text-xs text-muted-foreground mt-1">
                   Risk level is view-only

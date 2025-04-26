@@ -33,41 +33,102 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
   // Calculate the reward percentage based on risk and reward-to-risk ratio
   const rewardPercentage = inputs.riskPerTrade * inputs.rewardRiskRatio;
 
+  // Store last valid input state to recover from invalid inputs
+  const [lastValidInputs, setLastValidInputs] = useState(inputs);
+  
+  // Debounce timer ref to avoid excessive calculations
+  const debounceTimerRef = React.useRef<number | null>(null);
+
   useEffect(() => {
     // If we have initial data, set it
     if (initialData) {
       setInputs(initialData);
+      setLastValidInputs(initialData);
     }
   }, [initialData]);
 
+  const validateNumericInput = (value: string, min: number, max: number): number => {
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) return min;
+    return Math.max(min, Math.min(max, numValue));
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const numValue = parseFloat(value);
     
-    setInputs(prev => ({
-      ...prev,
-      [name]: numValue
-    }));
-
-    // Auto-update calculations when user inputs change - debounced
-    const debounceTimer = setTimeout(() => {
-      onCalculate({
+    try {
+      // Apply different validation rules based on the field
+      let validatedValue: number;
+      
+      switch (name) {
+        case 'targetPercent':
+          validatedValue = validateNumericInput(value, 1, 100);
+          break;
+        case 'daysRemaining':
+          validatedValue = validateNumericInput(value, 1, 60);
+          break;
+        case 'riskPerTrade':
+          validatedValue = validateNumericInput(value, 0.1, 5);
+          break;
+        case 'winRate':
+          validatedValue = validateNumericInput(value, 1, 99);
+          break;
+        case 'rewardRiskRatio':
+          validatedValue = validateNumericInput(value, 0.1, 10);
+          break;
+        default:
+          validatedValue = parseFloat(value);
+      }
+      
+      // Update the state with the validated value
+      const newInputs = {
         ...inputs,
-        [name]: numValue
-      });
-    }, 500);
-    
-    return () => clearTimeout(debounceTimer);
+        [name]: validatedValue
+      };
+      
+      setInputs(newInputs);
+      setLastValidInputs(newInputs);
+
+      // Clear previous timer if exists
+      if (debounceTimerRef.current !== null) {
+        window.clearTimeout(debounceTimerRef.current);
+      }
+      
+      // Auto-update calculations when user inputs change - debounced
+      debounceTimerRef.current = window.setTimeout(() => {
+        onCalculate(newInputs);
+        debounceTimerRef.current = null;
+      }, 500);
+    } catch (error) {
+      console.error("Error processing input:", error);
+      // Revert to last valid state on error
+      setInputs(lastValidInputs);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onCalculate(inputs);
+    try {
+      onCalculate(inputs);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   // Save to local storage when inputs change
   useEffect(() => {
-    localStorage.setItem('challengeBlueprint_goalInputs', JSON.stringify(inputs));
+    try {
+      localStorage.setItem('challengeBlueprint_goalInputs', JSON.stringify(inputs));
+    } catch (error) {
+      console.error("Error saving to localStorage:", error);
+    }
+    
+    // Cleanup function to clear any pending timers
+    return () => {
+      if (debounceTimerRef.current !== null) {
+        window.clearTimeout(debounceTimerRef.current);
+      }
+    };
   }, [inputs]);
 
   return (
