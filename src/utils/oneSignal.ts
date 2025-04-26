@@ -66,7 +66,7 @@ export const isIOSDevice = () => {
   return (
     typeof window !== 'undefined' && 
     /iPad|iPhone|iPod/.test(navigator.userAgent) && 
-    !window.MSStream
+    !(window as any).MSStream // Fixed: Cast window to any to avoid TypeScript error
   );
 };
 
