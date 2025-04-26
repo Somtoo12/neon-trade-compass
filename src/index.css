@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,30 +7,30 @@
 
 @layer base {
   :root {
-    --background: 222 25% 11%;
-    --foreground: 210 40% 98%;
-    --card: 222 25% 11%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 25% 11%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 183 100% 50%;
-    --primary-foreground: 222 25% 11%;
-    --secondary: 217 32% 17%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217 32% 17%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 183 100% 50%;
-    --accent-foreground: 210 40% 98%;
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 142 100% 50%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 261 100% 69%;
+    --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217 32% 17%;
-    --input: 217 32% 17%;
-    --ring: 183 100% 50%;
-    --radius: 0.5rem;
-    --space-blue: #0F1A2A;
-    --neon-cyan: #00FEFC;
-    --neon-green: #39FF14;
-    --neon-pink: #FF10F0;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 262.1 83.3% 57.8%;
+    --radius: 0.75rem;
+    --glow-color: rgba(123, 97, 255, 0.8);
+    --neon-green: #00ffb3;
+    --neon-blue: #00c2ff;
+    --neon-purple: #7b61ff;
   }
   
   :root.light-mode {
@@ -59,13 +60,13 @@
   }
 
   * {
-    @apply border-border;
+    @apply border-border transition-colors duration-300;
     -webkit-tap-highlight-color: transparent;
   }
   
   html, body {
     @apply bg-background text-foreground overflow-x-hidden;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Inter', sans-serif;
     scroll-behavior: smooth;
   }
   
@@ -74,6 +75,7 @@
     @apply break-words;
   }
 
+  /* Ensure readable font sizes on mobile */
   body {
     font-size: 16px;
   }
@@ -83,15 +85,18 @@
     font-size: 16px !important;
   }
 
+  /* Improved focus styles for accessibility */
   :focus {
     outline: 2px solid hsl(var(--ring));
     outline-offset: 2px;
   }
   
+  /* Better touch targets */
   button, a {
     @apply cursor-pointer;
   }
 
+  /* Responsive headings */
   h1 {
     @apply text-2xl md:text-3xl lg:text-4xl;
   }
@@ -104,6 +109,7 @@
     @apply text-lg md:text-xl;
   }
   
+  /* Reduced animations mode */
   .reduce-animations * {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
@@ -111,10 +117,12 @@
     scroll-behavior: auto !important;
   }
   
+  /* Safari padding bottom fix */
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 20px);
   }
   
+  /* Safari padding top fix */
   .pt-safe {
     padding-top: env(safe-area-inset-top, 20px);
   }
@@ -141,32 +149,7 @@
     @apply ring-2 ring-neon-purple shadow-[0_0_15px_rgba(123,97,255,0.3)];
   }
 
-  .neo-blur {
-    @apply backdrop-blur-xl bg-black/40 border border-white/10;
-  }
-  
-  .holographic-panel {
-    @apply bg-space-blue/80 backdrop-blur-md border border-neon-cyan/20 rounded-lg shadow-lg;
-    box-shadow: 0 0 20px rgba(0, 254, 252, 0.1);
-  }
-  
-  .cyber-text {
-    @apply bg-gradient-to-r from-neon-cyan via-white to-neon-cyan bg-clip-text text-transparent font-bold;
-    text-shadow: 0 0 10px rgba(0, 254, 252, 0.5);
-  }
-  
-  .binary-block {
-    @apply inline-flex items-center justify-center w-8 h-8 rounded border;
-  }
-  
-  .binary-block-active {
-    @apply border-neon-cyan bg-neon-cyan/20 text-neon-cyan;
-  }
-  
-  .binary-block-inactive {
-    @apply border-white/20 bg-white/5 text-white/20;
-  }
-
+  /* Mobile optimized components */
   .mobile-optimized-card {
     @apply p-3 md:p-6;
   }
@@ -187,6 +170,7 @@
     @apply flex flex-col md:flex-row;
   }
 
+  /* Background position utilities for gradient animations */
   .bg-pos-0 {
     background-position: 0% 50%;
   }
@@ -199,6 +183,7 @@
     background-size: 200% 200%;
   }
 
+  /* New glow borders for featured cards */
   .border-gradient-0 {
     border-image: linear-gradient(to right, var(--neon-green), var(--neon-blue)) 1;
   }
@@ -211,10 +196,12 @@
     border-image: linear-gradient(to right, var(--neon-purple), var(--neon-green)) 1;
   }
   
+  /* Spotify containers */
   .aspect-ratio-container {
     aspect-ratio: 16 / 9;
   }
   
+  /* Fix for iPhone bottom notch */
   @supports (padding: max(0px)) {
     .pb-safe {
       padding-bottom: max(env(safe-area-inset-bottom), 20px);
@@ -226,6 +213,7 @@
   }
 }
 
+/* Screenshot theme styles */
 .screenshot-light {
   background: #FFFFFF !important;
   color: #1A1F2C !important;
@@ -246,6 +234,7 @@
   border-color: #333 !important;
 }
 
+/* Load performance improvements */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
