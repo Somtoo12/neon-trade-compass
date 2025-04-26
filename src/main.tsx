@@ -7,9 +7,10 @@ import { initializeOneSignal } from './utils/oneSignal';
 // Initialize OneSignal when the app starts
 document.addEventListener('DOMContentLoaded', () => {
   // Ensure OneSignal initialization happens after DOM is fully loaded
-  setTimeout(() => {
-    initializeOneSignal();
-  }, 1000); // Small delay to ensure everything is ready
+  initializeOneSignal();
+  
+  // Log successful initialization
+  console.log("Main.tsx: OneSignal initialization called");
 });
 
 createRoot(document.getElementById("root")!).render(<App />);

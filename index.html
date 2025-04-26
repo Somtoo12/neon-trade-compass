@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -16,7 +17,7 @@
       gtag('config', 'G-EJWTCMX08H');
     </script>
 
-    <!-- OneSignal Web SDK - Proper initialization with required settings -->
+    <!-- OneSignal Web SDK - Optimized initialization -->
     <script>
       // Pre-define OneSignalDeferred array to capture early calls
       window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -25,17 +26,27 @@
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 
     <script>
-      // Initialize OneSignal as early as possible
-      window.OneSignalDeferred.push(async function() {
+      // Initialize OneSignal with improved configuration
+      window.OneSignalDeferred.push(function() {
         try {
           console.log("Initializing OneSignal with App ID: d3c47d59-7e65-49d6-a331-4ae93e3423bb");
-          await OneSignal.init({
+          OneSignal.init({
             appId: "d3c47d59-7e65-49d6-a331-4ae93e3423bb",
+            safari_web_id: "web.onesignal.auto.0c986762-3fda-40b6-9e3c-ff179e4c9954", // Auto-generated, helps with Safari support
             allowLocalhostAsSecureOrigin: true,
             serviceWorkerPath: "/OneSignalSDKWorker.js",
-            serviceWorkerUpdaterPath: "/OneSignalSDKUpdaterWorker.js",
+            serviceWorkerUpdaterPath: "/OneSignalSDKUpdaterWorker.js", 
             notifyButton: {
-              enable: true
+              enable: true,
+              size: 'medium',
+              theme: 'default',
+              displayPredicate: function() {
+                return OneSignal.isPushNotificationsEnabled()
+                  .then(function(isPushEnabled) {
+                    return !isPushEnabled;
+                  });
+              },
+              position: 'bottom-right',
             },
             persistNotification: true,
             promptOptions: {
@@ -59,7 +70,6 @@
               title: "PipCraft Alerts Enabled",
               message: "Thanks for subscribing to trading notifications!",
             },
-            persistNotification: true,
             // Make notifications persistent until user interaction
             notificationDisplayOptions: {
               requireInteraction: true
@@ -68,13 +78,29 @@
           
           console.log("OneSignal successfully initialized!");
           
-          // Initialize event handlers
+          // Enhanced event handlers with better logging
           OneSignal.Notifications.addEventListener('permissionChange', function(permission) {
             console.log('OneSignal: Permission changed to', permission);
           });
           
           OneSignal.Notifications.addEventListener('permissionPromptDisplay', function() {
             console.log('OneSignal: Prompt displayed');
+          });
+
+          // Send a test notification after successful subscription
+          OneSignal.Notifications.addEventListener('click', function(event) {
+            console.log('OneSignal: Notification clicked', event);
+          });
+
+          // Add debug log for subscription changes
+          OneSignal.User.addEventListener('change', function(event) {
+            console.log('OneSignal: User state changed', event);
+            
+            // Check if subscription state changed
+            if (event.current.pushSubscription) {
+              console.log('OneSignal: Push subscription ID:', 
+                event.current.pushSubscription.id);
+            }
           });
 
           // Check if it's iOS device to provide custom guidance

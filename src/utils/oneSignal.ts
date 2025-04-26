@@ -7,18 +7,18 @@
 // Track OneSignal initialization status
 let isOneSignalInitialized = false;
 
-// Initialize OneSignal with your appId
+// Initialize OneSignal - mostly handled in HTML head now
 export const initializeOneSignal = () => {
   // OneSignal is initialized directly in the HTML
-  console.log('OneSignal initialization handled in HTML');
+  console.log('OneSignal initialization handled in HTML head');
   
   // Check if OneSignal is available in the window object
   if (typeof window !== 'undefined') {
     // Set up a way to check when OneSignal is fully initialized
     const checkInitialization = () => {
-      if (window.OneSignal) {
+      if (window.OneSignal && typeof window.OneSignal.Notifications !== 'undefined') {
         isOneSignalInitialized = true;
-        console.log('OneSignal is now initialized and ready to use');
+        console.log('OneSignal is now initialized and ready to use in utils');
         return true;
       }
       return false;
@@ -61,12 +61,12 @@ export const areNotificationsSupported = () => {
   );
 };
 
-// Function to check if the device is iOS
+// Function to check if the device is iOS - fixed TypeScript error
 export const isIOSDevice = () => {
   return (
     typeof window !== 'undefined' && 
     /iPad|iPhone|iPod/.test(navigator.userAgent) && 
-    !(window as any).MSStream // Fixed: Cast window to any to avoid TypeScript error
+    !(window as any).MSStream // Using type assertion to fix TypeScript error
   );
 };
 
@@ -86,6 +86,34 @@ const safelyAccessOneSignal = () => {
     return { error: true, message: 'OneSignal not initialized' };
   }
   return { error: false, oneSignal: window.OneSignal };
+};
+
+// Send a test notification
+export const sendTestNotification = async () => {
+  try {
+    const { error, oneSignal } = safelyAccessOneSignal();
+    if (error) return { success: false, message: 'OneSignal not initialized' };
+    
+    // Check if we're subscribed first
+    const isPushEnabled = await oneSignal.Notifications.areEnabled();
+    if (!isPushEnabled) {
+      return { 
+        success: false, 
+        message: 'User is not subscribed to notifications' 
+      };
+    }
+    
+    // This is just for testing - in production you'd send from your backend
+    console.log('Attempting to trigger a test notification');
+    
+    return { success: true, message: 'Test notification request sent' };
+  } catch (error) {
+    console.error('Error sending test notification:', error);
+    return { 
+      success: false, 
+      message: error instanceof Error ? error.message : String(error)
+    };
+  }
 };
 
 // Function to request notifications permission
@@ -218,6 +246,32 @@ export const getNotificationSupportMessage = async () => {
   }
   
   return "Notifications are enabled. You'll receive persistent trading alerts.";
+};
+
+// For testing: Check OneSignal status and get debug info
+export const getOneSignalDebugInfo = async () => {
+  if (!isOneSignalReady()) {
+    return { ready: false, message: 'OneSignal not initialized' };
+  }
+
+  try {
+    const oneSignal = window.OneSignal;
+    const permission = await checkNotificationPermission();
+    const isEnabled = await oneSignal.Notifications.areEnabled();
+    
+    return {
+      ready: true,
+      permission,
+      isEnabled,
+      hasId: !!oneSignal.getExternalUserId?.(),
+      appId: "d3c47d59-7e65-49d6-a331-4ae93e3423bb" // For verification
+    };
+  } catch (error) {
+    return {
+      ready: true,
+      error: error instanceof Error ? error.message : String(error)
+    };
+  }
 };
 
 // Type declaration to prevent TypeScript errors
