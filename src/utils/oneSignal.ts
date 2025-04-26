@@ -4,10 +4,51 @@
  * Documentation: https://documentation.onesignal.com/docs/web-push-quickstart
  */
 
+// Track OneSignal initialization status
+let isOneSignalInitialized = false;
+
 // Initialize OneSignal with your appId
 export const initializeOneSignal = () => {
-  // OneSignal is now initialized directly in the HTML
+  // OneSignal is initialized directly in the HTML
   console.log('OneSignal initialization handled in HTML');
+  
+  // Check if OneSignal is available in the window object
+  if (typeof window !== 'undefined') {
+    // Set up a way to check when OneSignal is fully initialized
+    const checkInitialization = () => {
+      if (window.OneSignal) {
+        isOneSignalInitialized = true;
+        console.log('OneSignal is now initialized and ready to use');
+        return true;
+      }
+      return false;
+    };
+
+    // Try immediately
+    if (checkInitialization()) return;
+    
+    // If not ready yet, set up an interval to check
+    const intervalId = setInterval(() => {
+      if (checkInitialization()) {
+        clearInterval(intervalId);
+      }
+    }, 500);
+    
+    // Timeout after 10 seconds to prevent infinite checking
+    setTimeout(() => {
+      clearInterval(intervalId);
+      if (!isOneSignalInitialized) {
+        console.error('OneSignal failed to initialize within timeout period');
+      }
+    }, 10000);
+  }
+};
+
+// Function to check if OneSignal is initialized
+export const isOneSignalReady = () => {
+  return typeof window !== 'undefined' && 
+    window.OneSignal !== undefined && 
+    isOneSignalInitialized;
 };
 
 // Function to check if notifications are supported
@@ -29,87 +70,101 @@ export const checkNotificationPermission = async () => {
   return Notification.permission;
 };
 
+// Safely access OneSignal with error handling
+const safelyAccessOneSignal = () => {
+  if (!isOneSignalReady()) {
+    console.error('OneSignal not initialized yet. Try again later.');
+    return { error: true, message: 'OneSignal not initialized' };
+  }
+  return { error: false, oneSignal: window.OneSignal };
+};
+
 // Function to request notifications permission
 export const requestNotificationPermission = async () => {
-  if (typeof window !== 'undefined' && window.OneSignal) {
-    try {
-      // First check if notifications are supported
-      if (!areNotificationsSupported()) {
-        console.log("Push notifications are not supported on this device/browser");
-        return { 
-          success: false, 
-          reason: 'unsupported',
-          message: 'Push notifications are not supported on this device or browser'
-        };
-      }
-      
-      const permission = await window.OneSignal.Notifications.requestPermission();
-      console.log("Notification permission status:", permission);
-      
-      return { 
-        success: permission, 
-        reason: permission ? 'granted' : 'denied',
-        message: permission ? 'Notifications enabled' : 'Notification permission denied'
-      };
-    } catch (error) {
-      console.error("Error requesting notification permission:", error);
+  try {
+    // First check if notifications are supported
+    if (!areNotificationsSupported()) {
+      console.log("Push notifications are not supported on this device/browser");
       return { 
         success: false, 
-        reason: 'error',
-        message: 'Error requesting permission: ' + (error instanceof Error ? error.message : String(error))
+        reason: 'unsupported',
+        message: 'Push notifications are not supported on this device or browser'
       };
     }
+    
+    // Check if OneSignal is ready
+    const { error, message, oneSignal } = safelyAccessOneSignal();
+    if (error) {
+      return { 
+        success: false, 
+        reason: 'unavailable',
+        message 
+      };
+    }
+    
+    // Request permission using OneSignal
+    const permission = await oneSignal.Notifications.requestPermission();
+    console.log("Notification permission status:", permission);
+    
+    return { 
+      success: permission, 
+      reason: permission ? 'granted' : 'denied',
+      message: permission ? 'Notifications enabled' : 'Notification permission denied'
+    };
+  } catch (error) {
+    console.error("Error requesting notification permission:", error);
+    return { 
+      success: false, 
+      reason: 'error',
+      message: 'Error requesting permission: ' + (error instanceof Error ? error.message : String(error))
+    };
   }
-  
-  return { 
-    success: false, 
-    reason: 'unavailable',
-    message: 'OneSignal not initialized' 
-  };
 };
 
 // Function to show OneSignal slidedown prompt
 export const showNotificationPrompt = async () => {
-  if (typeof window !== 'undefined' && window.OneSignal) {
-    try {
-      // First check support
-      if (!areNotificationsSupported()) {
-        console.log("Push notifications are not supported on this device/browser");
-        return { 
-          success: false, 
-          reason: 'unsupported' 
-        };
-      }
-      
-      // Check if the user has already subscribed
-      const isEnabled = await window.OneSignal.Notifications.areEnabled();
-      
-      if (!isEnabled) {
-        console.log("Showing OneSignal notification prompt");
-        await window.OneSignal.Notifications.showSlidedownPrompt();
-        return { success: true };
-      } else {
-        console.log("User already subscribed to notifications");
-        return { 
-          success: true, 
-          reason: 'already-subscribed' 
-        };
-      }
-    } catch (error) {
-      console.error("Error showing notification prompt:", error);
+  try {
+    // First check support
+    if (!areNotificationsSupported()) {
+      console.log("Push notifications are not supported on this device/browser");
       return { 
         success: false, 
-        reason: 'error',
-        message: error instanceof Error ? error.message : String(error)
+        reason: 'unsupported' 
       };
     }
+    
+    // Check if OneSignal is ready
+    const { error, message, oneSignal } = safelyAccessOneSignal();
+    if (error) {
+      return { 
+        success: false, 
+        reason: 'unavailable',
+        message 
+      };
+    }
+    
+    // Check if the user has already subscribed
+    const isEnabled = await oneSignal.Notifications.areEnabled();
+    
+    if (!isEnabled) {
+      console.log("Showing OneSignal notification prompt");
+      await oneSignal.Notifications.showSlidedownPrompt();
+      return { success: true };
+    } else {
+      console.log("User already subscribed to notifications");
+      return { 
+        success: true, 
+        reason: 'already-subscribed' 
+      };
+    }
+  } catch (error) {
+    console.error("Error showing notification prompt:", error);
+    return { 
+      success: false, 
+      reason: 'error',
+      message: error instanceof Error ? error.message : String(error)
+    };
   }
-  
-  return { 
-    success: false, 
-    reason: 'unavailable',
-    message: 'OneSignal not initialized' 
-  };
 };
 
 // Get a user-friendly message explaining why notifications aren't working

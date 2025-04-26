@@ -5,6 +5,9 @@ import './index.css'
 import { initializeOneSignal } from './utils/oneSignal';
 
 // Initialize OneSignal when the app starts
-initializeOneSignal();
+document.addEventListener('DOMContentLoaded', () => {
+  // Ensure OneSignal is initialized after the DOM is fully loaded
+  initializeOneSignal();
+});
 
 createRoot(document.getElementById("root")!).render(<App />);

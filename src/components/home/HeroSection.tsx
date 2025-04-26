@@ -10,7 +10,8 @@ import {
   requestNotificationPermission, 
   showNotificationPrompt, 
   checkNotificationPermission,
-  getNotificationSupportMessage
+  getNotificationSupportMessage,
+  isOneSignalReady
 } from '@/utils/oneSignal';
 
 // Tool grid data
@@ -29,6 +30,7 @@ const HeroSection: React.FC = () => {
   const [typerText, setTyperText] = useState("Loading Pip Calculator...");
   const [audioPlaying, setAudioPlaying] = useState(false);
   const [notificationStatus, setNotificationStatus] = useState<string>('loading');
+  const [oneSignalLoaded, setOneSignalLoaded] = useState(false);
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -62,6 +64,46 @@ const HeroSection: React.FC = () => {
         audioRef.current.pause();
         audioRef.current = null;
       }
+    };
+  }, []);
+  
+  // Check OneSignal availability and notification permissions
+  useEffect(() => {
+    // Check OneSignal initialization
+    const checkOneSignal = () => {
+      const isReady = isOneSignalReady();
+      setOneSignalLoaded(isReady);
+      return isReady;
+    };
+    
+    // Try immediately
+    if (checkOneSignal()) {
+      checkNotificationPermission().then(permission => {
+        setNotificationStatus(permission);
+      });
+    } else {
+      // If not available yet, set up polling
+      const intervalId = setInterval(() => {
+        if (checkOneSignal()) {
+          clearInterval(intervalId);
+          checkNotificationPermission().then(permission => {
+            setNotificationStatus(permission);
+          });
+        }
+      }, 1000);
+      
+      // Stop checking after 10 seconds
+      setTimeout(() => {
+        clearInterval(intervalId);
+        if (!oneSignalLoaded) {
+          console.error("OneSignal failed to initialize within timeout period");
+          setNotificationStatus('unavailable');
+        }
+      }, 10000);
+    }
+    
+    return () => {
+      // Cleanup any intervals on unmount
     };
   }, []);
 
@@ -112,41 +154,82 @@ const HeroSection: React.FC = () => {
   };
 
   const handleNotificationRequest = async () => {
-    const result = await requestNotificationPermission();
-    
-    if (result.success) {
-      setNotificationStatus('granted');
+    // First check if OneSignal is loaded
+    if (!oneSignalLoaded) {
       toast({
-        title: "Notifications Enabled",
-        description: "You'll now receive trading alerts and market updates",
+        title: "Service Unavailable",
+        description: "Notification service is still loading, please try again in a few moments",
+        variant: "destructive",
         duration: 3000,
       });
-    } else {
-      const permission = await checkNotificationPermission();
-      setNotificationStatus(permission);
+      return;
+    }
+
+    // If permissions already granted, show confirmation
+    const currentPermission = await checkNotificationPermission();
+    if (currentPermission === 'granted') {
+      setNotificationStatus('granted');
+      toast({
+        title: "Notifications Already Enabled",
+        description: "You're already set to receive trading alerts",
+        duration: 3000,
+      });
+      return;
+    }
+    
+    // Show OneSignal's native prompt
+    const promptResult = await showNotificationPrompt();
+    
+    if (promptResult.success) {
+      // Check permission after prompt
+      const newPermission = await checkNotificationPermission();
+      setNotificationStatus(newPermission);
       
-      if (result.reason === 'unsupported') {
-        const message = await getNotificationSupportMessage();
+      if (newPermission === 'granted') {
         toast({
-          title: "Notifications Not Supported",
-          description: message,
-          variant: "destructive",
-          duration: 5000,
-        });
-      } else if (result.reason === 'denied') {
-        toast({
-          title: "Notifications Blocked",
-          description: "Please enable notifications in your browser settings to receive alerts",
-          variant: "destructive",
-          duration: 5000,
-        });
-      } else {
-        toast({
-          title: "Notification Error",
-          description: result.message || "Failed to enable notifications",
-          variant: "destructive",
+          title: "Notifications Enabled",
+          description: "You'll now receive trading alerts and market updates",
           duration: 3000,
         });
+      }
+    } else {
+      // If OneSignal prompt fails, try browser native
+      const result = await requestNotificationPermission();
+      
+      if (result.success) {
+        setNotificationStatus('granted');
+        toast({
+          title: "Notifications Enabled",
+          description: "You'll now receive trading alerts and market updates",
+          duration: 3000,
+        });
+      } else {
+        const permission = await checkNotificationPermission();
+        setNotificationStatus(permission);
+        
+        if (result.reason === 'unsupported') {
+          const message = await getNotificationSupportMessage();
+          toast({
+            title: "Notifications Not Supported",
+            description: message,
+            variant: "destructive",
+            duration: 5000,
+          });
+        } else if (permission === 'denied') {
+          toast({
+            title: "Notifications Blocked",
+            description: "Please enable notifications in your browser settings to receive alerts",
+            variant: "destructive",
+            duration: 5000,
+          });
+        } else {
+          toast({
+            title: "Notification Error",
+            description: result.message || "Failed to enable notifications",
+            variant: "destructive",
+            duration: 3000,
+          });
+        }
       }
     }
   };
@@ -156,7 +239,9 @@ const HeroSection: React.FC = () => {
     let buttonVariant: "outline" | "default" = "outline";
     let buttonClass = "w-full min-h-[44px] border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm";
     
-    if (notificationStatus === 'granted') {
+    if (notificationStatus === 'loading' || !oneSignalLoaded) {
+      buttonText = "Loading Notifications...";
+    } else if (notificationStatus === 'granted') {
       buttonText = "Trading Alerts Enabled";
       buttonVariant = "default";
       buttonClass = "w-full min-h-[44px] bg-green-600 hover:bg-green-700";
@@ -166,6 +251,9 @@ const HeroSection: React.FC = () => {
     } else if (notificationStatus === 'unsupported') {
       buttonText = "Notifications Not Supported";
       buttonClass = "w-full min-h-[44px] border-yellow-500 text-yellow-500 hover:bg-yellow-500/10";
+    } else if (notificationStatus === 'unavailable') {
+      buttonText = "Notification Service Unavailable";
+      buttonClass = "w-full min-h-[44px] border-yellow-500 text-yellow-500 hover:bg-yellow-500/10";
     }
 
     return (
@@ -174,6 +262,7 @@ const HeroSection: React.FC = () => {
         size="lg"
         onClick={handleNotificationRequest}
         className={`${buttonClass} ${notificationStatus === 'default' ? 'animate-pulse' : ''}`}
+        disabled={notificationStatus === 'loading' || notificationStatus === 'unavailable' || !oneSignalLoaded}
       >
         <Bell className="mr-2 h-5 w-5" />
         {buttonText}

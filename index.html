@@ -17,41 +17,51 @@
       gtag('config', 'G-EJWTCMX08H');
     </script>
 
-    <!-- OneSignal Web SDK -->
+    <!-- OneSignal Web SDK - Load this early to ensure it's ready -->
+    <script>
+      // Pre-define OneSignalDeferred array to capture early calls
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+    </script>
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(async function(OneSignal) {
-        await OneSignal.init({
-          appId: "d3c47d59-7e65-49d6-a331-4ae93e3423bb",
-          allowLocalhostAsSecureOrigin: true,
-          promptOptions: {
-            slidedown: {
-              prompts: [{
-                type: "push",
-                autoPrompt: true,
-                text: {
-                  actionMessage: "Get instant alerts for market movements and trading opportunities!",
-                  acceptButton: "Allow",
-                  cancelButton: "Later"
-                },
-                delay: {
-                  pageViews: 1,
-                  timeDelay: 5
-                }
-              }]
+      // Initialize OneSignal as soon as possible
+      window.OneSignalDeferred.push(async function(OneSignal) {
+        try {
+          await OneSignal.init({
+            appId: "d3c47d59-7e65-49d6-a331-4ae93e3423bb",
+            allowLocalhostAsSecureOrigin: true,
+            promptOptions: {
+              slidedown: {
+                prompts: [{
+                  type: "push",
+                  autoPrompt: true,
+                  text: {
+                    actionMessage: "Get instant alerts for market movements and trading opportunities!",
+                    acceptButton: "Allow",
+                    cancelButton: "Later"
+                  },
+                  delay: {
+                    pageViews: 1,
+                    timeDelay: 5
+                  }
+                }]
+              }
             }
-          }
-        });
-        
-        // Initialize event handlers
-        OneSignal.Notifications.addEventListener('permissionChange', function(permission) {
-          console.log('OneSignal: Permission changed to', permission);
-        });
-        
-        OneSignal.Notifications.addEventListener('permissionPromptDisplay', function() {
-          console.log('OneSignal: Prompt displayed');
-        });
+          });
+          
+          console.log("OneSignal successfully initialized!");
+          
+          // Initialize event handlers
+          OneSignal.Notifications.addEventListener('permissionChange', function(permission) {
+            console.log('OneSignal: Permission changed to', permission);
+          });
+          
+          OneSignal.Notifications.addEventListener('permissionPromptDisplay', function() {
+            console.log('OneSignal: Prompt displayed');
+          });
+        } catch (error) {
+          console.error("Error initializing OneSignal:", error);
+        }
       });
     </script>
 
