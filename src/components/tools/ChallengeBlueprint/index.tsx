@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
@@ -57,6 +58,7 @@ const ChallengeBlueprint: React.FC = () => {
     requiredWins: 0,
     dailyTrades: 0
   });
+  const [calculationAttempts, setCalculationAttempts] = useState(0);
   const isMobile = useIsMobile();
   
   useEffect(() => {
@@ -100,61 +102,103 @@ const ChallengeBlueprint: React.FC = () => {
     localStorage.setItem('challengeBlueprint_riskStyle', riskStyle);
   }, [riskStyle]);
 
-  const calculateStrategyMetrics = (data: TraderData, style: RiskStyle) => {
+  const handleForceRefresh = useCallback(() => {
+    if (!traderData) return;
+    
+    setCalculationAttempts(prev => prev + 1);
+    setIsLoading(true);
+    toast({
+      title: "Recalculating strategy",
+      description: "Refreshing your challenge blueprint...",
+      duration: 2000,
+    });
+    
+    // Force recalculation with a slight delay
+    setTimeout(() => {
+      calculateStrategyMetrics(traderData, riskStyle, true);
+    }, 500);
+  }, [traderData, riskStyle]);
+
+  const calculateStrategyMetrics = (data: TraderData, style: RiskStyle, isForceRefresh = false) => {
     setIsLoading(true);
     
+    // Create calculation timeout - circuit breaker pattern
+    const calculationTimeout = setTimeout(() => {
+      if (isLoading) {
+        toast({
+          title: "Strategic recalibration needed",
+          description: "Try adjusting your risk profile or force refresh.",
+          duration: 5000,
+        });
+      }
+    }, 8000);
+    
     setTimeout(() => {
-      const rewardAmount = data.riskPerTrade * data.riskRewardRatio;
-      
-      const targetProfit = data.profitTarget / 100 * data.accountSize;
-      const profitPerWin = (rewardAmount / 100) * data.accountSize;
-      const winsNeeded = Math.ceil(targetProfit / profitPerWin);
-      
-      const tradesNeeded = Math.ceil(winsNeeded / (data.winRate / 100));
-      
-      let riskValue: number;
-      if (style === 'conservative') riskValue = 0.5;
-      else if (style === 'balanced') riskValue = 1.5;
-      else riskValue = 3.0;
-      
-      const updatedData = {
-        ...data,
-        riskPerTrade: riskValue
-      };
-      
-      const dailyTargetAmount = (data.profitTarget / 100 * data.accountSize) / data.passDays;
-      const dailyTargetPercent = dailyTargetAmount / data.accountSize * 100;
-      
-      const maxConsecutiveLosses = Math.ceil(Math.log(0.05) / Math.log(1 - data.winRate / 100));
-      let worstCaseDrawdown = 0;
-      
-      if (style === 'conservative') worstCaseDrawdown = 0.5 * maxConsecutiveLosses;
-      else if (style === 'balanced') worstCaseDrawdown = 1.5 * maxConsecutiveLosses;
-      else worstCaseDrawdown = 3.0 * maxConsecutiveLosses;
-      
-      const drawdownRisk = Math.min(worstCaseDrawdown, 15);
-      
-      const passProbability = calculatePassProbability(data.winRate / 100, tradesNeeded, winsNeeded);
-      
-      const equityCurveData = generateEquityCurves(updatedData, style);
-      
-      setStrategyMetrics({
-        tradesNeeded,
-        winsNeeded,
-        rewardAmount,
-        dailyTargetAmount,
-        dailyTargetPercent,
-        drawdownRisk,
-        passProbability,
-        equityCurveData
-      });
-      
-      setTraderData(updatedData);
-      
-      setIsLoading(false);
-      
-      if (activeTab === 'input') {
-        setActiveTab('strategy');
+      try {
+        const rewardAmount = data.riskPerTrade * data.riskRewardRatio;
+        
+        const targetProfit = data.profitTarget / 100 * data.accountSize;
+        const profitPerWin = (rewardAmount / 100) * data.accountSize;
+        const winsNeeded = Math.ceil(targetProfit / profitPerWin);
+        
+        const tradesNeeded = Math.ceil(winsNeeded / (data.winRate / 100));
+        
+        let riskValue: number;
+        if (style === 'conservative') riskValue = 0.5;
+        else if (style === 'balanced') riskValue = 1.5;
+        else riskValue = 3.0;
+        
+        const updatedData = {
+          ...data,
+          riskPerTrade: riskValue
+        };
+        
+        const dailyTargetAmount = (data.profitTarget / 100 * data.accountSize) / data.passDays;
+        const dailyTargetPercent = dailyTargetAmount / data.accountSize * 100;
+        
+        const maxConsecutiveLosses = Math.ceil(Math.log(0.05) / Math.log(1 - data.winRate / 100));
+        let worstCaseDrawdown = 0;
+        
+        if (style === 'conservative') worstCaseDrawdown = 0.5 * maxConsecutiveLosses;
+        else if (style === 'balanced') worstCaseDrawdown = 1.5 * maxConsecutiveLosses;
+        else worstCaseDrawdown = 3.0 * maxConsecutiveLosses;
+        
+        const drawdownRisk = Math.min(worstCaseDrawdown, 15);
+        
+        const passProbability = calculatePassProbability(data.winRate / 100, tradesNeeded, winsNeeded);
+        
+        const equityCurveData = generateEquityCurves(updatedData, style, isForceRefresh || calculationAttempts > 1);
+        
+        clearTimeout(calculationTimeout);
+        
+        // Update strategy metrics state with all calculated values
+        setStrategyMetrics({
+          tradesNeeded,
+          winsNeeded,
+          rewardAmount,
+          dailyTargetAmount,
+          dailyTargetPercent,
+          drawdownRisk,
+          passProbability,
+          equityCurveData
+        });
+        
+        setTraderData(updatedData);
+        
+        setIsLoading(false);
+        
+        if (activeTab === 'input') {
+          setActiveTab('strategy');
+        }
+      } catch (error) {
+        console.error("Error in calculations:", error);
+        clearTimeout(calculationTimeout);
+        setIsLoading(false);
+        toast({
+          title: "Calculation error",
+          description: "We encountered an error. Please try adjusting your inputs.",
+          duration: 5000,
+        });
       }
     }, 800);
   };
@@ -183,7 +227,7 @@ const ChallengeBlueprint: React.FC = () => {
     return result;
   };
 
-  const generateEquityCurves = (data: TraderData, style: RiskStyle): {
+  const generateEquityCurves = (data: TraderData, style: RiskStyle, addRandomness = false): {
     average: {x: number, y: number}[];
     best: {x: number, y: number}[];
     worst: {x: number, y: number}[];
@@ -208,11 +252,17 @@ const ChallengeBlueprint: React.FC = () => {
       (winRate * riskPerTrade * rewardRatio) - ((1 - winRate) * riskPerTrade)
     );
     
+    // Random variance to prevent identical curves when forcing refresh
+    const randomFactor = addRandomness ? Math.random() * 0.3 + 0.85 : 1.0;  
+    
     const stepsPerDay = 1;
     for (let day = 1; day <= data.passDays; day++) {
-      const avgEquity = 100 + (expectedDailyReturn * day);
-      const bestEquity = 100 + (expectedDailyReturn * day * 1.4) + (day * volatility * 0.3);
-      const worstEquity = 100 + (expectedDailyReturn * day * 0.6) - (day * volatility * 0.4);
+      // Add a tiny bit of controlled randomness if requested (for forced refreshes)
+      const dailyRandomness = addRandomness ? (Math.random() - 0.5) * 0.7 : 0;
+      
+      const avgEquity = 100 + (expectedDailyReturn * day * randomFactor) + (addRandomness ? dailyRandomness : 0);
+      const bestEquity = 100 + (expectedDailyReturn * day * 1.4) + (day * volatility * 0.3) + (addRandomness ? dailyRandomness * 2 : 0);
+      const worstEquity = 100 + (expectedDailyReturn * day * 0.6) - (day * volatility * 0.4) + (addRandomness ? dailyRandomness / 2 : 0);
       
       if (day % stepsPerDay === 0 || day === data.passDays) {
         averageCurve.push({ x: day, y: Math.max(96, avgEquity) });
@@ -238,31 +288,41 @@ const ChallengeBlueprint: React.FC = () => {
     setIsLoading(true);
     
     setTimeout(() => {
-      const rewardAmount = inputs.riskPerTrade * inputs.rewardRiskRatio;
-      
-      const winsNeeded = Math.ceil(inputs.targetPercent / rewardAmount);
-      
-      const tradesNeeded = Math.ceil(winsNeeded / (inputs.winRate / 100));
-      
-      const dailyTrades = Math.ceil(tradesNeeded / inputs.daysRemaining);
-      
-      const passProbability = calculatePassProbability(inputs.winRate / 100, tradesNeeded, winsNeeded);
-      
-      setGoalResults({
-        tradesNeeded: Math.ceil(tradesNeeded),
-        winsNeeded,
-        passProbability,
-        requiredWins: winsNeeded,
-        dailyTrades
-      });
-      
-      setIsLoading(false);
-      
-      toast({
-        title: "Pass plan calculated",
-        description: `You need ${winsNeeded} wins in about ${tradesNeeded} trades to reach your target.`,
-        duration: 3000,
-      });
+      try {
+        const rewardAmount = inputs.riskPerTrade * inputs.rewardRiskRatio;
+        
+        const winsNeeded = Math.ceil(inputs.targetPercent / rewardAmount);
+        
+        const tradesNeeded = Math.ceil(winsNeeded / (inputs.winRate / 100));
+        
+        const dailyTrades = Math.ceil(tradesNeeded / inputs.daysRemaining);
+        
+        const passProbability = calculatePassProbability(inputs.winRate / 100, tradesNeeded, winsNeeded);
+        
+        setGoalResults({
+          tradesNeeded: Math.ceil(tradesNeeded),
+          winsNeeded,
+          passProbability,
+          requiredWins: winsNeeded,
+          dailyTrades
+        });
+        
+        setIsLoading(false);
+        
+        toast({
+          title: "Pass plan calculated",
+          description: `You need ${winsNeeded} wins in about ${tradesNeeded} trades to reach your target.`,
+          duration: 3000,
+        });
+      } catch (error) {
+        console.error("Error in goal calculations:", error);
+        setIsLoading(false);
+        toast({
+          title: "Calculation error",
+          description: "We encountered an error. Please try adjusting your inputs.",
+          duration: 3000,
+        });
+      }
     }, 500);
   };
 
@@ -377,11 +437,11 @@ const ChallengeBlueprint: React.FC = () => {
         </TabsContent>
         
         <TabsContent value="strategy">
-          {strategyMetrics && traderData && (
+          {(strategyMetrics || isLoading) && traderData && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
                 <StrategyBreakdown 
-                  metrics={strategyMetrics} 
+                  metrics={strategyMetrics!} 
                   traderData={traderData}
                   isLoading={isLoading} 
                 />
@@ -390,8 +450,22 @@ const ChallengeBlueprint: React.FC = () => {
                 <RiskStyleSelector 
                   currentStyle={riskStyle} 
                   onStyleChange={handleRiskStyleChange} 
-                  metrics={strategyMetrics}
+                  metrics={strategyMetrics || {
+                    tradesNeeded: 0,
+                    winsNeeded: 0,
+                    rewardAmount: 0,
+                    dailyTargetAmount: 0,
+                    dailyTargetPercent: 0,
+                    drawdownRisk: 0,
+                    passProbability: 0,
+                    equityCurveData: {
+                      average: [],
+                      best: [],
+                      worst: []
+                    }
+                  }}
                   onRiskPerTradeChange={handleRiskPerTradeChange}
+                  onForceRefresh={handleForceRefresh}
                 />
                 <div className="mt-6">
                   <InsightsPanel />

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Shield, Gauge, Flame } from 'lucide-react';
+import { Shield, Gauge, Flame, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import {
   Tooltip,
@@ -9,6 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { Button } from '@/components/ui/button';
 import { StrategyMetrics, RiskStyle } from './index';
 
 interface RiskStyleSelectorProps {
@@ -16,14 +17,17 @@ interface RiskStyleSelectorProps {
   onStyleChange: (style: RiskStyle) => void;
   metrics: StrategyMetrics;
   onRiskPerTradeChange?: (value: number) => void;
+  onForceRefresh?: () => void;
 }
 
 const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
   currentStyle,
   onStyleChange,
-  metrics
+  metrics,
+  onRiskPerTradeChange,
+  onForceRefresh
 }) => {
-  // Fixed risk parameters
+  // Fixed risk parameters - these values are now explicitly connected to the rest of the application
   const riskStyles = {
     conservative: {
       riskPerTrade: 0.5,
@@ -44,18 +48,39 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
       description: "Maximum velocity approach. Only for expert traders with exceptional win rates and mental discipline."
     }
   };
+  
+  // When a risk style is selected, explicitly update the risk per trade value
+  const handleStyleChange = (style: RiskStyle) => {
+    onStyleChange(style);
+    if (onRiskPerTradeChange) {
+      onRiskPerTradeChange(riskStyles[style].riskPerTrade);
+    }
+  };
 
   return (
     <Card className="border border-[#00FEFC]/20 shadow-lg bg-[#0F1A2A]/80 backdrop-blur-lg">
       <CardContent className="p-5">
-        <h3 className="text-lg font-semibold mb-4 font-['Space_Grotesk',sans-serif] text-[#00FEFC]">🔒 Choose Risk Style</h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold font-['Space_Grotesk',sans-serif] text-[#00FEFC]">🔒 Choose Risk Style</h3>
+          {onForceRefresh && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onForceRefresh}
+              className="border-[#00FEFC]/30 hover:bg-[#00FEFC]/10"
+              title="Force refresh calculations"
+            >
+              <RefreshCw className="h-4 w-4 text-[#00FEFC]" />
+            </Button>
+          )}
+        </div>
         
         <div className="grid grid-cols-1 gap-3 mb-6">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.button
-                  onClick={() => onStyleChange('conservative')}
+                  onClick={() => handleStyleChange('conservative')}
                   className={`flex items-center p-4 rounded-lg border transition-all ${
                     currentStyle === 'conservative'
                       ? 'border-[#00FEFC] shadow-[0_0_15px_rgba(0,254,252,0.3)] bg-gradient-to-r from-[#0F1A2A] to-[#132436]'
@@ -102,7 +127,7 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.button
-                  onClick={() => onStyleChange('balanced')}
+                  onClick={() => handleStyleChange('balanced')}
                   className={`flex items-center p-4 rounded-lg border transition-all ${
                     currentStyle === 'balanced'
                       ? 'border-[#00FEFC] shadow-[0_0_15px_rgba(0,254,252,0.3)] bg-gradient-to-r from-[#0F1A2A] to-[#132436]'
@@ -149,7 +174,7 @@ const RiskStyleSelector: React.FC<RiskStyleSelectorProps> = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.button
-                  onClick={() => onStyleChange('aggressive')}
+                  onClick={() => handleStyleChange('aggressive')}
                   className={`flex items-center p-4 rounded-lg border transition-all ${
                     currentStyle === 'aggressive'
                       ? 'border-[#00FEFC] shadow-[0_0_15px_rgba(0,254,252,0.3)] bg-gradient-to-r from-[#0F1A2A] to-[#132436]'
