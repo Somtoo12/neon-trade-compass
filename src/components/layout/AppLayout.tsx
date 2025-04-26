@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import MobileNav from './MobileNav';
@@ -6,7 +5,6 @@ import Footer from './Footer';
 import BackButton from './BackButton';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ThemeToggle from '../theme/ThemeToggle';
-import { Button } from '@/components/ui/button';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -27,23 +25,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       {/* Desktop theme toggle */}
       {!isMobile && <div className="absolute top-4 right-4 z-10"><ThemeToggle /></div>}
 
-      {/* Animation toggle button */}
-      <div className="absolute top-4 right-20 z-10">
-        <Button
-          variant="outline" 
-          size="sm" 
-          onClick={() => {
-            document.body.classList.toggle('reduce-animations');
-          }}
-          className="text-xs border-accent/30 bg-background/50 backdrop-blur-sm hidden md:inline-flex"
-        >
-          Toggle Animations
-        </Button>
-      </div>
-
       {isMobile ? (
         <div className="flex flex-col flex-1 overflow-hidden">
-          {/* Back button and mobile navigation */}
           <div className="flex items-center justify-between py-2 px-4 pt-safe">
             <BackButton />
             <MobileNav activeSection={activeSection} setActiveSection={setActiveSection} />

@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Calculator, 
@@ -139,15 +138,16 @@ const ToolShowcase: React.FC = () => {
                           <h3 className="text-lg font-semibold mb-2 text-center">{tool.name}</h3>
                           <p className="text-sm text-muted-foreground text-center mb-4">{tool.summary}</p>
                         </div>
-                        <Link to={tool.path}>
+                        <div className="w-full">
                           <Button 
                             variant="outline" 
                             size="sm" 
-                            className="w-full bg-card hover:bg-accent/10 border-accent/20"
+                            className="w-full bg-card hover:bg-accent/10 border-accent/20 cursor-not-allowed opacity-50"
+                            disabled
                           >
-                            Launch Tool
+                            Coming Soon
                           </Button>
-                        </Link>
+                        </div>
                       </div>
                     </Card>
                   </motion.div>
