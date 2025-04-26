@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -58,21 +57,6 @@ export default {
 					purple: '#7b61ff',
 					blue: '#00c2ff',
 				},
-				tactical: {
-					background: '#0A0E17', // Deep void background
-					profit: '#00FF88',     // Neon mint for profit zones
-					risk: '#FF0055',       // Laser red for risk alerts
-					neutral: '#1E90FF',    // Bright blue for neutral data
-				},
-				// Colors with opacity
-				'tactical-background': {
-					DEFAULT: '#0A0E17',
-					80: 'rgba(10, 14, 23, 0.8)',
-				},
-			},
-			fontFamily: {
-				rajdhani: ['Rajdhani', 'sans-serif'],
-				'share-tech': ['"Share Tech Mono"', 'monospace'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -95,21 +79,6 @@ export default {
 				'float': {
 					'0%, 100%': { transform: 'translateY(0)' },
 					'50%': { transform: 'translateY(-5px)' },
-				},
-				'tactical-pulse': {
-					'0%, 100%': { opacity: '1', boxShadow: '0 0 5px var(--pulse-color)' },
-					'50%': { opacity: '0.8', boxShadow: '0 0 15px var(--pulse-color)' },
-				},
-				'data-scan': {
-					'0%': { backgroundPosition: '0% 50%' },
-					'50%': { backgroundPosition: '100% 50%' },
-					'100%': { backgroundPosition: '0% 50%' },
-				},
-				'text-glitch': {
-					'0%, 100%': { textShadow: '0 0 5px #00FF88' },
-					'25%': { textShadow: '2px 0 5px #00C2FF, -2px 0 5px #FF0055' },
-					'50%': { textShadow: '0 0 10px #00FF88' },
-					'75%': { textShadow: '-2px 0 5px #00C2FF, 2px 0 5px #FF0055' },
 				}
 			},
 			animation: {
@@ -117,22 +86,13 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'pulse-glow': 'pulse-glow 2s infinite',
 				'float': 'float 3s ease-in-out infinite',
-				'tactical-pulse': 'tactical-pulse 2s infinite',
-				'data-scan': 'data-scan 5s ease infinite',
-				'text-glitch': 'text-glitch 3s infinite',
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-				'cyber-grid': 'linear-gradient(rgba(0, 255, 136, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 136, 0.1) 1px, transparent 1px)',
 			},
 			boxShadow: {
 				'glow': '0 0 10px rgba(var(--primary), 0.3)',
-				'tactical-glow': '0 0 15px rgba(0, 255, 136, 0.5)',
-				'risk-glow': '0 0 15px rgba(255, 0, 85, 0.5)',
-			},
-			backgroundSize: {
-				'cyber-grid': '20px 20px',
-			},
+			}
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
