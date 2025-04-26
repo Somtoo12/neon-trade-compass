@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Trophy, TrendingUp, Target } from 'lucide-react';
@@ -104,7 +105,7 @@ const BlueprintSummary: React.FC<BlueprintSummaryProps> = ({
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <TrendingUp className="h-4 w-4 text-red-400 mr-1.5" />
-                      <span className="text-xs text-muted-foreground">DRAWDOWN</span>
+                      <span className="text-xs text-muted-foreground">DD</span>
                     </div>
                     <div className="text-base font-bold">{drawdown.toFixed(1)}%</div>
                   </div>
@@ -169,3 +170,4 @@ const BlueprintSummary: React.FC<BlueprintSummaryProps> = ({
 };
 
 export default BlueprintSummary;
+
