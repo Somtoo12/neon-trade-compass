@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -88,6 +89,24 @@ export default {
         'pulse-text': {
           '0%, 100%': { opacity: '0.7' },
           '50%': { opacity: '1' }
+        },
+        'glow': {
+          '0%, 100%': { 
+            boxShadow: '0 0 5px rgba(0, 254, 252, 0.3), 0 0 10px rgba(0, 254, 252, 0.2)' 
+          },
+          '50%': { 
+            boxShadow: '0 0 10px rgba(0, 254, 252, 0.5), 0 0 20px rgba(0, 254, 252, 0.3)' 
+          }
+        },
+        'number-change': {
+          '0%': { 
+            transform: 'translateY(100%)',
+            opacity: '0'
+          },
+          '100%': { 
+            transform: 'translateY(0)',
+            opacity: '1'
+          }
         }
       },
       animation: {
@@ -97,6 +116,8 @@ export default {
         'float': 'float 3s ease-in-out infinite',
         'pulse-border': 'pulse-border 2s infinite',
         'pulse-text': 'pulse-text 1.5s infinite',
+        'glow': 'glow 2s ease-in-out infinite',
+        'number-change': 'number-change 0.5s ease-out'
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
