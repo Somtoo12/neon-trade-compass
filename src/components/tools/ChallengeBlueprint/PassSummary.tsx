@@ -1,112 +1,89 @@
 
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { motion } from 'framer-motion';
-import { CheckCircle, AlertTriangle, TrendingUp, Gauge } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2, CheckCircle, AlertTriangle, Calculator, TrendingUp } from "lucide-react";
 
 interface PassSummaryProps {
   tradesNeeded: number;
+  winsNeeded: number;
   passProbability: number;
   requiredWins: number;
   dailyTrades: number;
-  isLoading?: boolean;
+  isLoading: boolean;
 }
 
 const PassSummary: React.FC<PassSummaryProps> = ({
-  tradesNeeded, 
-  passProbability, 
-  requiredWins, 
+  tradesNeeded,
+  winsNeeded,
+  passProbability,
+  requiredWins,
   dailyTrades,
-  isLoading = false,
+  isLoading
 }) => {
+  // Determine badge status
+  const getBadgeColor = () => {
+    if (passProbability >= 85) return "bg-green-500/20 border-green-500/30 text-green-600";
+    if (passProbability >= 60) return "bg-yellow-500/20 border-yellow-500/30 text-yellow-600";
+    return "bg-red-500/20 border-red-500/30 text-red-600";
+  };
+  
+  const getIcon = () => {
+    if (passProbability >= 85) return <CheckCircle className="h-5 w-5" />;
+    if (passProbability >= 60) return <TrendingUp className="h-5 w-5" />;
+    return <AlertTriangle className="h-5 w-5" />;
+  };
+
   return (
     <Card className="border border-border/50 shadow-md bg-card/30 backdrop-blur-sm">
       <CardHeader className="pb-2">
-        <CardTitle className="text-xl text-center">
-          Your Challenge Pass Plan
+        <CardTitle className="text-xl flex items-center">
+          <Calculator className="h-5 w-5 mr-2 text-accent" />
+          Pass Strategy Breakdown
         </CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="flex items-center justify-center p-6">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent"></div>
+          <div className="flex items-center justify-center p-4">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            <span className="ml-2 text-muted-foreground">Calculating...</span>
           </div>
         ) : (
-          <motion.div 
-            className="space-y-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4 }}
-          >
-            <div className="grid grid-cols-2 gap-4">
-              <motion.div 
-                className="bg-secondary/30 p-3 rounded-lg"
-                initial={{ y: 10, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.1 }}
-              >
-                <div className="text-sm text-muted-foreground">Total Trades Needed</div>
-                <div className="text-xl font-semibold mt-1">{Math.ceil(tradesNeeded)}</div>
-              </motion.div>
-              
-              <motion.div 
-                className="bg-secondary/30 p-3 rounded-lg"
-                initial={{ y: 10, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2 }}
-              >
-                <div className="text-sm text-muted-foreground">Pass Probability</div>
-                <div className="text-xl font-semibold mt-1 flex items-center">
-                  {passProbability.toFixed(0)}%
-                  {passProbability >= 80 ? (
-                    <CheckCircle className="h-4 w-4 text-green-500 ml-1" />
-                  ) : passProbability >= 60 ? (
-                    <TrendingUp className="h-4 w-4 text-amber-500 ml-1" />
-                  ) : (
-                    <AlertTriangle className="h-4 w-4 text-red-500 ml-1" />
-                  )}
+          <div className="space-y-4">
+            <div className="flex items-center">
+              <div className={`p-1.5 rounded-full mr-3 ${getBadgeColor()}`}>
+                {getIcon()}
+              </div>
+              <div>
+                <div className="font-medium">
+                  {passProbability}% Probability of Success
                 </div>
-              </motion.div>
+                <div className="text-muted-foreground text-sm">
+                  Based on binomial probability distribution
+                </div>
+              </div>
             </div>
             
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="p-4 bg-accent/10 rounded-lg border border-accent/20"
-            >
-              <div className="flex items-start">
-                <Gauge className="h-5 w-5 text-accent mr-2 mt-0.5" />
-                <div>
-                  <h4 className="font-medium">Your Pass Strategy</h4>
-                  <p className="text-sm mt-2">
-                    With your current settings, aim for <span className="font-semibold">{requiredWins} wins</span> in your next {Math.ceil(tradesNeeded)} trades.
-                    That's about <span className="font-semibold">{dailyTrades} trades per day</span> to stay on track.
-                  </p>
-                </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 border border-border/50 rounded-lg">
+                <div className="text-sm text-muted-foreground">Winning Trades Required</div>
+                <div className="text-2xl font-semibold">{winsNeeded}</div>
               </div>
-            </motion.div>
-
-            <div className="space-y-2 mt-4">
-              <div className="flex justify-between text-sm">
-                <span>Progress to Pass</span>
-                <span className="font-medium">Target: {passProbability.toFixed(0)}% probability</span>
-              </div>
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                style={{ transformOrigin: 'left' }}
-              >
-                <Progress value={passProbability} className="h-2" />
-              </motion.div>
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>High Risk</span>
-                <span>Low Risk</span>
+              
+              <div className="p-3 border border-border/50 rounded-lg">
+                <div className="text-sm text-muted-foreground">Total Trades Needed</div>
+                <div className="text-2xl font-semibold">{tradesNeeded}</div>
               </div>
             </div>
-          </motion.div>
+            
+            <div className="p-3 border border-border/50 rounded-lg">
+              <div className="text-sm text-muted-foreground">Trading Frequency</div>
+              <div className="text-xl font-semibold">{dailyTrades} trades/day</div>
+            </div>
+            
+            <div className="p-3 bg-accent/10 rounded-lg text-sm">
+              <p>You need <span className="font-medium">{winsNeeded} winning trades</span> out of approximately {tradesNeeded} total trades. With your win rate, this gives you a {passProbability}% chance of success.</p>
+            </div>
+          </div>
         )}
       </CardContent>
     </Card>

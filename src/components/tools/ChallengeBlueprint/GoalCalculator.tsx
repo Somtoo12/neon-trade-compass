@@ -29,6 +29,9 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
     winRate: initialData?.winRate || 60,
     rewardRiskRatio: initialData?.rewardRiskRatio || 1.5,
   });
+  
+  // Calculate the reward percentage based on risk and reward-to-risk ratio
+  const rewardPercentage = inputs.riskPerTrade * inputs.rewardRiskRatio;
 
   useEffect(() => {
     // If we have initial data, set it
@@ -166,6 +169,11 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
                 step={0.1}
                 className="bg-secondary/30"
               />
+              {inputs.riskPerTrade > 0 && (
+                <p className="text-xs text-muted-foreground">
+                  You risk {inputs.riskPerTrade}% per trade
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <div className="flex items-center">
@@ -221,6 +229,11 @@ const GoalCalculator: React.FC<GoalCalculatorProps> = ({ onCalculate, initialDat
                 max={10}
                 className="bg-secondary/30"
               />
+              {inputs.rewardRiskRatio > 0 && (
+                <p className="text-xs text-muted-foreground">
+                  Each win gains {rewardPercentage.toFixed(3)}% ({inputs.rewardRiskRatio}× your {inputs.riskPerTrade}% risk)
+                </p>
+              )}
             </div>
           </div>
           

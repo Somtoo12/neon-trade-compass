@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -13,6 +14,7 @@ import GoalCalculator, { GoalInputs } from './GoalCalculator';
 import PassSummary from './PassSummary';
 import InfoCard from './InfoCard';
 import { useIsMobile } from '@/hooks/use-mobile';
+import ProbabilityEngine from './ProbabilityEngine';
 
 export type RiskStyle = 'conservative' | 'balanced' | 'aggressive';
 export type TraderData = {
@@ -29,11 +31,17 @@ export type TraderData = {
 
 export type StrategyMetrics = {
   tradesNeeded: number;
+  winsNeeded: number;
+  rewardAmount: number;
   dailyTargetAmount: number;
   dailyTargetPercent: number;
   drawdownRisk: number;
   passProbability: number;
-  equityCurveData: {x: number, y: number}[];
+  equityCurveData: {
+    average: {x: number, y: number}[];
+    best: {x: number, y: number}[];
+    worst: {x: number, y: number}[];
+  };
 };
 
 const ChallengeBlueprint: React.FC = () => {
@@ -45,6 +53,7 @@ const ChallengeBlueprint: React.FC = () => {
   const [goalInputs, setGoalInputs] = useState<GoalInputs | null>(null);
   const [goalResults, setGoalResults] = useState({
     tradesNeeded: 0,
+    winsNeeded: 0,
     passProbability: 0,
     requiredWins: 0,
     dailyTrades: 0
@@ -96,28 +105,41 @@ const ChallengeBlueprint: React.FC = () => {
     setIsLoading(true);
     
     setTimeout(() => {
-      let multiplier = 1.0;
-      if (style === 'conservative') multiplier = 1.2;
-      if (style === 'aggressive') multiplier = 0.8;
+      // Calculate the reward amount based on risk per trade and reward-to-risk ratio
+      const rewardAmount = data.riskPerTrade * data.riskRewardRatio;
       
-      const tradesNeeded = Math.ceil((data.profitTarget / 100 * data.accountSize) / 
-        (data.winRate / 100 * data.riskRewardRatio * data.riskPerTrade / 100 * data.accountSize - 
-        (1 - data.winRate / 100) * data.riskPerTrade / 100 * data.accountSize));
+      // Calculate how many winning trades are needed to hit the profit target
+      const targetProfit = data.profitTarget / 100 * data.accountSize;
+      const profitPerWin = (rewardAmount / 100) * data.accountSize;
+      const winsNeeded = Math.ceil(targetProfit / profitPerWin);
       
+      // Calculate expected trades needed based on win rate
+      const tradesNeeded = Math.ceil(winsNeeded / (data.winRate / 100));
+      
+      // Apply risk style adjustments
+      let riskMultiplier = 1.0;
+      if (style === 'conservative') riskMultiplier = 0.7;
+      if (style === 'aggressive') riskMultiplier = 1.5;
+      
+      // Calculate daily target metrics
       const dailyTargetAmount = (data.profitTarget / 100 * data.accountSize) / data.passDays;
       const dailyTargetPercent = dailyTargetAmount / data.accountSize * 100;
       
-      const drawdownRisk = data.riskPerTrade * Math.sqrt(tradesNeeded) / 10 * multiplier;
+      // Calculate drawdown risk using more sophisticated approach
+      const maxConsecutiveLosses = Math.ceil(Math.log(0.05) / Math.log(1 - data.winRate / 100)); // 5% chance threshold
+      const worstCaseDrawdown = data.riskPerTrade * maxConsecutiveLosses * riskMultiplier;
+      const drawdownRisk = Math.min(worstCaseDrawdown, 15); // Cap at reasonable level
       
-      let passProbability = Math.min(98, 100 - drawdownRisk * 2);
-      if (data.isAccelerated) {
-        passProbability = Math.max(30, passProbability - 15);
-      }
+      // Calculate pass probability using binomial distribution
+      const passProbability = calculatePassProbability(data.winRate / 100, tradesNeeded, winsNeeded);
       
-      const equityCurveData = generateEquityCurve(data, style);
+      // Generate equity curve data
+      const equityCurveData = generateEquityCurves(data, style);
       
       setStrategyMetrics({
         tradesNeeded,
+        winsNeeded,
+        rewardAmount,
         dailyTargetAmount,
         dailyTargetPercent,
         drawdownRisk,
@@ -133,60 +155,117 @@ const ChallengeBlueprint: React.FC = () => {
     }, 800);
   };
 
-  const generateEquityCurve = (data: TraderData, style: RiskStyle): {x: number, y: number}[] => {
-    const points = [];
-    let equity = 100;
-    const daysPerPoint = Math.max(1, Math.floor(data.passDays / 20));
+  // Calculate pass probability using binomial distribution
+  const calculatePassProbability = (winRate: number, trades: number, winsNeeded: number) => {
+    // Simplified implementation of binomial CDF
+    let probability = 0;
     
-    let volatility = 0.8;
-    if (style === 'conservative') volatility = 0.5;
-    if (style === 'aggressive') volatility = 1.2;
-    
-    for (let i = 0; i <= data.passDays; i += daysPerPoint) {
-      const random = Math.random() * volatility - volatility / 2;
-      equity += (data.profitTarget / data.passDays) * daysPerPoint + random;
-      
-      equity = Math.max(95, equity);
-      
-      points.push({
-        x: i,
-        y: equity
-      });
+    // We want P(X ≥ winsNeeded) = 1 - P(X < winsNeeded)
+    for (let i = 0; i < winsNeeded; i++) {
+      probability += binomialProbability(trades, i, winRate);
     }
     
-    points.push({
-      x: data.passDays,
-      y: 100 + data.profitTarget
-    });
+    return Math.min(99, Math.max(1, Math.round((1 - probability) * 100)));
+  };
+
+  // Calculate binomial probability mass function
+  const binomialProbability = (n: number, k: number, p: number) => {
+    const combinations = factorial(n) / (factorial(k) * factorial(n - k));
+    return combinations * Math.pow(p, k) * Math.pow(1 - p, n - k);
+  };
+
+  // Helper function to calculate factorial
+  const factorial = (n: number) => {
+    if (n === 0 || n === 1) return 1;
+    let result = 1;
+    for (let i = 2; i <= n; i++) {
+      result *= i;
+    }
+    return result;
+  };
+
+  const generateEquityCurves = (data: TraderData, style: RiskStyle): {
+    average: {x: number, y: number}[];
+    best: {x: number, y: number}[];
+    worst: {x: number, y: number}[];
+  } => {
+    const averageCurve: {x: number, y: number}[] = [];
+    const bestCurve: {x: number, y: number}[] = [];
+    const worstCurve: {x: number, y: number}[] = [];
     
-    return points;
+    // Risk multipliers based on style
+    let volatility = 1.0;
+    if (style === 'conservative') volatility = 0.6;
+    if (style === 'aggressive') volatility = 1.6;
+    
+    // Setup initial points
+    averageCurve.push({ x: 0, y: 100 });
+    bestCurve.push({ x: 0, y: 100 });
+    worstCurve.push({ x: 0, y: 100 });
+    
+    const winRate = data.winRate / 100;
+    const riskPerTrade = data.riskPerTrade;
+    const rewardRatio = data.riskRewardRatio;
+    
+    const expectedDailyReturn = data.tradesPerDay * (
+      (winRate * riskPerTrade * rewardRatio) - ((1 - winRate) * riskPerTrade)
+    );
+    
+    const stepsPerDay = 1; // How many points to plot per day
+    for (let day = 1; day <= data.passDays; day++) {
+      // Average case - follows expected value
+      const avgEquity = 100 + (expectedDailyReturn * day);
+      
+      // Best case - 90th percentile performance
+      const bestEquity = 100 + (expectedDailyReturn * day * 1.4) + (day * volatility * 0.3);
+      
+      // Worst case - 10th percentile performance
+      const worstEquity = 100 + (expectedDailyReturn * day * 0.6) - (day * volatility * 0.4);
+      
+      if (day % stepsPerDay === 0 || day === data.passDays) {
+        averageCurve.push({ x: day, y: Math.max(96, avgEquity) });
+        bestCurve.push({ x: day, y: Math.max(98, bestEquity) });
+        worstCurve.push({ x: day, y: Math.max(90, worstEquity) });
+      }
+    }
+    
+    // Ensure final point reaches target
+    if (data.passDays > 0) {
+      const targetEquity = 100 + data.profitTarget;
+      averageCurve[averageCurve.length - 1] = { x: data.passDays, y: targetEquity };
+      bestCurve[bestCurve.length - 1] = { x: data.passDays, y: targetEquity + 2 };
+      worstCurve[worstCurve.length - 1] = { 
+        x: data.passDays, 
+        y: Math.max(96, targetEquity - 4) 
+      };
+    }
+    
+    return { average: averageCurve, best: bestCurve, worst: worstCurve };
   };
 
   const calculateGoalResults = (inputs: GoalInputs) => {
     setIsLoading(true);
     
     setTimeout(() => {
-      const expectedValuePerTrade = (inputs.winRate / 100 * inputs.rewardRiskRatio * inputs.riskPerTrade) - 
-                                    ((100 - inputs.winRate) / 100 * inputs.riskPerTrade);
+      // Calculate reward amount
+      const rewardAmount = inputs.riskPerTrade * inputs.rewardRiskRatio;
       
-      const tradesNeeded = inputs.targetPercent / expectedValuePerTrade;
+      // Calculate how many winning trades needed based on profit target
+      const winsNeeded = Math.ceil(inputs.targetPercent / rewardAmount);
+      
+      // Calculate expected number of trades based on win rate
+      const tradesNeeded = Math.ceil(winsNeeded / (inputs.winRate / 100));
       
       const dailyTrades = Math.ceil(tradesNeeded / inputs.daysRemaining);
       
-      const requiredWins = Math.ceil(tradesNeeded * (inputs.winRate / 100));
-      
-      let passProbability = Math.min(95, 
-        50 + (inputs.winRate - 50) * 1.5 + 
-        (inputs.rewardRiskRatio - 1) * 10 - 
-        Math.max(0, (2 - inputs.riskPerTrade) * 5)
-      );
-      
-      passProbability = Math.max(1, Math.min(99, passProbability));
+      // Calculate pass probability using binomial distribution
+      const passProbability = calculatePassProbability(inputs.winRate / 100, tradesNeeded, winsNeeded);
       
       setGoalResults({
         tradesNeeded: Math.ceil(tradesNeeded),
+        winsNeeded,
         passProbability,
-        requiredWins,
+        requiredWins: winsNeeded,
         dailyTrades
       });
       
@@ -194,7 +273,7 @@ const ChallengeBlueprint: React.FC = () => {
       
       toast({
         title: "Pass plan calculated",
-        description: `You need about ${Math.ceil(tradesNeeded)} trades with ${requiredWins} wins to reach your target.`,
+        description: `You need ${winsNeeded} wins in about ${tradesNeeded} trades to reach your target.`,
         duration: 3000,
       });
     }, 500);
@@ -276,7 +355,7 @@ const ChallengeBlueprint: React.FC = () => {
         </div>
         
         <p className="text-muted-foreground mb-8">
-          Design a realistic strategy to pass any prop firm challenge based on your trading performance data.
+          Design a bulletproof strategy to pass any prop firm challenge based on mathematical precision and your trading performance.
         </p>
       </motion.div>
       
@@ -285,6 +364,7 @@ const ChallengeBlueprint: React.FC = () => {
           <TabsTrigger value="input" className="text-xs md:text-sm">Trader Profile</TabsTrigger>
           <TabsTrigger value="strategy" disabled={!strategyMetrics} className="text-xs md:text-sm">Strategy Blueprint</TabsTrigger>
           <TabsTrigger value="simulator" disabled={!strategyMetrics} className="text-xs md:text-sm">Adaptive Simulator</TabsTrigger>
+          <TabsTrigger value="probability" disabled={!strategyMetrics} className="text-xs md:text-sm">Probability Engine</TabsTrigger>
           <TabsTrigger value="export" disabled={!strategyMetrics} className="text-xs md:text-sm">Export & Review</TabsTrigger>
         </TabsList>
         
@@ -305,6 +385,7 @@ const ChallengeBlueprint: React.FC = () => {
               {goalInputs && (
                 <PassSummary 
                   tradesNeeded={goalResults.tradesNeeded}
+                  winsNeeded={goalResults.winsNeeded}
                   passProbability={goalResults.passProbability}
                   requiredWins={goalResults.requiredWins}
                   dailyTrades={goalResults.dailyTrades}
@@ -346,6 +427,16 @@ const ChallengeBlueprint: React.FC = () => {
               traderData={traderData}
               riskStyle={riskStyle}
               initialMetrics={strategyMetrics}
+            />
+          )}
+        </TabsContent>
+
+        <TabsContent value="probability">
+          {strategyMetrics && traderData && (
+            <ProbabilityEngine
+              traderData={traderData}
+              metrics={strategyMetrics}
+              riskStyle={riskStyle}
             />
           )}
         </TabsContent>
