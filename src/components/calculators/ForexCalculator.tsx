@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -5,9 +6,16 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { ArrowRight, Search, Loader, AlertTriangle } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { forexPairs } from '@/constants/currencyPairs';
-import { fetchLivePrice, getPipSize, calculatePipValue } from '@/services/twelveDataApi';
+import { 
+  fetchLivePrice, 
+  getPipSize, 
+  calculatePipValue, 
+  isJPYPair,
+  calculateTotalPnL 
+} from '@/services/twelveDataApi';
 import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Button } from '@/components/ui/button';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -32,6 +40,7 @@ const ForexCalculator: React.FC = () => {
   const [pipsResult, setPipsResult] = useState<number | null>(null);
   const [pipValue, setPipValue] = useState<number | null>(null);
   const [totalPnL, setTotalPnL] = useState<number | null>(null);
+  const [livePrice, setLivePrice] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
@@ -85,6 +94,7 @@ const ForexCalculator: React.FC = () => {
     setPipsResult(null);
     setPipValue(null);
     setTotalPnL(null);
+    setLivePrice(null);
     
     try {
       const { pair, lotSize, entryPrice, exitPrice } = data;
@@ -92,20 +102,27 @@ const ForexCalculator: React.FC = () => {
       const entryPriceNum = parseFloat(entryPrice);
       const exitPriceNum = parseFloat(exitPrice);
       
+      if (!entryPrice || !exitPrice) {
+        throw new Error("Please enter both Entry and Exit prices to calculate your pip result.");
+      }
+      
       // Fetch live price to calculate accurate pip value
-      const livePrice = await fetchLivePrice(pair);
+      const currentPrice = await fetchLivePrice(pair);
+      setLivePrice(currentPrice);
+      
+      // Calculate pip size based on currency pair
+      const pipSize = getPipSize(pair);
       
       // Calculate pip value using live price
-      const calculatedPipValue = calculatePipValue(livePrice, lotSizeNum, pair);
+      const calculatedPipValue = calculatePipValue(currentPrice, lotSizeNum, pair);
       setPipValue(calculatedPipValue);
       
       // Calculate pips difference
-      const pipSize = getPipSize(pair);
       const pipDifference = (exitPriceNum - entryPriceNum) / pipSize;
       setPipsResult(Math.round(pipDifference * 100) / 100);
       
-      // Calculate total P&L
-      const pnl = pipDifference * calculatedPipValue;
+      // Calculate total P&L using the accurate live price for pip value
+      const pnl = calculateTotalPnL(entryPriceNum, exitPriceNum, currentPrice, lotSizeNum, pair);
       setTotalPnL(Math.round(pnl * 100) / 100);
       
     } catch (err) {
@@ -248,7 +265,7 @@ const ForexCalculator: React.FC = () => {
                         <Input 
                           type="number" 
                           step="0.00001" 
-                          placeholder="Leave empty for live price"
+                          placeholder="Enter price"
                           className="bg-secondary/50 border-input/40 input-glow"
                           {...field}
                         />
@@ -268,7 +285,7 @@ const ForexCalculator: React.FC = () => {
                         <Input 
                           type="number"
                           step="0.00001" 
-                          placeholder="Leave empty for live price"
+                          placeholder="Enter price"
                           className="bg-secondary/50 border-input/40 input-glow"
                           {...field}
                         />
@@ -279,7 +296,7 @@ const ForexCalculator: React.FC = () => {
                 />
               </div>
               
-              <button
+              <Button
                 type="submit"
                 disabled={isLoading}
                 className="w-full py-2 px-4 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors flex items-center justify-center mt-4"
@@ -292,7 +309,7 @@ const ForexCalculator: React.FC = () => {
                 ) : (
                   'Calculate'
                 )}
-              </button>
+              </Button>
             </form>
           </Form>
         </div>
@@ -319,6 +336,13 @@ const ForexCalculator: React.FC = () => {
                 <h3 className="text-sm dark:text-gray-400 light:text-gray-700 mb-1">Pips Gained/Lost</h3>
                 <p className={`text-2xl font-bold ${pipsResult >= 0 ? 'text-[#00ff94]' : 'text-red-500'}`}>
                   {pipsResult >= 0 ? '+' : ''}{pipsResult.toFixed(1)}
+                </p>
+              </div>
+              
+              <div>
+                <h3 className="text-sm dark:text-gray-400 light:text-gray-700 mb-1">Current Market Price</h3>
+                <p className="text-xl font-medium dark:text-gray-300 light:text-gray-800">
+                  {livePrice?.toFixed(5)}
                 </p>
               </div>
               

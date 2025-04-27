@@ -29,18 +29,37 @@ export const formatSymbolForTwelveData = (symbol: string): string => {
 };
 
 export const isJPYPair = (symbol: string): boolean => {
-  // Check if the pair involves JPY as the quote currency
-  return symbol.endsWith('JPY') || symbol.endsWith('/JPY');
+  const formattedSymbol = symbol.replace('/', '');
+  return formattedSymbol.endsWith('JPY') || formattedSymbol.includes('JPY');
 };
 
 export const getPipSize = (symbol: string): number => {
   return isJPYPair(symbol) ? 0.01 : 0.0001;
 };
 
+// Calculate accurate pip value based on current price and lot size
 export const calculatePipValue = (currentPrice: number, lotSize: number, symbol: string): number => {
   const standardLotSize = 100000; // Standard lot size for forex
   const pipSize = getPipSize(symbol);
+  
+  // For JPY pairs: Pip Value = (0.01 / current price) × 100,000 × lot size
+  // For other pairs: Pip Value = (0.0001 / current price) × 100,000 × lot size
   return (pipSize / currentPrice) * standardLotSize * lotSize;
+};
+
+// Calculate total PnL based on entry, exit, current price for accurate pip value
+export const calculateTotalPnL = (
+  entryPrice: number, 
+  exitPrice: number, 
+  currentPrice: number,
+  lotSize: number,
+  symbol: string
+): number => {
+  const pipSize = getPipSize(symbol);
+  const pipDifference = (exitPrice - entryPrice) / pipSize;
+  const pipValue = calculatePipValue(currentPrice, lotSize, symbol);
+  
+  return pipDifference * pipValue;
 };
 
 export const fetchLivePrice = async (symbol: string): Promise<number> => {
