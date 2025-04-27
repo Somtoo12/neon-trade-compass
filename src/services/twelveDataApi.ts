@@ -4,6 +4,7 @@ interface PriceResponse {
   symbol: string;
   timestamp: number;
   status: string;
+  message?: string; // Adding the optional message property for error responses
 }
 
 export const formatSymbolForTwelveData = (symbol: string): string => {
