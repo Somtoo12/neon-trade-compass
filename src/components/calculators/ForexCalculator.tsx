@@ -1,21 +1,28 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowRight, Search } from 'lucide-react';
+import { ArrowRight, Search, Loader } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { forexPairs } from '@/constants/currencyPairs';
+import { fetchLivePrice } from '@/services/twelveDataApi';
+import { useToast } from '@/hooks/use-toast';
 
 const ForexCalculator: React.FC = () => {
   const [pair, setPair] = useState('EUR/USD');
   const [lotSize, setLotSize] = useState('0.01');
-  const [entryPrice, setEntryPrice] = useState('1.10000');
-  const [exitPrice, setExitPrice] = useState('1.11000');
+  const [entryPrice, setEntryPrice] = useState('');
+  const [exitPrice, setExitPrice] = useState('');
   const [accountCurrency, setAccountCurrency] = useState('USD');
   
   const [pipsResult, setPipsResult] = useState(0);
   const [pipValue, setPipValue] = useState(0);
   const [totalPnL, setTotalPnL] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  const { toast } = useToast();
   
   const allPairs = [
     ...(forexPairs.metals || []),
@@ -50,44 +57,73 @@ const ForexCalculator: React.FC = () => {
   
   const currencyOptions = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'NZD', 'CHF'];
   
-  useEffect(() => {
-    calculatePips();
-  }, [pair, lotSize, entryPrice, exitPrice, accountCurrency]);
-  
   const getPipDecimal = (pair: string) => {
     if (pair.includes('JPY')) return 0.01;
     return 0.0001;
   };
   
-  const calculatePips = () => {
-    const entry = parseFloat(entryPrice);
-    const exit = parseFloat(exitPrice);
-    const lot = parseFloat(lotSize);
+  const calculatePips = async () => {
+    setIsLoading(true);
+    setError(null);
     
-    if (isNaN(entry) || isNaN(exit) || isNaN(lot)) {
-      setPipsResult(0);
-      setPipValue(0);
-      setTotalPnL(0);
-      return;
+    try {
+      const entry = entryPrice ? parseFloat(entryPrice) : 0;
+      const exit = exitPrice ? parseFloat(exitPrice) : 0;
+      const lot = parseFloat(lotSize);
+      
+      // If entry or exit prices are missing, fetch live price
+      let entryPriceValue = entry;
+      let exitPriceValue = exit;
+      
+      if (!entryPrice || !exitPrice) {
+        const livePrice = await fetchLivePrice(pair);
+        
+        if (!entryPrice) {
+          entryPriceValue = livePrice;
+          setEntryPrice(livePrice.toFixed(pair.includes('JPY') ? 3 : 5));
+        }
+        
+        if (!exitPrice) {
+          exitPriceValue = livePrice;
+          setExitPrice(livePrice.toFixed(pair.includes('JPY') ? 3 : 5));
+        }
+      }
+      
+      if (isNaN(entryPriceValue) || isNaN(exitPriceValue) || isNaN(lot)) {
+        setPipsResult(0);
+        setPipValue(0);
+        setTotalPnL(0);
+        return;
+      }
+      
+      const pipDecimal = getPipDecimal(pair);
+      const pipDiff = pair.includes('JPY') 
+        ? (exitPriceValue - entryPriceValue) / pipDecimal 
+        : (exitPriceValue - entryPriceValue) / pipDecimal;
+      
+      let singlePipValue = 0;
+      if (pair.includes('JPY')) {
+        singlePipValue = 1000 * lot / 100;
+      } else {
+        singlePipValue = 10 * lot;
+      }
+      
+      const pipValueInAccountCurrency = singlePipValue;
+      
+      setPipsResult(Math.round(pipDiff * 100) / 100);
+      setPipValue(Math.round(pipValueInAccountCurrency * 100) / 100);
+      setTotalPnL(Math.round(pipDiff * pipValueInAccountCurrency * 100) / 100);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Price temporarily unavailable. Please try again later.';
+      setError(errorMessage);
+      toast({
+        title: "API Error",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
     }
-    
-    const pipDecimal = getPipDecimal(pair);
-    const pipDiff = pair.includes('JPY') 
-      ? (exit - entry) / pipDecimal 
-      : (exit - entry) / pipDecimal;
-    
-    let singlePipValue = 0;
-    if (pair.includes('JPY')) {
-      singlePipValue = 1000 * lot / 100;
-    } else {
-      singlePipValue = 10 * lot;
-    }
-    
-    const pipValueInAccountCurrency = singlePipValue;
-    
-    setPipsResult(Math.round(pipDiff * 100) / 100);
-    setPipValue(Math.round(pipValueInAccountCurrency * 100) / 100);
-    setTotalPnL(Math.round(pipDiff * pipValueInAccountCurrency * 100) / 100);
   };
   
   return (
@@ -195,6 +231,7 @@ const ForexCalculator: React.FC = () => {
                 value={entryPrice} 
                 onChange={(e) => setEntryPrice(e.target.value)}
                 className="bg-secondary/50 border-input/40 input-glow"
+                placeholder="Leave empty for live price"
               />
             </div>
             <div className="space-y-2">
@@ -205,6 +242,7 @@ const ForexCalculator: React.FC = () => {
                 value={exitPrice} 
                 onChange={(e) => setExitPrice(e.target.value)}
                 className="bg-secondary/50 border-input/40 input-glow"
+                placeholder="Leave empty for live price"
               />
             </div>
           </div>
@@ -227,6 +265,21 @@ const ForexCalculator: React.FC = () => {
               </SelectContent>
             </Select>
           </div>
+          
+          <button
+            onClick={calculatePips}
+            disabled={isLoading}
+            className="w-full py-2 px-4 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors flex items-center justify-center"
+          >
+            {isLoading ? (
+              <>
+                <Loader className="mr-2 h-4 w-4 animate-spin" />
+                Loading Price...
+              </>
+            ) : (
+              'Calculate'
+            )}
+          </button>
         </div>
         
         <div className="bg-black/40 backdrop-blur-md dark:border-white/5 light:bg-[#FFFFFF] rounded-xl p-6 border light:border-gray-200/80 flex flex-col justify-center dark:shadow-[0_4px_15px_rgba(0,0,0,0.5)] light:shadow-[0_2px_15px_rgba(0,0,0,0.08)]">
@@ -235,26 +288,32 @@ const ForexCalculator: React.FC = () => {
             <ArrowRight className="h-4 w-4 dark:text-gray-400 light:text-gray-500" />
           </div>
           
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-sm dark:text-gray-400 light:text-gray-700 mb-1">Pips Gained/Lost</h3>
-              <p className={`text-2xl font-bold ${pipsResult >= 0 ? 'text-[#00ff94]' : 'text-red-500'}`}>
-                {pipsResult >= 0 ? '+' : ''}{pipsResult.toFixed(1)}
-              </p>
+          {error ? (
+            <div className="py-8 text-center">
+              <p className="text-red-500">{error}</p>
             </div>
-            
-            <div>
-              <h3 className="text-sm dark:text-gray-400 light:text-gray-700 mb-1">Pip Value</h3>
-              <p className="text-xl font-medium dark:text-gray-300 light:text-gray-800">{pipValue.toFixed(2)} {accountCurrency}</p>
+          ) : (
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-sm dark:text-gray-400 light:text-gray-700 mb-1">Pips Gained/Lost</h3>
+                <p className={`text-2xl font-bold ${pipsResult >= 0 ? 'text-[#00ff94]' : 'text-red-500'}`}>
+                  {pipsResult >= 0 ? '+' : ''}{pipsResult.toFixed(1)}
+                </p>
+              </div>
+              
+              <div>
+                <h3 className="text-sm dark:text-gray-400 light:text-gray-700 mb-1">Pip Value</h3>
+                <p className="text-xl font-medium dark:text-gray-300 light:text-gray-800">{pipValue.toFixed(2)} {accountCurrency}</p>
+              </div>
+              
+              <div>
+                <h3 className="text-sm dark:text-gray-400 light:text-gray-700 mb-1">Total Profit/Loss</h3>
+                <p className={`text-3xl font-bold ${totalPnL >= 0 ? 'text-[#00ff94]' : 'text-red-500'}`}>
+                  {totalPnL >= 0 ? '+' : ''}{totalPnL.toFixed(2)} {accountCurrency}
+                </p>
+              </div>
             </div>
-            
-            <div>
-              <h3 className="text-sm dark:text-gray-400 light:text-gray-700 mb-1">Total Profit/Loss</h3>
-              <p className={`text-3xl font-bold ${totalPnL >= 0 ? 'text-[#00ff94]' : 'text-red-500'}`}>
-                {totalPnL >= 0 ? '+' : ''}{totalPnL.toFixed(2)} {accountCurrency}
-              </p>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </Card>
