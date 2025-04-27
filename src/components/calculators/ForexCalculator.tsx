@@ -3,19 +3,24 @@ import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowRight, Search, Loader, AlertTriangle } from 'lucide-react';
+import { ArrowRight, Search, Loader, AlertTriangle, Info } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { forexPairs } from '@/constants/currencyPairs';
 import { 
   fetchLivePrice, 
-  getPipSize, 
+  calculatePipsDifference, 
   calculatePipValue, 
-  isJPYPair,
-  calculateTotalPnL 
+  calculateTotalPnL,
+  getPipSize,
+  getPipDescription,
+  formatPipDisplay,
+  getInstrumentType,
+  InstrumentType
 } from '@/services/twelveDataApi';
 import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -41,8 +46,10 @@ const ForexCalculator: React.FC = () => {
   const [pipValue, setPipValue] = useState<number | null>(null);
   const [totalPnL, setTotalPnL] = useState<number | null>(null);
   const [livePrice, setLivePrice] = useState<number | null>(null);
+  const [pipDescription, setPipDescription] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentInstrument, setCurrentInstrument] = useState<InstrumentType>(InstrumentType.FOREX_STANDARD);
   
   const { toast } = useToast();
   
@@ -87,6 +94,15 @@ const ForexCalculator: React.FC = () => {
       pair.toLowerCase().includes(searchTerm.toLowerCase())
     ) : []
   };
+
+  const handleSymbolChange = (symbol: string) => {
+    // Update instrument type when symbol changes
+    const instrumentType = getInstrumentType(symbol);
+    setCurrentInstrument(instrumentType);
+    setPipDescription(getPipDescription(symbol));
+    
+    form.setValue('pair', symbol);
+  };
   
   const onSubmit = async (data: CalculatorFormValues) => {
     setIsLoading(true);
@@ -95,6 +111,7 @@ const ForexCalculator: React.FC = () => {
     setPipValue(null);
     setTotalPnL(null);
     setLivePrice(null);
+    setPipDescription("");
     
     try {
       const { pair, lotSize, entryPrice, exitPrice } = data;
@@ -110,20 +127,21 @@ const ForexCalculator: React.FC = () => {
       const currentPrice = await fetchLivePrice(pair);
       setLivePrice(currentPrice);
       
-      // Calculate pip size based on currency pair
-      const pipSize = getPipSize(pair);
+      // Get pip description for this instrument
+      const pipDescriptionText = getPipDescription(pair);
+      setPipDescription(pipDescriptionText);
       
       // Calculate pip value using live price
       const calculatedPipValue = calculatePipValue(currentPrice, lotSizeNum, pair);
       setPipValue(calculatedPipValue);
       
       // Calculate pips difference
-      const pipDifference = (exitPriceNum - entryPriceNum) / pipSize;
-      setPipsResult(Math.round(pipDifference * 100) / 100);
+      const pipDifference = calculatePipsDifference(entryPriceNum, exitPriceNum, pair);
+      setPipsResult(pipDifference);
       
       // Calculate total P&L using the accurate live price for pip value
       const pnl = calculateTotalPnL(entryPriceNum, exitPriceNum, currentPrice, lotSizeNum, pair);
-      setTotalPnL(Math.round(pnl * 100) / 100);
+      setTotalPnL(pnl);
       
     } catch (err) {
       const errorMessage = err instanceof Error 
@@ -154,10 +172,29 @@ const ForexCalculator: React.FC = () => {
                 name="pair"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel>Currency Pair</FormLabel>
+                    <div className="flex items-center justify-between">
+                      <FormLabel>Currency Pair / Instrument</FormLabel>
+                      {pipDescription && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className="flex items-center text-xs text-muted-foreground">
+                                <Info className="h-3 w-3 mr-1" />
+                                {pipDescription}
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>This is how pips are calculated for this instrument</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
+                    </div>
                     <Select 
                       value={field.value} 
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => {
+                        handleSymbolChange(value);
+                      }}
                     >
                       <SelectTrigger className="bg-secondary/50 border-input/40 input-glow">
                         <SelectValue placeholder="Select pair" />
@@ -335,7 +372,7 @@ const ForexCalculator: React.FC = () => {
               <div>
                 <h3 className="text-sm dark:text-gray-400 light:text-gray-700 mb-1">Pips Gained/Lost</h3>
                 <p className={`text-2xl font-bold ${pipsResult >= 0 ? 'text-[#00ff94]' : 'text-red-500'}`}>
-                  {pipsResult >= 0 ? '+' : ''}{pipsResult.toFixed(1)}
+                  {pipsResult >= 0 ? '+' : ''}{formatPipDisplay(pipsResult, form.getValues().pair)}
                 </p>
               </div>
               
