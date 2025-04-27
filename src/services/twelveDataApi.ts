@@ -4,7 +4,7 @@ interface PriceResponse {
   symbol: string;
   timestamp: number;
   status: string;
-  message?: string; // Adding the optional message property for error responses
+  message?: string;
 }
 
 export const formatSymbolForTwelveData = (symbol: string): string => {
@@ -26,6 +26,21 @@ export const formatSymbolForTwelveData = (symbol: string): string => {
   }
   
   return symbol;
+};
+
+export const isJPYPair = (symbol: string): boolean => {
+  // Check if the pair involves JPY as the quote currency
+  return symbol.endsWith('JPY') || symbol.endsWith('/JPY');
+};
+
+export const getPipSize = (symbol: string): number => {
+  return isJPYPair(symbol) ? 0.01 : 0.0001;
+};
+
+export const calculatePipValue = (currentPrice: number, lotSize: number, symbol: string): number => {
+  const standardLotSize = 100000; // Standard lot size for forex
+  const pipSize = getPipSize(symbol);
+  return (pipSize / currentPrice) * standardLotSize * lotSize;
 };
 
 export const fetchLivePrice = async (symbol: string): Promise<number> => {

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -6,24 +5,12 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { ArrowRight, Search, Loader, AlertTriangle } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { forexPairs } from '@/constants/currencyPairs';
-import { fetchLivePrice } from '@/services/twelveDataApi';
+import { fetchLivePrice, getPipSize, calculatePipValue } from '@/services/twelveDataApi';
 import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-
-// Define contract sizes for non-forex instruments
-const CONTRACT_SIZES = {
-  'NAS100': 20,
-  'US30': 5,
-  'BTC/USD': 1,
-  'ETH/USD': 1,
-  'SOL/USD': 1,
-  'XAU/USD': 100,  // Gold (100 oz)
-  'XAG/USD': 5000, // Silver (5000 oz)
-  default: 100000  // Default contract size for forex (100,000 units)
-};
 
 // Form schema for validation
 const calculatorSchema = z.object({
@@ -31,11 +18,11 @@ const calculatorSchema = z.object({
   lotSize: z.string().refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
     message: "Lot size must be a positive number"
   }),
-  entryPrice: z.string().refine(val => val === '' || (!isNaN(parseFloat(val)) && parseFloat(val) > 0), {
-    message: "Entry price must be a positive number or empty (for live price)"
+  entryPrice: z.string().refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
+    message: "Entry price is required and must be a positive number"
   }),
-  exitPrice: z.string().refine(val => val === '' || (!isNaN(parseFloat(val)) && parseFloat(val) > 0), {
-    message: "Exit price must be a positive number or empty (for live price)"
+  exitPrice: z.string().refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
+    message: "Exit price is required and must be a positive number"
   })
 });
 
@@ -91,31 +78,6 @@ const ForexCalculator: React.FC = () => {
       pair.toLowerCase().includes(searchTerm.toLowerCase())
     ) : []
   };
-
-  // Function to determine pip decimal value based on the currency pair
-  const getPipDecimal = (pair: string): number => {
-    // JPY pairs use 0.01 as pip value
-    if (pair.includes('JPY')) {
-      return 0.01;
-    }
-    // All other pairs use 0.0001
-    return 0.0001;
-  };
-  
-  // Function to determine if a symbol needs API price data
-  const needsLivePrice = (symbol: string): boolean => {
-    // Indices, metals, and crypto typically need live price data
-    return (
-      forexPairs.indices?.includes(symbol) ||
-      forexPairs.metals?.includes(symbol) ||
-      forexPairs.crypto?.includes(symbol)
-    );
-  };
-
-  // Get contract size for the selected instrument
-  const getContractSize = (pair: string): number => {
-    return CONTRACT_SIZES[pair as keyof typeof CONTRACT_SIZES] || CONTRACT_SIZES.default;
-  };
   
   const onSubmit = async (data: CalculatorFormValues) => {
     setIsLoading(true);
@@ -127,46 +89,24 @@ const ForexCalculator: React.FC = () => {
     try {
       const { pair, lotSize, entryPrice, exitPrice } = data;
       const lotSizeNum = parseFloat(lotSize);
-      
-      // Check if both entry and exit prices are provided
-      if (!entryPrice && !exitPrice) {
-        // Fetch live price to use for both entry and exit
-        const livePrice = await fetchLivePrice(pair);
-        
-        form.setValue('entryPrice', livePrice.toFixed(pair.includes('JPY') ? 3 : 5));
-        form.setValue('exitPrice', livePrice.toFixed(pair.includes('JPY') ? 3 : 5));
-        
-        // Since both prices are the same, there's no pip difference
-        setPipsResult(0);
-        
-        // Calculate pip value
-        calculatePipValue(pair, lotSizeNum, livePrice);
-        setTotalPnL(0);
-        
-        setIsLoading(false);
-        return;
-      } else if (!entryPrice || !exitPrice) {
-        setError("Please enter both Entry and Exit prices to calculate your pip result.");
-        setIsLoading(false);
-        return;
-      }
-      
-      // Parse prices
       const entryPriceNum = parseFloat(entryPrice);
       const exitPriceNum = parseFloat(exitPrice);
       
+      // Fetch live price to calculate accurate pip value
+      const livePrice = await fetchLivePrice(pair);
+      
+      // Calculate pip value using live price
+      const calculatedPipValue = calculatePipValue(livePrice, lotSizeNum, pair);
+      setPipValue(calculatedPipValue);
+      
       // Calculate pips difference
-      const pipDecimal = getPipDecimal(pair);
-      const pipDifference = (exitPriceNum - entryPriceNum) / pipDecimal;
+      const pipSize = getPipSize(pair);
+      const pipDifference = (exitPriceNum - entryPriceNum) / pipSize;
       setPipsResult(Math.round(pipDifference * 100) / 100);
       
-      // Calculate pip value and P&L
-      calculatePipValue(pair, lotSizeNum, exitPriceNum);
-      
       // Calculate total P&L
-      if (pipValue !== null) {
-        setTotalPnL(Math.round(pipDifference * pipValue * 100) / 100);
-      }
+      const pnl = pipDifference * calculatedPipValue;
+      setTotalPnL(Math.round(pnl * 100) / 100);
       
     } catch (err) {
       const errorMessage = err instanceof Error 
@@ -182,25 +122,6 @@ const ForexCalculator: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
-  
-  // Calculate pip value based on the instrument type
-  const calculatePipValue = (pair: string, lotSize: number, currentPrice: number) => {
-    let calculatedPipValue: number;
-    
-    if (pair.includes('JPY')) {
-      // JPY pairs have 0.01 pip size and standard pip value calculation
-      calculatedPipValue = 1000 * lotSize / 100;
-    } else if (needsLivePrice(pair)) {
-      // For indices, crypto, etc. that need live price
-      const contractSize = getContractSize(pair);
-      calculatedPipValue = (lotSize * contractSize * getPipDecimal(pair)) / currentPrice;
-    } else {
-      // Standard forex pairs (non-JPY)
-      calculatedPipValue = 10 * lotSize;
-    }
-    
-    setPipValue(Math.round(calculatedPipValue * 100) / 100);
   };
   
   return (
