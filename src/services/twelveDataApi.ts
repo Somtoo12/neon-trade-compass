@@ -12,7 +12,7 @@ export const formatSymbolForTwelveData = (symbol: string): string => {
   if (symbol === 'NAS100') return 'NDAQ/USD';
   if (symbol === 'US30') return 'DJI/USD';
   
-  // Handle currency pairs
+  // Handle forex pairs formats like EUR/USD
   if (symbol.includes('/')) return symbol;
   
   // Convert EURUSD format to EUR/USD format
@@ -20,7 +20,7 @@ export const formatSymbolForTwelveData = (symbol: string): string => {
     return `${symbol.substring(0, 3)}/${symbol.substring(3, 6)}`;
   }
   
-  // For any other format, append /USD if not already there
+  // For crypto, metals, indices that don't have a / already
   if (!symbol.includes('/')) {
     return `${symbol}/USD`;
   }
@@ -48,6 +48,6 @@ export const fetchLivePrice = async (symbol: string): Promise<number> => {
     return parseFloat(data.price);
   } catch (error) {
     console.error(`Error fetching price for ${symbol}:`, error);
-    throw new Error('Price temporarily unavailable. Please try again later.');
+    throw new Error('Unable to fetch live market price right now. Please try again later.');
   }
 };
