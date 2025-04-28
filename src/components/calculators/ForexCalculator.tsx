@@ -1,9 +1,11 @@
 
 import React, { useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const ForexCalculator = () => {
   const calculatorRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     // Only run this if we're in the browser environment
@@ -24,12 +26,12 @@ const ForexCalculator = () => {
             "ButtonStyle":"YmFja2dyb3VuZDogIzAwRkY1QTsgCmNvbG9yOiBibGFjazsgCmJvcmRlci1yYWRpdXM6IDhweDsgCmZvbnQtd2VpZ2h0OiBib2xkOwo=",
             "TitleStyle":"dGV4dC1hbGlnbjogbGVmdDsgCmZvbnQtc2l6ZTogMzBweDsgCmZvbnQtd2VpZ2h0OiA2MDA7IApjb2xvcjogd2hpdGU7Cg==",
             "TextboxStyle":"YmFja2dyb3VuZDogIzE1MTgxZDsgCmNvbG9yOiAjOTE5NGExOyAKYm9yZGVyOiBzb2xpZCAxcHggIzJhMmUzOTsgCmJvcmRlci1yYWRpdXM6IDZweDsKCg==",
-            "ContainerWidth":"700",
+            "ContainerWidth": "${isMobile ? window.innerWidth - 40 : Math.min(window.innerWidth - 100, 700)}",
             "HighlightColor":"rgba(0,0,0,1.0)",
             "IsDisplayTitle":false,
             "IsShowChartLinks":true,
             "IsShowEmbedButton":true,
-            "CompactType":"large",
+            "CompactType":"${isMobile ? 'small' : 'large'}",
             "Calculator":"pip-value-calculator",
             "ContainerId":"pip-value-calculator-160495"
           });
@@ -41,7 +43,7 @@ const ForexCalculator = () => {
       // Clear previous content and append scripts
       if (calculatorRef.current) {
         // Append scripts to the container
-        calculatorRef.current.innerHTML = '<div id="pip-value-calculator-160495"></div>';
+        calculatorRef.current.innerHTML = '<div id="pip-value-calculator-160495" class="mx-auto"></div>';
         calculatorRef.current.appendChild(remoteWidgetScript);
         
         // Add calculator script after remote widget script is loaded
@@ -49,8 +51,15 @@ const ForexCalculator = () => {
           calculatorRef.current?.appendChild(calculatorScript);
         };
       }
+
+      // Clean up on unmount
+      return () => {
+        if (calculatorRef.current) {
+          calculatorRef.current.innerHTML = '';
+        }
+      };
     }
-  }, []);
+  }, [isMobile]);
 
   return (
     <div className="space-y-8">
@@ -63,10 +72,16 @@ const ForexCalculator = () => {
         </p>
       </div>
 
-      <Card className="p-6">
-        {/* Calculator Container */}
-        <div ref={calculatorRef} className="calculator-container min-h-[400px] flex items-center justify-center">
-          <div className="text-muted-foreground">Loading calculator...</div>
+      <Card className="p-4 md:p-6">
+        {/* Calculator Container with responsive width */}
+        <div 
+          ref={calculatorRef} 
+          className="calculator-container min-h-[400px] flex items-center justify-center overflow-x-auto w-full"
+        >
+          <div className="text-muted-foreground flex flex-col items-center">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mb-2"></div>
+            Loading calculator...
+          </div>
         </div>
 
         {/* SEO Article */}
