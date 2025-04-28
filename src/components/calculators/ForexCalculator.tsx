@@ -1,410 +1,125 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowRight, Search, Loader, AlertTriangle, Info } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { forexPairs } from '@/constants/currencyPairs';
-import { 
-  fetchLivePrice, 
-  calculatePipsDifference, 
-  calculatePipValue, 
-  calculateTotalPnL,
-  getPipSize,
-  getPipDescription,
-  formatPipDisplay,
-  getInstrumentType,
-  InstrumentType
-} from '@/services/twelveDataApi';
-import { useToast } from '@/hooks/use-toast';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 
-// Form schema for validation
-const calculatorSchema = z.object({
-  pair: z.string(),
-  lotSize: z.string().refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
-    message: "Lot size must be a positive number"
-  }),
-  entryPrice: z.string().refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
-    message: "Entry price is required and must be a positive number"
-  }),
-  exitPrice: z.string().refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
-    message: "Exit price is required and must be a positive number"
-  })
-});
-
-type CalculatorFormValues = z.infer<typeof calculatorSchema>;
-
-const ForexCalculator: React.FC = () => {
-  const [pipsResult, setPipsResult] = useState<number | null>(null);
-  const [pipValue, setPipValue] = useState<number | null>(null);
-  const [totalPnL, setTotalPnL] = useState<number | null>(null);
-  const [livePrice, setLivePrice] = useState<number | null>(null);
-  const [pipDescription, setPipDescription] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [currentInstrument, setCurrentInstrument] = useState<InstrumentType>(InstrumentType.FOREX_STANDARD);
-  
-  const { toast } = useToast();
-  
-  const form = useForm<CalculatorFormValues>({
-    resolver: zodResolver(calculatorSchema),
-    defaultValues: {
-      pair: 'EUR/USD',
-      lotSize: '0.01',
-      entryPrice: '',
-      exitPrice: ''
-    }
-  });
-  
-  // Combine all pairs for the dropdown
-  const allPairs = [
-    ...(forexPairs.metals || []),
-    ...(forexPairs.indices || []),
-    ...(forexPairs.crypto || []),
-    ...(forexPairs.majors || []),
-    ...(forexPairs.minors || []),
-    ...(forexPairs.exotics || [])
-  ];
-  
-  const [searchTerm, setSearchTerm] = useState('');
-  const filteredPairs = {
-    metals: forexPairs.metals ? forexPairs.metals.filter(pair => 
-      pair.toLowerCase().includes(searchTerm.toLowerCase())
-    ) : [],
-    indices: forexPairs.indices ? forexPairs.indices.filter(pair => 
-      pair.toLowerCase().includes(searchTerm.toLowerCase())
-    ) : [],
-    crypto: forexPairs.crypto ? forexPairs.crypto.filter(pair => 
-      pair.toLowerCase().includes(searchTerm.toLowerCase())
-    ) : [],
-    majors: forexPairs.majors ? forexPairs.majors.filter(pair => 
-      pair.toLowerCase().includes(searchTerm.toLowerCase())
-    ) : [],
-    minors: forexPairs.minors ? forexPairs.minors.filter(pair => 
-      pair.toLowerCase().includes(searchTerm.toLowerCase())
-    ) : [],
-    exotics: forexPairs.exotics ? forexPairs.exotics.filter(pair => 
-      pair.toLowerCase().includes(searchTerm.toLowerCase())
-    ) : []
-  };
-
-  const handleSymbolChange = (symbol: string) => {
-    // Update instrument type when symbol changes
-    const instrumentType = getInstrumentType(symbol);
-    setCurrentInstrument(instrumentType);
-    setPipDescription(getPipDescription(symbol));
-    
-    form.setValue('pair', symbol);
-  };
-  
-  const onSubmit = async (data: CalculatorFormValues) => {
-    setIsLoading(true);
-    setError(null);
-    setPipsResult(null);
-    setPipValue(null);
-    setTotalPnL(null);
-    setLivePrice(null);
-    setPipDescription("");
-    
-    try {
-      const { pair, lotSize, entryPrice, exitPrice } = data;
-      const lotSizeNum = parseFloat(lotSize);
-      const entryPriceNum = parseFloat(entryPrice);
-      const exitPriceNum = parseFloat(exitPrice);
-      
-      if (!entryPrice || !exitPrice) {
-        throw new Error("Please enter both Entry and Exit prices to calculate your pip result.");
-      }
-      
-      // Fetch live price to calculate accurate pip value
-      const currentPrice = await fetchLivePrice(pair);
-      setLivePrice(currentPrice);
-      
-      // Get pip description for this instrument
-      const pipDescriptionText = getPipDescription(pair);
-      setPipDescription(pipDescriptionText);
-      
-      // Calculate pip value using live price
-      const calculatedPipValue = calculatePipValue(currentPrice, lotSizeNum, pair);
-      setPipValue(calculatedPipValue);
-      
-      // Calculate pips difference
-      const pipDifference = calculatePipsDifference(entryPriceNum, exitPriceNum, pair);
-      setPipsResult(pipDifference);
-      
-      // Calculate total P&L using the accurate live price for pip value
-      const pnl = calculateTotalPnL(entryPriceNum, exitPriceNum, currentPrice, lotSizeNum, pair);
-      setTotalPnL(pnl);
-      
-    } catch (err) {
-      const errorMessage = err instanceof Error 
-        ? err.message 
-        : "Unable to fetch live market price right now. Please try again later.";
-        
-      setError(errorMessage);
-      toast({
-        title: "Calculation Error",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
+const ForexCalculator = () => {
   return (
-    <Card className="neo-card p-6">
-      <h2 className="text-xl font-semibold mb-4 font-poppins">Forex Pip Calculator</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="pair"
-                render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <FormLabel>Currency Pair / Instrument</FormLabel>
-                      {pipDescription && (
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div className="flex items-center text-xs text-muted-foreground">
-                                <Info className="h-3 w-3 mr-1" />
-                                {pipDescription}
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>This is how pips are calculated for this instrument</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      )}
-                    </div>
-                    <Select 
-                      value={field.value} 
-                      onValueChange={(value) => {
-                        handleSymbolChange(value);
-                      }}
-                    >
-                      <SelectTrigger className="bg-secondary/50 border-input/40 input-glow">
-                        <SelectValue placeholder="Select pair" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-card border-input/40 max-h-[300px]">
-                        <div className="flex items-center px-3 pb-2">
-                          <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
-                          <Input
-                            placeholder="Search pairs..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="h-8"
-                          />
-                        </div>
-                        <ScrollArea className="h-[200px]">
-                          {filteredPairs.metals && filteredPairs.metals.length > 0 && (
-                            <SelectGroup>
-                              <SelectLabel>Metals</SelectLabel>
-                              {filteredPairs.metals.map((option) => (
-                                <SelectItem key={option} value={option}>{option}</SelectItem>
-                              ))}
-                            </SelectGroup>
-                          )}
-                          
-                          {filteredPairs.indices && filteredPairs.indices.length > 0 && (
-                            <SelectGroup>
-                              <SelectLabel>Indices</SelectLabel>
-                              {filteredPairs.indices.map((option) => (
-                                <SelectItem key={option} value={option}>{option}</SelectItem>
-                              ))}
-                            </SelectGroup>
-                          )}
-                          
-                          {filteredPairs.crypto && filteredPairs.crypto.length > 0 && (
-                            <SelectGroup>
-                              <SelectLabel>Crypto</SelectLabel>
-                              {filteredPairs.crypto.map((option) => (
-                                <SelectItem key={option} value={option}>{option}</SelectItem>
-                              ))}
-                            </SelectGroup>
-                          )}
-                          
-                          {filteredPairs.majors && filteredPairs.majors.length > 0 && (
-                            <SelectGroup>
-                              <SelectLabel>Major Pairs</SelectLabel>
-                              {filteredPairs.majors.map((option) => (
-                                <SelectItem key={option} value={option}>{option}</SelectItem>
-                              ))}
-                            </SelectGroup>
-                          )}
-                          
-                          {filteredPairs.minors && filteredPairs.minors.length > 0 && (
-                            <SelectGroup>
-                              <SelectLabel>Minor Pairs</SelectLabel>
-                              {filteredPairs.minors.map((option) => (
-                                <SelectItem key={option} value={option}>{option}</SelectItem>
-                              ))}
-                            </SelectGroup>
-                          )}
-                          
-                          {filteredPairs.exotics && filteredPairs.exotics.length > 0 && (
-                            <SelectGroup>
-                              <SelectLabel>Exotic Pairs</SelectLabel>
-                              {filteredPairs.exotics.map((option) => (
-                                <SelectItem key={option} value={option}>{option}</SelectItem>
-                              ))}
-                            </SelectGroup>
-                          )}
-                        </ScrollArea>
-                      </SelectContent>
-                    </Select>
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="lotSize"
-                render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel>Lot Size</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        step="0.01" 
-                        min="0.01" 
-                        placeholder="0.01"
-                        className="bg-secondary/50 border-input/40 input-glow"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="entryPrice"
-                  render={({ field }) => (
-                    <FormItem className="space-y-2">
-                      <FormLabel>Entry Price</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number" 
-                          step="0.00001" 
-                          placeholder="Enter price"
-                          className="bg-secondary/50 border-input/40 input-glow"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="exitPrice"
-                  render={({ field }) => (
-                    <FormItem className="space-y-2">
-                      <FormLabel>Exit Price</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number"
-                          step="0.00001" 
-                          placeholder="Enter price"
-                          className="bg-secondary/50 border-input/40 input-glow"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-2 px-4 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors flex items-center justify-center mt-4"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader className="mr-2 h-4 w-4 animate-spin" />
-                    Calculating...
-                  </>
-                ) : (
-                  'Calculate'
-                )}
-              </Button>
-            </form>
-          </Form>
-        </div>
-        
-        <div className="bg-black/40 backdrop-blur-md dark:border-white/5 light:bg-[#FFFFFF] rounded-xl p-6 border light:border-gray-200/80 flex flex-col justify-center dark:shadow-[0_4px_15px_rgba(0,0,0,0.5)] light:shadow-[0_2px_15px_rgba(0,0,0,0.08)]">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-sm dark:text-gray-400 light:text-gray-600">Result</span>
-            <ArrowRight className="h-4 w-4 dark:text-gray-400 light:text-gray-500" />
-          </div>
-          
-          {isLoading ? (
-            <div className="py-8 text-center">
-              <Loader className="h-8 w-8 animate-spin mx-auto mb-2" />
-              <p className="text-muted-foreground">Fetching data...</p>
-            </div>
-          ) : error ? (
-            <div className="py-8 text-center">
-              <AlertTriangle className="h-8 w-8 text-destructive mx-auto mb-2" />
-              <p className="text-destructive">{error}</p>
-            </div>
-          ) : pipsResult !== null ? (
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm dark:text-gray-400 light:text-gray-700 mb-1">Pips Gained/Lost</h3>
-                <p className={`text-2xl font-bold ${pipsResult >= 0 ? 'text-[#00ff94]' : 'text-red-500'}`}>
-                  {pipsResult >= 0 ? '+' : ''}{formatPipDisplay(pipsResult, form.getValues().pair)}
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="text-sm dark:text-gray-400 light:text-gray-700 mb-1">Current Market Price</h3>
-                <p className="text-xl font-medium dark:text-gray-300 light:text-gray-800">
-                  {livePrice?.toFixed(5)}
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="text-sm dark:text-gray-400 light:text-gray-700 mb-1">Pip Value</h3>
-                <p className="text-xl font-medium dark:text-gray-300 light:text-gray-800">
-                  {pipValue?.toFixed(2)} USD
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="text-sm dark:text-gray-400 light:text-gray-700 mb-1">Total Profit/Loss</h3>
-                <p className={`text-3xl font-bold ${totalPnL !== null && totalPnL >= 0 ? 'text-[#00ff94]' : 'text-red-500'}`}>
-                  {totalPnL !== null ? (totalPnL >= 0 ? '+' : '') + totalPnL.toFixed(2) + ' USD' : '-'}
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="py-8 text-center">
-              <p className="text-muted-foreground">Enter values and click Calculate to see results</p>
-            </div>
-          )}
-        </div>
+    <div className="space-y-8">
+      <div className="sticky top-0 py-2 md:py-3 bg-background/90 backdrop-blur-lg z-10 border-b border-border/30 -mx-3 md:-mx-4 px-3 md:px-4">
+        <h2 className="text-lg md:text-xl font-bold font-poppins">
+          Forex Pip Value Calculator
+        </h2>
+        <p className="text-xs md:text-sm text-muted-foreground">
+          Calculate exact pip values for precise position sizing
+        </p>
       </div>
-    </Card>
+
+      <Card className="p-6">
+        {/* Embedded Calculator */}
+        <div id="pip-value-calculator-160495">
+          <script type="text/javascript" src="https://www.cashbackforex.com/Content/remote/remote-widgets.js"></script>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                RemoteCalc({
+                  "Url":"https://www.cashbackforex.com",
+                  "TopPaneStyle":"YmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KCMzNDM1NDAgMCUsICMyNDI4MzEgMTAwJSk7IApjb2xvcjogd2hpdGU7IApib3JkZXItYm90dG9tOiBub25lOw==",
+                  "BottomPaneStyle":"YmFja2dyb3VuZDogIzE1MTgxZDsgCmJvcmRlcjogc29saWQgMHB4ICMyYTJlMzk7IApjb2xvcjogIzkxOTRhMTs=",
+                  "ButtonStyle":"YmFja2dyb3VuZDogIzAwRkY1QTsgCmNvbG9yOiBibGFjazsgCmJvcmRlci1yYWRpdXM6IDhweDsgCmZvbnQtd2VpZ2h0OiBib2xkOwo=",
+                  "TitleStyle":"dGV4dC1hbGlnbjogbGVmdDsgCmZvbnQtc2l6ZTogMzBweDsgCmZvbnQtd2VpZ2h0OiA2MDA7IApjb2xvcjogd2hpdGU7Cg==",
+                  "TextboxStyle":"YmFja2dyb3VuZDogIzE1MTgxZDsgCmNvbG9yOiAjOTE5NGExOyAKYm9yZGVyOiBzb2xpZCAxcHggIzJhMmUzOTsgCmJvcmRlci1yYWRpdXM6IDZweDsKCg==",
+                  "ContainerWidth":"700",
+                  "HighlightColor":"rgba(0,0,0,1.0)",
+                  "IsDisplayTitle":false,
+                  "IsShowChartLinks":true,
+                  "IsShowEmbedButton":true,
+                  "CompactType":"large",
+                  "Calculator":"pip-value-calculator",
+                  "ContainerId":"pip-value-calculator-160495"
+                });
+              `
+            }}
+          />
+        </div>
+
+        {/* SEO Article */}
+        <div className="mt-12 prose dark:prose-invert max-w-none">
+          <h2 className="text-2xl font-bold mb-6">How to Use Our Forex Pip Value Calculator to Improve Your Trading Precision</h2>
+          
+          <p className="mb-4">
+            When it comes to successful forex trading, understanding your pip value is one of the most important factors. Every pip movement can mean the difference between making a profit or experiencing a loss. That's why we've made it easy for you with our free, intuitive Forex Pip Value Calculator.
+          </p>
+
+          <p className="mb-6">
+            This tool is designed to help both beginners and advanced traders quickly determine the exact monetary value of each pip based on their lot size, currency pair, and market prices. With just a few simple inputs, you'll get immediate results that can help you plan your trades with precision, minimize unnecessary risks, and optimize your trading strategy.
+          </p>
+
+          <h3 className="text-xl font-bold mb-4">Why Pip Value Matters in Forex Trading</h3>
+          <p className="mb-4">
+            Pip value plays a critical role in every trade you place. A pip, which stands for "percentage in point," measures the smallest price movement in the forex market. Knowing the value of each pip in your base currency helps you to:
+          </p>
+
+          <ul className="list-disc pl-6 mb-6">
+            <li>Size your trades appropriately</li>
+            <li>Manage your risk with better stop-loss and take-profit levels</li>
+            <li>Understand potential gains or losses before entering a position</li>
+            <li>Maintain consistent risk management across all trades</li>
+          </ul>
+
+          <p className="mb-6">
+            For instance, if you're trading EUR/USD and your pip value is $10 per pip at a standard lot size, every 10-pip movement could equal a $100 profit or loss. Without knowing your pip value in advance, you risk exposing your account to unintended volatility.
+          </p>
+
+          <h3 className="text-xl font-bold mb-4">How to Use the PipCraft Pip Value Calculator</h3>
+          <p className="mb-4">Our calculator was built with simplicity and speed in mind. Here's how to use it:</p>
+
+          <ol className="list-decimal pl-6 mb-6">
+            <li className="mb-2">Select Your Currency Pair: Choose the forex pair you are planning to trade, such as EUR/USD, GBP/JPY, or USD/CHF.</li>
+            <li className="mb-2">Enter Your Lot Size: Specify the size of your trade (standard, mini, or micro lots). Even a small difference in lot size can drastically change your pip value.</li>
+            <li className="mb-2">Input Entry and Exit Prices: Although pip value is primarily based on lot size and currency pair, providing entry and exit prices ensures the tool is tailored to your specific trade idea.</li>
+            <li>Click Calculate: Instantly receive the pip value result in your account's base currency, allowing you to adjust your risk accordingly before executing the trade.</li>
+          </ol>
+
+          <p className="mb-6">This simple, fast process ensures that every trade you make is backed by solid numbers, not guesswork.</p>
+
+          <h3 className="text-xl font-bold mb-4">Why Choose PipCraft's Forex Pip Calculator?</h3>
+          <p className="mb-4">While there are many pip calculators available online, PipCraft's calculator is uniquely optimized for speed, clarity, and user-friendliness. Here's why traders trust it:</p>
+
+          <ul className="list-disc pl-6 mb-6">
+            <li>Instant Results: No waiting, no complicated forms—just input and calculate.</li>
+            <li>Supports All Major and Minor Pairs: Whether you're trading USD/JPY or NZD/CAD, the tool adjusts to any pair.</li>
+            <li>Responsive Design: Use it seamlessly on your desktop, tablet, or mobile device.</li>
+            <li>Zero Guesswork: Always know your pip value before placing a trade, improving your discipline and consistency.</li>
+          </ul>
+
+          <p className="mb-6">
+            Many successful traders know that precision in trading starts long before entering a trade. With PipCraft's pip calculator, you gain that precision every time you plan a new position.
+          </p>
+
+          <h3 className="text-xl font-bold mb-4">Trading Examples Using Pip Value</h3>
+          <p className="mb-6">
+            Let's say you are trading GBP/USD with a 0.10 lot size (a mini lot). If your calculated pip value is $1 per pip, a 50-pip gain would result in a $50 profit. Similarly, a 20-pip loss would mean a $20 loss.
+          </p>
+
+          <p className="mb-6">
+            Without a pip calculator, you might underestimate or overestimate your exposure, leading to poor risk management. Smart traders always know their numbers first—and that's exactly what our tool helps you achieve.
+          </p>
+
+          <h3 className="text-xl font-bold mb-4">Final Thoughts: Master Your Trading with Precision</h3>
+          <p className="mb-4">
+            Risk management is the foundation of successful trading. Using our Forex Pip Value Calculator ensures that you have complete clarity over your potential trade outcomes before you even click "Buy" or "Sell."
+          </p>
+
+          <p className="mb-4">
+            By using the PipCraft calculator before every trade, you can size your positions properly, avoid emotional decision-making, and trade with the confidence that you're controlling your risk at all times. Whether you're scalping, day trading, or swing trading, this tool is an essential part of your trading arsenal.
+          </p>
+
+          <p>
+            Bookmark this page now, and make our Pip Value Calculator your go-to resource for every trade you take!
+          </p>
+        </div>
+      </Card>
+    </div>
   );
 };
 
