@@ -1,8 +1,57 @@
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 
 const ForexCalculator = () => {
+  const calculatorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Only run this if we're in the browser environment
+    if (typeof window !== 'undefined') {
+      // Create script for remote widgets
+      const remoteWidgetScript = document.createElement('script');
+      remoteWidgetScript.src = 'https://www.cashbackforex.com/Content/remote/remote-widgets.js';
+      remoteWidgetScript.async = true;
+      
+      // Create script for calculator configuration
+      const calculatorScript = document.createElement('script');
+      calculatorScript.textContent = `
+        if (typeof RemoteCalc === 'function') {
+          RemoteCalc({
+            "Url":"https://www.cashbackforex.com",
+            "TopPaneStyle":"YmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KCMzNDM1NDAgMCUsICMyNDI4MzEgMTAwJSk7IApjb2xvcjogd2hpdGU7IApib3JkZXItYm90dG9tOiBub25lOw==",
+            "BottomPaneStyle":"YmFja2dyb3VuZDogIzE1MTgxZDsgCmJvcmRlcjogc29saWQgMHB4ICMyYTJlMzk7IApjb2xvcjogIzkxOTRhMTs=",
+            "ButtonStyle":"YmFja2dyb3VuZDogIzAwRkY1QTsgCmNvbG9yOiBibGFjazsgCmJvcmRlci1yYWRpdXM6IDhweDsgCmZvbnQtd2VpZ2h0OiBib2xkOwo=",
+            "TitleStyle":"dGV4dC1hbGlnbjogbGVmdDsgCmZvbnQtc2l6ZTogMzBweDsgCmZvbnQtd2VpZ2h0OiA2MDA7IApjb2xvcjogd2hpdGU7Cg==",
+            "TextboxStyle":"YmFja2dyb3VuZDogIzE1MTgxZDsgCmNvbG9yOiAjOTE5NGExOyAKYm9yZGVyOiBzb2xpZCAxcHggIzJhMmUzOTsgCmJvcmRlci1yYWRpdXM6IDZweDsKCg==",
+            "ContainerWidth":"700",
+            "HighlightColor":"rgba(0,0,0,1.0)",
+            "IsDisplayTitle":false,
+            "IsShowChartLinks":true,
+            "IsShowEmbedButton":true,
+            "CompactType":"large",
+            "Calculator":"pip-value-calculator",
+            "ContainerId":"pip-value-calculator-160495"
+          });
+        } else {
+          console.error('RemoteCalc is not defined. Make sure the script is loaded properly.');
+        }
+      `;
+      
+      // Clear previous content and append scripts
+      if (calculatorRef.current) {
+        // Append scripts to the container
+        calculatorRef.current.innerHTML = '<div id="pip-value-calculator-160495"></div>';
+        calculatorRef.current.appendChild(remoteWidgetScript);
+        
+        // Add calculator script after remote widget script is loaded
+        remoteWidgetScript.onload = () => {
+          calculatorRef.current?.appendChild(calculatorScript);
+        };
+      }
+    }
+  }, []);
+
   return (
     <div className="space-y-8">
       <div className="sticky top-0 py-2 md:py-3 bg-background/90 backdrop-blur-lg z-10 border-b border-border/30 -mx-3 md:-mx-4 px-3 md:px-4">
@@ -15,31 +64,9 @@ const ForexCalculator = () => {
       </div>
 
       <Card className="p-6">
-        {/* Embedded Calculator */}
-        <div id="pip-value-calculator-160495">
-          <script type="text/javascript" src="https://www.cashbackforex.com/Content/remote/remote-widgets.js"></script>
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                RemoteCalc({
-                  "Url":"https://www.cashbackforex.com",
-                  "TopPaneStyle":"YmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KCMzNDM1NDAgMCUsICMyNDI4MzEgMTAwJSk7IApjb2xvcjogd2hpdGU7IApib3JkZXItYm90dG9tOiBub25lOw==",
-                  "BottomPaneStyle":"YmFja2dyb3VuZDogIzE1MTgxZDsgCmJvcmRlcjogc29saWQgMHB4ICMyYTJlMzk7IApjb2xvcjogIzkxOTRhMTs=",
-                  "ButtonStyle":"YmFja2dyb3VuZDogIzAwRkY1QTsgCmNvbG9yOiBibGFjazsgCmJvcmRlci1yYWRpdXM6IDhweDsgCmZvbnQtd2VpZ2h0OiBib2xkOwo=",
-                  "TitleStyle":"dGV4dC1hbGlnbjogbGVmdDsgCmZvbnQtc2l6ZTogMzBweDsgCmZvbnQtd2VpZ2h0OiA2MDA7IApjb2xvcjogd2hpdGU7Cg==",
-                  "TextboxStyle":"YmFja2dyb3VuZDogIzE1MTgxZDsgCmNvbG9yOiAjOTE5NGExOyAKYm9yZGVyOiBzb2xpZCAxcHggIzJhMmUzOTsgCmJvcmRlci1yYWRpdXM6IDZweDsKCg==",
-                  "ContainerWidth":"700",
-                  "HighlightColor":"rgba(0,0,0,1.0)",
-                  "IsDisplayTitle":false,
-                  "IsShowChartLinks":true,
-                  "IsShowEmbedButton":true,
-                  "CompactType":"large",
-                  "Calculator":"pip-value-calculator",
-                  "ContainerId":"pip-value-calculator-160495"
-                });
-              `
-            }}
-          />
+        {/* Calculator Container */}
+        <div ref={calculatorRef} className="calculator-container min-h-[400px] flex items-center justify-center">
+          <div className="text-muted-foreground">Loading calculator...</div>
         </div>
 
         {/* SEO Article */}
