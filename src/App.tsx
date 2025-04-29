@@ -19,6 +19,7 @@ import TermsPage from "./pages/legal/TermsPage";
 import PrivacyPage from "./pages/legal/PrivacyPage";
 import DisclaimerPage from "./pages/legal/DisclaimerPage";
 import ToolsPage from "./pages/ToolsPage";
+import EconomicCalendar from "./pages/EconomicCalendar";
 
 const queryClient = new QueryClient();
 

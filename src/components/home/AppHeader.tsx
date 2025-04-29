@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,7 +27,7 @@ const AppHeader: React.FC = () => {
     { label: 'Calculators', icon: <Calculator className="h-4 w-4" />, path: '/calculators' },
     { label: 'Journal', icon: <BookOpen className="h-4 w-4" />, path: '/trade-journal' },
     { label: 'Games', icon: <GamepadIcon className="h-4 w-4" />, path: '/trader-games' },
-    { label: 'Calendar', icon: <Calendar className="h-4 w-4" />, path: '/daily-trade-tools' },
+    { label: 'Calendar', icon: <Calendar className="h-4 w-4" />, path: '/economic-calendar' },
     { label: 'Tools', icon: <Compass className="h-4 w-4" />, path: '/tools' },
   ];
   

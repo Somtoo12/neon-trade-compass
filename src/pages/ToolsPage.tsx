@@ -66,8 +66,8 @@ const ToolsPage: React.FC = () => {
   return (
     <AppLayout activeSection="tools" setActiveSection={() => {}}>
       <Helmet>
-        <title>Trading Tools | PipCraft</title>
-        <meta name="description" content="Explore our collection of trading tools designed to enhance your trading experience." />
+        <title>PipCraft Tools | Trading & Finance Tools Suite</title>
+        <meta name="description" content="Discover a growing collection of smart tools built to simplify tasks, solve problems, and supercharge your workflow. New tools are added regularly across multiple categories." />
       </Helmet>
       
       <div className="container mx-auto max-w-6xl px-4">
@@ -79,10 +79,10 @@ const ToolsPage: React.FC = () => {
         >
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-4xl font-bold mb-3 bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
-              Trading Tools
+              PipCraft Tools
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Discover our comprehensive suite of tools designed to enhance your trading strategy, manage risk, and improve performance.
+              Discover a growing collection of smart tools built to simplify tasks, solve problems, and supercharge your workflow. New tools are added regularly across multiple categories.
             </p>
           </div>
 
