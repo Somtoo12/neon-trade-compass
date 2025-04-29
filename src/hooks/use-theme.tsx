@@ -18,15 +18,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     localStorage.setItem('theme', theme);
-    
-    // Add or remove the 'dark' class on the document element
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-      document.documentElement.classList.remove('light-mode');
-    } else {
-      document.documentElement.classList.remove('dark');
-      document.documentElement.classList.add('light-mode');
-    }
+    document.documentElement.classList.toggle('light-mode', theme === 'light');
   }, [theme]);
 
   const toggleTheme = () => {

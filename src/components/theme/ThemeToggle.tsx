@@ -12,12 +12,12 @@ const ThemeToggle = () => {
       onClick={toggleTheme}
       className={`
         transition-all duration-300 ease-in-out
-        p-2 rounded-full min-h-[40px] min-w-[40px]
+        p-2 rounded-full
         ${theme === 'dark' 
           ? 'bg-secondary hover:bg-secondary/80 text-primary' 
           : 'bg-white hover:bg-gray-100 text-gray-800 shadow-md'
         }
-        ${isMobile ? 'min-h-[44px] min-w-[44px]' : ''}
+        ${isMobile ? '' : 'fixed top-4 right-4 z-50'}
       `}
       aria-label="Toggle theme"
     >
