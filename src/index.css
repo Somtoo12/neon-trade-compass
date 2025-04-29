@@ -1,117 +1,245 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 47.4% 11.2%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 47.4% 11.2%;
- 
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 142 100% 50%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 261 100% 69%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 262.1 83.3% 57.8%;
+    --radius: 0.75rem;
+    --glow-color: rgba(123, 97, 255, 0.8);
+    --neon-green: #00ffb3;
+    --neon-blue: #00c2ff;
+    --neon-purple: #7b61ff;
+  }
+  
+  :root.light-mode {
+    --background: 0 0% 98%; /* Soft white background */
+    --foreground: 240 10% 3.9%; /* Dark text for contrast */
+    --card: 0 0% 95%; /* Lighter gray for cards */
+    --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 47.4% 11.2%;
- 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 0 0% 98%;
- 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
- 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
- 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
- 
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 261 43% 69%; /* Soft purple primary */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 4.8% 90%; /* Very light gray */
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95%; /* Almost white */
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 261 43% 69%; /* Soft purple accent */
+    --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
- 
-    --ring: 222.2 84% 4.9%;
- 
-    --radius: 0.5rem;
-
-    --neon-purple: 259, 73%, 59%;
-    --neon-blue: 207, 90%, 54%;
-    --neon-green: 144, 100%, 45%;
-
-    --neon-purple-rgb: 139, 92, 246;
-    --neon-blue-rgb: 37, 99, 235;
-    --neon-green-rgb: 52, 211, 153;
+    --border: 240 5.9% 85%; /* Light border */
+    --input: 240 5.9% 85%;
+    --ring: 261 43% 69%; /* Soft purple ring */
+    --glow-color: rgba(123, 97, 255, 0.4);
+    --neon-green: #00cc8e;
+    --neon-blue: #0099cc;
+    --neon-purple: #6b50e0;
   }
 
-  .dark {
-    --background: 20 14.3% 4.1%;
-    --foreground: 210 20% 98%;
- 
-    --card: 20 14.3% 4.1%;
-    --card-foreground: 210 20% 98%;
- 
-    --popover: 20 14.3% 4.1%;
-    --popover-foreground: 210 20% 98%;
- 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
- 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 20% 98%;
- 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.9%;
- 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 20% 98%;
- 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 20% 98%;
- 
-    --border: 216 34% 17%;
-    --input: 216 34% 17%;
- 
-    --ring: 224.3 76.3% 48%;
-  }
-}
-
-@layer base {
   * {
-    @apply border-border;
+    @apply border-border transition-colors duration-300;
+    -webkit-tap-highlight-color: transparent;
   }
+  
+  html, body {
+    @apply bg-background text-foreground overflow-x-hidden;
+    font-family: 'Inter', sans-serif;
+    scroll-behavior: smooth;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+    @apply break-words;
+  }
+
+  /* Ensure readable font sizes on mobile */
   body {
-    @apply bg-background text-foreground;
-    font-feature-settings:
-      "rlig" 1,
-      "calt" 1;
+    font-size: 16px;
+  }
+
+  input, select, textarea {
+    @apply text-base;
+    font-size: 16px !important;
+  }
+
+  /* Improved focus styles for accessibility */
+  :focus {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+  
+  /* Better touch targets */
+  button, a {
+    @apply cursor-pointer;
+  }
+
+  /* Responsive headings */
+  h1 {
+    @apply text-2xl md:text-3xl lg:text-4xl;
+  }
+  
+  h2 {
+    @apply text-xl md:text-2xl lg:text-3xl;
+  }
+  
+  h3 {
+    @apply text-lg md:text-xl;
+  }
+  
+  /* Reduced animations mode */
+  .reduce-animations * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+  
+  /* Safari padding bottom fix */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+  }
+  
+  /* Safari padding top fix */
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 20px);
   }
 }
 
-@keyframes highlight-pulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(var(--neon-blue-rgb), 0);
+@layer components {
+  .neo-card {
+    @apply bg-card/30 backdrop-blur-sm border border-white/10 rounded-xl shadow-lg;
   }
-  50% {
-    box-shadow: 0 0 0 6px rgba(var(--neon-blue-rgb), 0.4);
+  
+  .glassmorphism {
+    @apply bg-black/10 backdrop-blur-md border border-white/10 rounded-xl;
+  }
+  
+  .neon-glow {
+    @apply animate-pulse-glow;
+  }
+  
+  .neon-border {
+    @apply border border-neon-purple shadow-[0_0_10px_rgba(123,97,255,0.4)];
+  }
+  
+  .input-glow:focus {
+    @apply ring-2 ring-neon-purple shadow-[0_0_15px_rgba(123,97,255,0.3)];
+  }
+
+  /* Mobile optimized components */
+  .mobile-optimized-card {
+    @apply p-3 md:p-6;
+  }
+  
+  .mobile-optimized-button {
+    @apply min-h-[44px] py-3 px-4;
+  }
+  
+  .touch-friendly {
+    @apply p-3;
+  }
+  
+  .responsive-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4;
+  }
+  
+  .responsive-flex {
+    @apply flex flex-col md:flex-row;
+  }
+
+  /* Background position utilities for gradient animations */
+  .bg-pos-0 {
+    background-position: 0% 50%;
+  }
+  
+  .bg-pos-100 {
+    background-position: 100% 50%;
+  }
+  
+  .bg-size-200 {
+    background-size: 200% 200%;
+  }
+
+  /* New glow borders for featured cards */
+  .border-gradient-0 {
+    border-image: linear-gradient(to right, var(--neon-green), var(--neon-blue)) 1;
+  }
+  
+  .border-gradient-1 {
+    border-image: linear-gradient(to right, var(--neon-blue), var(--neon-purple)) 1;
+  }
+  
+  .border-gradient-2 {
+    border-image: linear-gradient(to right, var(--neon-purple), var(--neon-green)) 1;
+  }
+  
+  /* Spotify containers */
+  .aspect-ratio-container {
+    aspect-ratio: 16 / 9;
+  }
+  
+  /* Fix for iPhone bottom notch */
+  @supports (padding: max(0px)) {
+    .pb-safe {
+      padding-bottom: max(env(safe-area-inset-bottom), 20px);
+    }
+    
+    .mobile-nav-bottom {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
   }
 }
 
-.highlight-tool {
-  animation: highlight-pulse 2s ease-in-out;
+/* Screenshot theme styles */
+.screenshot-light {
+  background: #FFFFFF !important;
+  color: #1A1F2C !important;
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-in-out forwards;
+.screenshot-light * {
+  color: #1A1F2C !important;
+  border-color: #8E9196 !important;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+.screenshot-dark {
+  background: #1A1F2C !important;
+  color: #FFFFFF !important;
+}
+
+.screenshot-dark * {
+  color: #FFFFFF !important;
+  border-color: #333 !important;
+}
+
+/* Load performance improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

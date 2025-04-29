@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -144,7 +143,7 @@ const HeroSection: React.FC = () => {
           </motion.p>
 
           <div className="flex flex-col sm:flex-row justify-center gap-3 px-4">
-            <Link to="/tools" className="w-full sm:w-auto">
+            <Link to="/calculators" className="w-full sm:w-auto">
               <Button 
                 size="lg"
                 className="w-full sm:w-auto bg-gradient-to-r from-[#7C3AED] to-[#6366F1] hover:opacity-90 transition-opacity min-h-[44px]"
