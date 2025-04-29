@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,6 +18,7 @@ import ContactPage from "./pages/ContactPage";
 import TermsPage from "./pages/legal/TermsPage";
 import PrivacyPage from "./pages/legal/PrivacyPage";
 import DisclaimerPage from "./pages/legal/DisclaimerPage";
+import ToolsPage from "./pages/ToolsPage";
 
 const queryClient = new QueryClient();
 
@@ -31,7 +33,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/focus-mode" element={<FocusMode />} />
-              <Route path="/tools" element={<Index activeSection="daily-trade-tools" />} />
+              <Route path="/tools" element={<ToolsPage />} />
               <Route path="/forex-calculator" element={<Index activeSection="forex-calculator" />} />
               <Route path="/crypto-calculator" element={<Index activeSection="crypto-calculator" />} />
               <Route path="/futures-calculator" element={<Index activeSection="futures-calculator" />} />
