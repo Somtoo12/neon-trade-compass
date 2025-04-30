@@ -2,8 +2,9 @@
 import {
   Calculator, BookOpen, GamepadIcon, Calendar, Clock, LineChart,
   BarChart2, Compass, BrainCircuit, Heart, Layout, Search, 
-  FileText, Sliders, Users, BookText
+  FileText, Sliders, Users, BookText, QrCode, Timer, Dice6
 } from 'lucide-react';
+import { utilityToolsData } from './utilityToolsData';
 
 export interface Tool {
   id: string;
@@ -111,4 +112,6 @@ export const toolsData: Tool[] = [
     category: 'Education',
     icon: GamepadIcon
   },
+  // Add all utility tools to the main tools list
+  ...utilityToolsData
 ];

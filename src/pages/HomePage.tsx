@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 // Import home page components
 import AppHeader from '@/components/home/AppHeader';
 import HeroSection from '@/components/home/HeroSection';
+import EverydayTools from '@/components/home/EverydayTools';
 import ToolShowcase from '@/components/home/ToolShowcase';
 import ToolCategories from '@/components/home/ToolCategories';
 import FeaturedTools from '@/components/home/FeaturedTools';
@@ -44,6 +45,9 @@ const HomePage: React.FC = () => {
         
         {/* Hero Section - Redesigned with space theme */}
         <HeroSection />
+
+        {/* New Everyday Tools Section */}
+        <EverydayTools />
 
         {/* Tool Showcase - Auto-scrolling Banner */}
         <ToolShowcase />
