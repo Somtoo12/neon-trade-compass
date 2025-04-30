@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { BarChart, Book, Clock, Gauge, LineChart, Menu, PieChart, Scale, Compass, X, GamepadIcon, CalendarDays, ClipboardCheck } from 'lucide-react';
+import { BarChart, Book, Clock, Gauge, LineChart, Menu, PieChart, Scale, Compass, X, GamepadIcon, CalendarDays, ClipboardCheck, QrCode, Timer, FileText, Calculator, Calendar, Dice6 } from 'lucide-react';
 import ThemeToggle from '../theme/ThemeToggle';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -33,6 +33,13 @@ const MobileNav: React.FC<MobileNavProps> = ({ activeSection, setActiveSection }
     { id: 'crypto-calculator', label: 'Crypto Calculator', icon: <LineChart className="h-5 w-5" />, path: '/crypto-calculator' },
     { id: 'currency-heatmap', label: 'Currency Heatmap', icon: <Gauge className="h-5 w-5" />, path: '/currency-heatmap' },
     { id: 'trader-games', label: 'Trader Game Center', icon: <GamepadIcon className="h-5 w-5" />, path: '/trader-games' },
+    // Add new utility tools
+    { id: 'qr-code-generator', label: 'QR Code Generator', icon: <QrCode className="h-5 w-5" />, path: '/qr-code-generator' },
+    { id: 'countdown-timer', label: 'Countdown Timer', icon: <Clock className="h-5 w-5" />, path: '/countdown-timer' },
+    { id: 'character-counter', label: 'Character Counter', icon: <FileText className="h-5 w-5" />, path: '/character-counter' },
+    { id: 'tip-calculator', label: 'Tip Calculator', icon: <Calculator className="h-5 w-5" />, path: '/tip-calculator' },
+    { id: 'date-calculator', label: 'Date Calculator', icon: <Calendar className="h-5 w-5" />, path: '/date-calculator' },
+    { id: 'random-generator', label: 'Random Generator', icon: <Dice6 className="h-5 w-5" />, path: '/random-generator' },
   ];
 
   useEffect(() => {

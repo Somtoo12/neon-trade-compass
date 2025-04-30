@@ -1,6 +1,6 @@
 
 import {
-  QrCode, Clock, Timer, Calculator, Calendar, Dice6
+  QrCode, Clock, Timer, Calculator, Calendar, Dice6, FileText
 } from 'lucide-react';
 
 export interface UtilityTool {
@@ -39,7 +39,7 @@ export const utilityToolsData: UtilityTool[] = [
     shortDescription: 'Count characters, words & paragraphs',
     path: '/character-counter',
     category: 'Utilities',
-    icon: Timer
+    icon: FileText
   },
   {
     id: 'tip-calculator',
