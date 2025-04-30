@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset 
   xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -59,23 +58,5 @@
   </url>
   <url>
     <loc>https://pipcrafts.com/disclaimer</loc>
-  </url>
-  <url>
-    <loc>https://pipcrafts.com/qr-code-generator</loc>
-  </url>
-  <url>
-    <loc>https://pipcrafts.com/countdown-timer</loc>
-  </url>
-  <url>
-    <loc>https://pipcrafts.com/character-counter</loc>
-  </url>
-  <url>
-    <loc>https://pipcrafts.com/tip-calculator</loc>
-  </url>
-  <url>
-    <loc>https://pipcrafts.com/date-calculator</loc>
-  </url>
-  <url>
-    <loc>https://pipcrafts.com/random-generator</loc>
   </url>
 </urlset>
