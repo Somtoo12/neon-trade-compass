@@ -1,7 +1,6 @@
+
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset 
-  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://pipcrafts.com/</loc>
   </url>
@@ -42,6 +41,9 @@
     <loc>https://pipcrafts.com/economic-calendar</loc>
   </url>
   <url>
+    <loc>https://pipcrafts.com/tools</loc>
+  </url>
+  <url>
     <loc>https://pipcrafts.com/qr-code-generator</loc>
   </url>
   <url>
@@ -58,6 +60,39 @@
   </url>
   <url>
     <loc>https://pipcrafts.com/random-generator</loc>
+  </url>
+  <url>
+    <loc>https://pipcrafts.com/password-strength-checker</loc>
+  </url>
+  <url>
+    <loc>https://pipcrafts.com/number-to-words-converter</loc>
+  </url>
+  <url>
+    <loc>https://pipcrafts.com/binary-to-decimal-converter</loc>
+  </url>
+  <url>
+    <loc>https://pipcrafts.com/grade-calculator</loc>
+  </url>
+  <url>
+    <loc>https://pipcrafts.com/hex-to-rgb-converter</loc>
+  </url>
+  <url>
+    <loc>https://pipcrafts.com/daily-water-intake-calculator</loc>
+  </url>
+  <url>
+    <loc>https://pipcrafts.com/text-reverser</loc>
+  </url>
+  <url>
+    <loc>https://pipcrafts.com/username-generator</loc>
+  </url>
+  <url>
+    <loc>https://pipcrafts.com/miles-to-km-converter</loc>
+  </url>
+  <url>
+    <loc>https://pipcrafts.com/typing-speed-tester</loc>
+  </url>
+  <url>
+    <loc>https://pipcrafts.com/password-generator</loc>
   </url>
   <url>
     <loc>https://pipcrafts.com/focus-mode</loc>

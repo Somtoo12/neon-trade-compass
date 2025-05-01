@@ -29,6 +29,16 @@ import TipCalculator from "./pages/utility-tools/TipCalculator";
 import DateCalculator from "./pages/utility-tools/DateCalculator";
 import RandomGenerator from "./pages/utility-tools/RandomGenerator";
 import PasswordStrengthChecker from "./pages/utility-tools/PasswordStrengthChecker";
+import NumberToWordsConverter from "./pages/utility-tools/NumberToWordsConverter";
+import BinaryToDecimalConverter from "./pages/utility-tools/BinaryToDecimalConverter";
+import GradeCalculator from "./pages/utility-tools/GradeCalculator";
+import HexToRGBConverter from "./pages/utility-tools/HexToRGBConverter";
+import DailyWaterIntakeCalculator from "./pages/utility-tools/DailyWaterIntakeCalculator";
+import TextReverser from "./pages/utility-tools/TextReverser";
+import UsernameGenerator from "./pages/utility-tools/UsernameGenerator";
+import MilesToKMConverter from "./pages/utility-tools/MilesToKMConverter";
+import TypingSpeedTester from "./pages/utility-tools/TypingSpeedTester";
+import PasswordGenerator from "./pages/utility-tools/PasswordGenerator";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +76,16 @@ const App = () => (
               <Route path="/date-calculator" element={<DateCalculator />} />
               <Route path="/random-generator" element={<RandomGenerator />} />
               <Route path="/password-strength-checker" element={<PasswordStrengthChecker />} />
+              <Route path="/number-to-words-converter" element={<NumberToWordsConverter />} />
+              <Route path="/binary-to-decimal-converter" element={<BinaryToDecimalConverter />} />
+              <Route path="/grade-calculator" element={<GradeCalculator />} />
+              <Route path="/hex-to-rgb-converter" element={<HexToRGBConverter />} />
+              <Route path="/daily-water-intake-calculator" element={<DailyWaterIntakeCalculator />} />
+              <Route path="/text-reverser" element={<TextReverser />} />
+              <Route path="/username-generator" element={<UsernameGenerator />} />
+              <Route path="/miles-to-km-converter" element={<MilesToKMConverter />} />
+              <Route path="/typing-speed-tester" element={<TypingSpeedTester />} />
+              <Route path="/password-generator" element={<PasswordGenerator />} />
               
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />

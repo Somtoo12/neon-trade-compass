@@ -1,10 +1,12 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
   BarChart, Book, Clock, Gauge, LineChart, PieChart, Scale, Calculator, 
   Compass, GamepadIcon, CalendarDays, ClipboardCheck, ChevronLeft, 
   ChevronRight, QrCode, Timer, FileText, Sliders, Calendar, Dice6,
-  ShieldCheck
+  ShieldCheck, ListOrdered, Binary, Award, Palette, Droplet, RotateCw,
+  User, ArrowUpDown, Keyboard, Key
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -52,6 +54,16 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: 'date-calculator', label: 'Date Calculator', icon: <Calendar className="h-5 w-5" />, path: '/date-calculator', category: 'Utilities' },
     { id: 'random-generator', label: 'Random Generator', icon: <Dice6 className="h-5 w-5" />, path: '/random-generator', category: 'Utilities' },
     { id: 'password-strength-checker', label: 'Password Checker', icon: <ShieldCheck className="h-5 w-5" />, path: '/password-strength-checker', category: 'Utilities' },
+    { id: 'number-to-words-converter', label: 'Number to Words', icon: <ListOrdered className="h-5 w-5" />, path: '/number-to-words-converter', category: 'Utilities' },
+    { id: 'binary-to-decimal-converter', label: 'Binary Converter', icon: <Binary className="h-5 w-5" />, path: '/binary-to-decimal-converter', category: 'Utilities' },
+    { id: 'grade-calculator', label: 'Grade Calculator', icon: <Award className="h-5 w-5" />, path: '/grade-calculator', category: 'Utilities' },
+    { id: 'hex-to-rgb-converter', label: 'Color Converter', icon: <Palette className="h-5 w-5" />, path: '/hex-to-rgb-converter', category: 'Utilities' },
+    { id: 'daily-water-intake-calculator', label: 'Water Intake', icon: <Droplet className="h-5 w-5" />, path: '/daily-water-intake-calculator', category: 'Utilities' },
+    { id: 'text-reverser', label: 'Text Reverser', icon: <RotateCw className="h-5 w-5" />, path: '/text-reverser', category: 'Utilities' },
+    { id: 'username-generator', label: 'Username Generator', icon: <User className="h-5 w-5" />, path: '/username-generator', category: 'Utilities' },
+    { id: 'miles-to-km-converter', label: 'Unit Converter', icon: <ArrowUpDown className="h-5 w-5" />, path: '/miles-to-km-converter', category: 'Utilities' },
+    { id: 'typing-speed-tester', label: 'Typing Speed Test', icon: <Keyboard className="h-5 w-5" />, path: '/typing-speed-tester', category: 'Utilities' },
+    { id: 'password-generator', label: 'Password Generator', icon: <Key className="h-5 w-5" />, path: '/password-generator', category: 'Utilities' },
   ];
 
   const handleNavClick = (section: string) => {
