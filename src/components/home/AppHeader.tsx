@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Calculator, GamepadIcon, BookOpen, Compass, Menu, X, Calendar, Home
+  Calculator, GamepadIcon, BookOpen, Compass, Menu, X, Calendar, Home,
+  QrCode, Timer, FileText, Sliders
 } from 'lucide-react';
 import ThemeToggle from '@/components/theme/ThemeToggle';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -29,6 +30,7 @@ const AppHeader: React.FC = () => {
     { label: 'Games', icon: <GamepadIcon className="h-4 w-4" />, path: '/trader-games' },
     { label: 'Calendar', icon: <Calendar className="h-4 w-4" />, path: '/economic-calendar' },
     { label: 'Tools', icon: <Compass className="h-4 w-4" />, path: '/tools' },
+    { label: 'Utilities', icon: <Sliders className="h-4 w-4" />, path: '/tools#utilities' },
   ];
   
   return (

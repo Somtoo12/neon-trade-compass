@@ -1,7 +1,11 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BarChart, Book, Clock, Gauge, LineChart, PieChart, Scale, Calculator, Compass, GamepadIcon, CalendarDays, ClipboardCheck, ChevronLeft, ChevronRight } from 'lucide-react';
+import { 
+  BarChart, Book, Clock, Gauge, LineChart, PieChart, Scale, Calculator, 
+  Compass, GamepadIcon, CalendarDays, ClipboardCheck, ChevronLeft, 
+  ChevronRight, QrCode, Timer, FileText, Sliders, Calendar, Dice6
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface SidebarProps {
@@ -16,6 +20,7 @@ interface NavItem {
   label: string;
   icon: React.ReactNode;
   path: string;
+  category?: string;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
@@ -25,23 +30,36 @@ const Sidebar: React.FC<SidebarProps> = ({
   toggleCollapsed
 }) => {
   const navItems: NavItem[] = [
-    { id: 'forex-calculator', label: 'Forex Pip Calculator', icon: <BarChart className="h-5 w-5" />, path: '/forex-calculator' },
-    { id: 'risk-management', label: 'Risk Management', icon: <Scale className="h-5 w-5" />, path: '/risk-management' },
-    { id: 'max-lot-size', label: 'Max Lot Size', icon: <Calculator className="h-5 w-5" />, path: '/max-lot-size' },
-    { id: 'trade-journal', label: 'Trade Journal', icon: <Book className="h-5 w-5" />, path: '/trade-journal' },
-    { id: 'challenge-blueprint', label: 'Challenge Blueprint', icon: <ClipboardCheck className="h-5 w-5" />, path: '/challenge-blueprint' },
-    { id: 'daily-trade-tools', label: 'Daily Trade Tools', icon: <Compass className="h-5 w-5" />, path: '/daily-trade-tools' },
-    { id: 'session-clock', label: 'Session Clock', icon: <Clock className="h-5 w-5" />, path: '/session-clock' },
-    { id: 'economic-calendar', label: 'Economic Calendar', icon: <CalendarDays className="h-5 w-5" />, path: '/economic-calendar' },
-    { id: 'futures-calculator', label: 'Futures Calculator', icon: <PieChart className="h-5 w-5" />, path: '/futures-calculator' },
-    { id: 'crypto-calculator', label: 'Crypto Calculator', icon: <LineChart className="h-5 w-5" />, path: '/crypto-calculator' },
-    { id: 'currency-heatmap', label: 'Currency Heatmap', icon: <Gauge className="h-5 w-5" />, path: '/currency-heatmap' },
-    { id: 'trader-games', label: 'Trader Game Center', icon: <GamepadIcon className="h-5 w-5" />, path: '/trader-games' },
+    // Trading Tools
+    { id: 'forex-calculator', label: 'Forex Pip Calculator', icon: <BarChart className="h-5 w-5" />, path: '/forex-calculator', category: 'Trading' },
+    { id: 'risk-management', label: 'Risk Management', icon: <Scale className="h-5 w-5" />, path: '/risk-management', category: 'Trading' },
+    { id: 'max-lot-size', label: 'Max Lot Size', icon: <Calculator className="h-5 w-5" />, path: '/max-lot-size', category: 'Trading' },
+    { id: 'trade-journal', label: 'Trade Journal', icon: <Book className="h-5 w-5" />, path: '/trade-journal', category: 'Trading' },
+    { id: 'challenge-blueprint', label: 'Challenge Blueprint', icon: <ClipboardCheck className="h-5 w-5" />, path: '/challenge-blueprint', category: 'Trading' },
+    { id: 'daily-trade-tools', label: 'Daily Trade Tools', icon: <Compass className="h-5 w-5" />, path: '/daily-trade-tools', category: 'Trading' },
+    { id: 'session-clock', label: 'Session Clock', icon: <Clock className="h-5 w-5" />, path: '/session-clock', category: 'Trading' },
+    { id: 'economic-calendar', label: 'Economic Calendar', icon: <CalendarDays className="h-5 w-5" />, path: '/economic-calendar', category: 'Trading' },
+    { id: 'futures-calculator', label: 'Futures Calculator', icon: <PieChart className="h-5 w-5" />, path: '/futures-calculator', category: 'Trading' },
+    { id: 'crypto-calculator', label: 'Crypto Calculator', icon: <LineChart className="h-5 w-5" />, path: '/crypto-calculator', category: 'Trading' },
+    { id: 'currency-heatmap', label: 'Currency Heatmap', icon: <Gauge className="h-5 w-5" />, path: '/currency-heatmap', category: 'Trading' },
+    { id: 'trader-games', label: 'Trader Game Center', icon: <GamepadIcon className="h-5 w-5" />, path: '/trader-games', category: 'Trading' },
+    
+    // Utility Tools
+    { id: 'qr-code-generator', label: 'QR Code Generator', icon: <QrCode className="h-5 w-5" />, path: '/qr-code-generator', category: 'Utilities' },
+    { id: 'countdown-timer', label: 'Countdown Timer', icon: <Timer className="h-5 w-5" />, path: '/countdown-timer', category: 'Utilities' },
+    { id: 'character-counter', label: 'Character Counter', icon: <FileText className="h-5 w-5" />, path: '/character-counter', category: 'Utilities' },
+    { id: 'tip-calculator', label: 'Tip Calculator', icon: <Calculator className="h-5 w-5" />, path: '/tip-calculator', category: 'Utilities' },
+    { id: 'date-calculator', label: 'Date Calculator', icon: <Calendar className="h-5 w-5" />, path: '/date-calculator', category: 'Utilities' },
+    { id: 'random-generator', label: 'Random Generator', icon: <Dice6 className="h-5 w-5" />, path: '/random-generator', category: 'Utilities' },
   ];
 
   const handleNavClick = (section: string) => {
     setActiveSection(section);
   };
+
+  // Group items by category
+  const tradingTools = navItems.filter(item => item.category === 'Trading' || !item.category);
+  const utilityTools = navItems.filter(item => item.category === 'Utilities');
 
   return (
     <div className={`h-screen sticky top-0 glassmorphism overflow-y-auto transition-all duration-300 ${
@@ -76,7 +94,37 @@ const Sidebar: React.FC<SidebarProps> = ({
       
       <nav className="px-2">
         <ul className="space-y-1.5">
-          {navItems.map((item) => (
+          {/* Trading Tools Section */}
+          {!collapsed && (
+            <li className="px-3 py-2">
+              <h2 className="text-xs font-semibold text-muted-foreground">Trading Tools</h2>
+            </li>
+          )}
+          {tradingTools.map((item) => (
+            <li key={item.id}>
+              <Link
+                to={item.path}
+                onClick={() => handleNavClick(item.id)}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-300 ${
+                  activeSection === item.id
+                    ? 'bg-accent/20 text-accent neon-border neon-purple-glow'
+                    : 'hover:bg-secondary text-foreground/80 hover:text-foreground'
+                } ${collapsed ? 'justify-center' : ''}`}
+                aria-selected={activeSection === item.id}
+              >
+                {item.icon}
+                {!collapsed && <span className="text-sm">{item.label}</span>}
+              </Link>
+            </li>
+          ))}
+
+          {/* Utility Tools Section */}
+          {!collapsed && utilityTools.length > 0 && (
+            <li className="px-3 py-2 mt-4">
+              <h2 className="text-xs font-semibold text-muted-foreground">Utility Tools</h2>
+            </li>
+          )}
+          {utilityTools.map((item) => (
             <li key={item.id}>
               <Link
                 to={item.path}
