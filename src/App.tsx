@@ -21,13 +21,14 @@ import DisclaimerPage from "./pages/legal/DisclaimerPage";
 import ToolsPage from "./pages/ToolsPage";
 import EconomicCalendar from "./pages/EconomicCalendar";
 
-// Import new utility tool pages
+// Import utility tool pages
 import QRCodeGenerator from "./pages/utility-tools/QRCodeGenerator";
 import CountdownTimer from "./pages/utility-tools/CountdownTimer";
 import CharacterCounter from "./pages/utility-tools/CharacterCounter";
 import TipCalculator from "./pages/utility-tools/TipCalculator";
 import DateCalculator from "./pages/utility-tools/DateCalculator";
 import RandomGenerator from "./pages/utility-tools/RandomGenerator";
+import PasswordStrengthChecker from "./pages/utility-tools/PasswordStrengthChecker";
 
 const queryClient = new QueryClient();
 
@@ -57,13 +58,14 @@ const App = () => (
               <Route path="/calculators" element={<Calculators />} />
               <Route path="/trader-games" element={<Index activeSection="trader-games" />} />
               
-              {/* New Utility Tool Routes */}
+              {/* Utility Tool Routes */}
               <Route path="/qr-code-generator" element={<QRCodeGenerator />} />
               <Route path="/countdown-timer" element={<CountdownTimer />} />
               <Route path="/character-counter" element={<CharacterCounter />} />
               <Route path="/tip-calculator" element={<TipCalculator />} />
               <Route path="/date-calculator" element={<DateCalculator />} />
               <Route path="/random-generator" element={<RandomGenerator />} />
+              <Route path="/password-strength-checker" element={<PasswordStrengthChecker />} />
               
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />

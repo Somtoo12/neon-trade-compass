@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
   BarChart, Book, Clock, Gauge, LineChart, PieChart, Scale, Calculator, 
   Compass, GamepadIcon, CalendarDays, ClipboardCheck, ChevronLeft, 
-  ChevronRight, QrCode, Timer, FileText, Sliders, Calendar, Dice6
+  ChevronRight, QrCode, Timer, FileText, Sliders, Calendar, Dice6,
+  ShieldCheck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -51,6 +51,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: 'tip-calculator', label: 'Tip Calculator', icon: <Calculator className="h-5 w-5" />, path: '/tip-calculator', category: 'Utilities' },
     { id: 'date-calculator', label: 'Date Calculator', icon: <Calendar className="h-5 w-5" />, path: '/date-calculator', category: 'Utilities' },
     { id: 'random-generator', label: 'Random Generator', icon: <Dice6 className="h-5 w-5" />, path: '/random-generator', category: 'Utilities' },
+    { id: 'password-strength-checker', label: 'Password Checker', icon: <ShieldCheck className="h-5 w-5" />, path: '/password-strength-checker', category: 'Utilities' },
   ];
 
   const handleNavClick = (section: string) => {
