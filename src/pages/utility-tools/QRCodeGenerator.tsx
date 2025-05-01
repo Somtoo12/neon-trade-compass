@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
@@ -9,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { QrCode, Download, Link as LinkIcon, FileText, Trash, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
-import QRCode from 'qrcode.react';
+import { QRCodeCanvas } from 'qrcode.react';
 
 const QRCodeGenerator: React.FC = () => {
   const [text, setText] = useState('');
@@ -164,13 +163,12 @@ const QRCodeGenerator: React.FC = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     className="bg-white p-4 rounded-lg shadow-lg"
                   >
-                    <QRCode
+                    <QRCodeCanvas
                       id="qr-code-canvas"
                       value={text}
                       size={250}
                       level="H"
                       includeMargin={true}
-                      renderAs="canvas"
                     />
                   </motion.div>
                 ) : (
