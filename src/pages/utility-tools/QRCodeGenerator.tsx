@@ -6,13 +6,14 @@ import AppLayout from '@/components/layout/AppLayout';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { QrCode, Download, Link as LinkIcon, FileText, Trash } from 'lucide-react';
+import { QrCode, Download, Link as LinkIcon, FileText, Trash, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
+import QRCode from 'qrcode.react';
 
 const QRCodeGenerator: React.FC = () => {
   const [text, setText] = useState('');
-  const [qrCode, setQrCode] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
   const qrRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -25,15 +26,17 @@ const QRCodeGenerator: React.FC = () => {
       });
       return;
     }
-
-    // Using Google Charts API to generate QR code
-    const encodedText = encodeURIComponent(text);
-    const qrCodeUrl = `https://chart.googleapis.com/chart?cht=qr&chl=${encodedText}&chs=250x250&choe=UTF-8&chld=L|2`;
-    setQrCode(qrCodeUrl);
+    
+    setIsGenerating(true);
+    
+    // A small timeout to show the loading state (even though QR generation is fast)
+    setTimeout(() => {
+      setIsGenerating(false);
+    }, 500);
   };
 
   const downloadQR = () => {
-    if (!qrCode) {
+    if (!text) {
       toast({
         title: "No QR Code",
         description: "Generate a QR code first before downloading.",
@@ -42,22 +45,36 @@ const QRCodeGenerator: React.FC = () => {
       return;
     }
 
-    const link = document.createElement('a');
-    link.href = qrCode;
-    link.download = 'qrcode.png';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    toast({
-      title: "Success!",
-      description: "QR code downloaded successfully.",
-    });
+    try {
+      const canvas = document.getElementById('qr-code-canvas') as HTMLCanvasElement;
+      if (!canvas) {
+        throw new Error("QR code canvas not found");
+      }
+      
+      const dataUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = 'qrcode.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({
+        title: "Success!",
+        description: "QR code downloaded successfully.",
+      });
+    } catch (error) {
+      console.error("Download failed:", error);
+      toast({
+        title: "Download Failed",
+        description: "Failed to download the QR code. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const clearInput = () => {
     setText('');
-    setQrCode('');
   };
 
   // Detect if input is a URL
@@ -71,7 +88,7 @@ const QRCodeGenerator: React.FC = () => {
   };
 
   return (
-    <AppLayout activeSection="utilities" setActiveSection={() => {}}>
+    <AppLayout activeSection="qr-code-generator" setActiveSection={() => {}}>
       <Helmet>
         <title>QR Code Generator | PipCraft Tools</title>
         <meta name="description" content="Generate QR codes for URLs, text, and contact information with our free QR code generator tool. Download as PNG for easy sharing." />
@@ -116,13 +133,19 @@ const QRCodeGenerator: React.FC = () => {
                     <Button 
                       onClick={generateQR} 
                       className="min-h-[44px] bg-primary hover:bg-primary/90 flex-grow md:flex-grow-0"
+                      disabled={isGenerating}
                     >
-                      <QrCode className="mr-2 h-4 w-4" /> Generate
+                      {isGenerating ? (
+                        <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</>
+                      ) : (
+                        <><QrCode className="mr-2 h-4 w-4" /> Generate</>
+                      )}
                     </Button>
                     <Button 
                       variant="outline"
                       onClick={clearInput}
                       className="min-h-[44px] flex-grow md:flex-grow-0"
+                      disabled={!text}
                     >
                       <Trash className="mr-2 h-4 w-4" /> Clear
                     </Button>
@@ -131,13 +154,24 @@ const QRCodeGenerator: React.FC = () => {
               </div>
 
               <div className="mt-8 flex flex-col items-center justify-center" ref={qrRef}>
-                {qrCode ? (
+                {isGenerating ? (
+                  <div className="flex items-center justify-center py-12">
+                    <Loader2 className="h-12 w-12 animate-spin text-muted-foreground" />
+                  </div>
+                ) : text ? (
                   <motion.div 
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     className="bg-white p-4 rounded-lg shadow-lg"
                   >
-                    <img src={qrCode} alt="Generated QR Code" className="mx-auto" />
+                    <QRCode
+                      id="qr-code-canvas"
+                      value={text}
+                      size={250}
+                      level="H"
+                      includeMargin={true}
+                      renderAs="canvas"
+                    />
                   </motion.div>
                 ) : (
                   <div className="text-center p-8 border border-dashed border-border rounded-lg bg-card/30">
@@ -146,7 +180,7 @@ const QRCodeGenerator: React.FC = () => {
                   </div>
                 )}
 
-                {qrCode && (
+                {text && !isGenerating && (
                   <Button 
                     onClick={downloadQR}
                     className="mt-4 min-h-[44px]"
