@@ -7,6 +7,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { HelmetProvider } from 'react-helmet-async';
 
+import NotificationPopup from "./components/notifications/NotificationPopup";
+import NotificationBadge from "./components/notifications/NotificationBadge";
+
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Calculators from "./pages/Calculators";
@@ -50,6 +53,8 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <NotificationPopup />
+            <NotificationBadge />
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/focus-mode" element={<FocusMode />} />
