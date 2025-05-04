@@ -3,68 +3,30 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Music, Calculator, BellRing, Star } from 'lucide-react';
+import { ArrowRight, Search, Calculator, BellRing, Star } from 'lucide-react';
 import { BarChart2, LineChart, Calendar, Clock } from 'lucide-react';
-import { BrainCircuit, Smartphone } from 'lucide-react';
+import { BrainCircuit, Smartphone, Tool, BookOpen, Gamepad, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-
-// Tool grid data
-const toolGrid = [
-  { 
-    name: 'Pip Calculator', 
-    icon: Calculator, 
-    description: 'Calculate pips in forex trading', 
-    path: '/forex-calculator',
-    tooltip: 'Forex pip calculator for beginners'
-  },
-  { 
-    name: 'Risk Manager', 
-    icon: BarChart2, 
-    description: 'Smart position sizing', 
-    path: '/risk-management' 
-  },
-  { 
-    name: 'Max Lot Size', 
-    icon: LineChart, 
-    description: 'Optimal trade sizing', 
-    path: '/max-lot-size' 
-  },
-  { 
-    name: 'Calendar', 
-    icon: Calendar, 
-    description: 'Economic events', 
-    path: '/economic-calendar' 
-  },
-  { 
-    name: 'Blueprint', 
-    icon: BrainCircuit, 
-    description: 'Challenge planning', 
-    path: '/challenge-blueprint' 
-  },
-  { 
-    name: 'Session Clock', 
-    icon: Clock, 
-    description: 'Market hours', 
-    path: '/session-clock' 
-  },
-];
+import { Input } from '@/components/ui/input';
+import { toolCategories } from '@/data/toolCategories';
+import { SearchBar } from '../search/SearchBar';
 
 const HeroSection: React.FC = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const [typerText, setTyperText] = useState("Loading Pip Calculator...");
+  const [typerText, setTyperText] = useState("Loading Tools...");
   const [audioPlaying, setAudioPlaying] = useState(false);
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     // Create typing animation sequence
     const texts = [
-      "Loading Pip Calculator...",
-      "Booting Risk AI...",
-      "Initializing Trade Blueprint...",
-      "Your Complete Trading Control Hub."
+      "Loading Tools...",
+      "Exploring Calculators...",
+      "Finding Productivity Tools...",
+      "Smarter tools for trading, life, learning, productivity, and beyond."
     ];
     
     let currentIndex = 0;
@@ -111,35 +73,8 @@ const HeroSection: React.FC = () => {
     window.prompt(`Use ${key}+D to bookmark this site in your browser`, document.title);
   };
   
-  const toggleFocusMode = () => {
-    if (!audioRef.current) return;
-    
-    if (audioPlaying) {
-      audioRef.current.pause();
-      toast({
-        title: "Focus Mode Disabled",
-        description: "Audio playback stopped",
-        duration: 2000,
-      });
-    } else {
-      audioRef.current.play().catch(() => {
-        toast({
-          title: "Playback Error",
-          description: "Unable to play audio automatically",
-          variant: "destructive",
-        });
-      });
-      toast({
-        title: "Focus Mode Enabled",
-        description: "Playing trading focus playlist",
-        duration: 2000,
-      });
-    }
-    setAudioPlaying(!audioPlaying);
-  };
-
   return (
-    <div className="relative min-h-[85vh] flex items-center justify-center px-4 md:px-6 overflow-hidden bg-background">
+    <div className="relative min-h-[90vh] flex items-center justify-center px-4 md:px-6 overflow-hidden bg-background">
       <div className="w-full max-w-7xl mx-auto relative z-10 pt-16 md:pt-20">
         <div className="absolute inset-0 opacity-10" style={{
           backgroundImage: `linear-gradient(to right, var(--neon-purple) 1px, transparent 1px),
@@ -149,14 +84,14 @@ const HeroSection: React.FC = () => {
           transformOrigin: 'center top'
         }} />
 
-        <div className="relative z-20 text-center space-y-4 md:space-y-6 px-4">
+        <div className="relative z-20 text-center space-y-6 md:space-y-8 px-4">
           <motion.h1 
             className="text-4xl md:text-5xl lg:text-7xl font-bold font-poppins tracking-tight"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
             <span className="bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent">
-              PipCraft
+              Explore Tools That Make Life Easier
             </span>
           </motion.h1>
 
@@ -166,7 +101,7 @@ const HeroSection: React.FC = () => {
             animate={{ opacity: 1 }}
           >
             {typerText}
-            {typerText !== "Your Complete Trading Control Hub." && (
+            {typerText !== "Smarter tools for trading, life, learning, productivity, and beyond." && (
               <motion.span
                 animate={{ opacity: [1, 0, 1] }}
                 transition={{ duration: 0.8, repeat: Infinity }}
@@ -174,13 +109,18 @@ const HeroSection: React.FC = () => {
             )}
           </motion.p>
 
+          {/* Search Bar */}
+          <div className="max-w-2xl mx-auto w-full">
+            <SearchBar />
+          </div>
+
           <div className="flex flex-col sm:flex-row justify-center gap-3 px-4">
             <Link to="/tools" className="w-full sm:w-auto">
               <Button 
                 size="lg"
                 className="w-full sm:w-auto bg-gradient-to-r from-[#7C3AED] to-[#6366F1] hover:opacity-90 transition-opacity min-h-[44px]"
               >
-                Explore PipCraft
+                Browse All Tools
                 <ArrowRight className="ml-2" />
               </Button>
             </Link>
@@ -191,8 +131,8 @@ const HeroSection: React.FC = () => {
                 size="lg"
                 className="w-full sm:w-auto border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm min-h-[44px]"
               >
-                <Music className="mr-2" />
-                Focus Mode
+                <BellRing className="mr-2" />
+                Get Notified on New Drops
               </Button>
             </Link>
 
@@ -206,36 +146,11 @@ const HeroSection: React.FC = () => {
                     className="hidden md:inline-flex w-full sm:w-auto border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm min-h-[44px]"
                   >
                     <Star className="mr-2 h-4 w-4" />
-                    Bookmark on Desktop
+                    Save for Later
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Add PipCraft to your desktop for quick access</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-            <TooltipProvider delayDuration={300}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <a
-                    href="https://t.me/pipcraftstelegram"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full sm:w-auto"
-                  >
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="w-full sm:w-auto bg-gradient-to-r from-[#ea384c] to-[#F97316] hover:opacity-90 text-white border-none min-h-[44px]"
-                    >
-                      <BellRing className="mr-2 h-4 w-4" />
-                      Red Folder News Alerts
-                    </Button>
-                  </a>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Join our Telegram channel for market alerts</p>
+                  <p>Add PipCraft to your desktop for quick access to free tools</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -261,38 +176,54 @@ const HeroSection: React.FC = () => {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Tap here to save PipCraft on your phone's home screen</p>
+                    <p>Tap here to save PipCraft on your phone's home screen for easy access to all tools</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </motion.div>
           )}
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto mt-8 px-3">
-            {toolGrid.map((tool, index) => (
-              <motion.div
-                key={tool.name}
-                className="group relative p-4 md:p-6 rounded-xl backdrop-blur-sm bg-black/20 border border-white/10 transition-all hover:bg-black/30 h-full"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ scale: 1.02 }}
-              >
-                <Link to={tool.path} className="absolute inset-0 z-10">
-                  <span className="sr-only">Go to {tool.name}</span>
-                </Link>
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-neon-purple/5 to-neon-blue/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                
-                {/* Replace the title prop with aria-label for accessibility */}
-                <tool.icon 
-                  className="w-6 h-6 md:w-8 md:h-8 mb-2 md:mb-3 text-accent"
-                  aria-label={tool.tooltip || `${tool.name} - ${tool.description}`}
-                />
-                
-                <h3 className="text-sm md:text-base font-medium mb-1">{tool.name}</h3>
-                <p className="text-xs md:text-sm text-foreground/60">{tool.description}</p>
-              </motion.div>
-            ))}
+          {/* Tool Count Tracker */}
+          <div className="w-full flex justify-center mt-8">
+            <motion.div 
+              className="px-4 py-2 rounded-full bg-accent/10 backdrop-blur-sm border border-accent/20 inline-flex items-center gap-2"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <span className="text-sm font-medium text-accent">27 Tools and Counting...</span>
+              <span className="px-2 py-0.5 text-xs rounded-full bg-neon-green/20 text-neon-green">+2 New This Week</span>
+            </motion.div>
+          </div>
+
+          {/* Floating tool icons animation */}
+          <div className="relative h-16 md:h-24 mt-8 overflow-hidden">
+            <div className="flex justify-center gap-4 md:gap-8 absolute inset-0">
+              {[Calculator, BarChart2, Calendar, LineChart, Clock, BrainCircuit].map((Icon, index) => (
+                <motion.div 
+                  key={index}
+                  className="relative"
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ 
+                    y: [0, -10, 0], 
+                    opacity: 1 
+                  }}
+                  transition={{ 
+                    y: { 
+                      repeat: Infinity, 
+                      duration: 2 + index * 0.2, 
+                      ease: "easeInOut",
+                      delay: index * 0.1
+                    },
+                    opacity: { duration: 0.5, delay: index * 0.1 }
+                  }}
+                >
+                  <div className="p-3 md:p-4 rounded-xl bg-background/30 backdrop-blur-sm border border-accent/20 shadow-lg">
+                    <Icon className="w-6 h-6 md:w-8 md:h-8 text-accent" aria-label="Tool icon" />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

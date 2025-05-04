@@ -8,14 +8,13 @@ import { Link } from 'react-router-dom';
 // Import home page components
 import AppHeader from '@/components/home/AppHeader';
 import HeroSection from '@/components/home/HeroSection';
-import EverydayTools from '@/components/home/EverydayTools';
-import ToolShowcase from '@/components/home/ToolShowcase';
-import ToolCategories from '@/components/home/ToolCategories';
-import FeaturedTools from '@/components/home/FeaturedTools';
-import GameCenter from '@/components/home/GameCenter';
+import FeaturedCategories from '@/components/home/FeaturedCategories';
+import PopularTools from '@/components/home/PopularTools';
+import UserTestimonials from '@/components/home/UserTestimonials';
+import TrustSection from '@/components/home/TrustSection';
+import EmailCapture from '@/components/home/EmailCapture';
 import Footer from '@/components/home/Footer';
 import ScrollToTop from '@/components/home/ScrollToTop';
-import BookmarkButtons from '@/components/home/BookmarkButtons';
 
 const HomePage: React.FC = () => {
   // Force HTTPS for consistent access
@@ -33,37 +32,32 @@ const HomePage: React.FC = () => {
   return (
     <>
       <SEO 
-        title="PipCraft – Free Trading Command Center for Forex, Crypto and Futures Traders"
-        description="Discover unique, all-in-one forex, crypto, and futures trading tools: advanced pip calculators, smart risk management, prop firm sizing, journals, and more. Built for ambitious traders."
+        title="PipCraft – Free Tools for Trading, Productivity, and Beyond"
+        description="Discover smarter tools for trading, life, learning, productivity, and beyond. Pip calculators, password strength checkers, countdown timers, word counters, and more - all free without signup."
         keywords="forex pip calculator for beginners, password strength checker online free, online countdown timer with alarm, online word counter free tool"
         canonical="https://pipcrafts.com/"
       />
-      {/* Developer note: If you add images to this page, compress them and ALWAYS provide meaningful alt text for SEO + accessibility. */}
-      {/* Content last updated: {new Date().toISOString().split('T')[0]} */}
       <div className="min-h-screen bg-background text-foreground overflow-hidden">
         <ScrollToTop />
         <AppHeader />
         
-        {/* Hero Section - Redesigned with space theme */}
+        {/* Hero Section - Modern design with search functionality */}
         <HeroSection />
 
-        {/* New Everyday Tools Section */}
-        <EverydayTools />
+        {/* Featured Categories Grid */}
+        <FeaturedCategories />
 
-        {/* Tool Showcase - Auto-scrolling Banner */}
-        <ToolShowcase />
+        {/* Popular Tools Carousel / Grid */}
+        <PopularTools />
 
-        {/* Bookmark Functionality */}
-        <BookmarkButtons />
+        {/* User Testimonials */}
+        <UserTestimonials />
 
-        {/* Tool Categories */}
-        <ToolCategories />
+        {/* Trust Section */}
+        <TrustSection />
 
-        {/* Featured Tools */}
-        <FeaturedTools />
-
-        {/* Game Center Teaser */}
-        <GameCenter />
+        {/* Email Capture / Newsletter */}
+        <EmailCapture />
 
         {/* Footer */}
         <Footer />
