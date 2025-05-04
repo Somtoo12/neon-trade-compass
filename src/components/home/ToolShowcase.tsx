@@ -22,8 +22,9 @@ const tools = [
   {
     name: 'Forex Pip Calculator',
     icon: <Calculator className="h-6 w-6 text-neon-green" />,
-    summary: 'Calculate pip values for any position size',
-    path: '/forex-calculator'
+    summary: 'Calculate pip values for beginners and pros alike',
+    path: '/forex-calculator',
+    altText: 'Forex pip calculator for beginners - Calculate pip value with lot size'
   },
   {
     name: 'Risk Management',
@@ -76,8 +77,9 @@ const tools = [
   {
     name: 'Crypto Calculator',
     icon: <Bitcoin className="h-6 w-6 text-neon-green" />,
-    summary: 'Optimize your crypto positions',
-    path: '/crypto-calculator'
+    summary: 'Optimize your pip calculator for crypto trading',
+    path: '/crypto-calculator',
+    altText: 'Pip calculator for crypto trading - Calculate cryptocurrency position sizes'
   },
   {
     name: 'Currency Heatmap',
@@ -132,7 +134,7 @@ const ToolShowcase: React.FC = () => {
                       <div className="p-6 flex flex-col h-full justify-between">
                         <div>
                           <div className="mb-3 flex justify-center">
-                            <div className="p-3 rounded-full bg-accent/10">
+                            <div className="p-3 rounded-full bg-accent/10" title={tool.altText || tool.name}>
                               {tool.icon}
                             </div>
                           </div>

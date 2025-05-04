@@ -15,7 +15,8 @@ const featuredTools = [
     path: '/max-lot-size',
     badge: '🔥 Most Used',
     color: 'from-neon-green to-neon-blue',
-    stat: '2,500+ daily calculations'
+    stat: '2,500+ daily calculations',
+    tooltip: 'Pip calculator with lot size and leverage input'
   },
   {
     name: 'Trade Journal',
@@ -71,7 +72,7 @@ const FeaturedTools: React.FC = () => {
               transition={{ duration: 0.5, delay: 0.1 * index }}
               className="h-full"
             >
-              <Link to={tool.path} className="block h-full">
+              <Link to={tool.path} className="block h-full" title={tool.tooltip || tool.name}>
                 <Card className={`h-full bg-card/50 backdrop-blur-sm overflow-hidden relative group border-0 shadow-lg`}>
                   <div className={`absolute inset-0 opacity-20 bg-gradient-to-br ${tool.color} group-hover:opacity-30 transition-opacity duration-300`}></div>
                   <div className={`absolute inset-0 opacity-10 border-2 border-transparent bg-clip-padding group-hover:border-gradient-${index}`} style={{

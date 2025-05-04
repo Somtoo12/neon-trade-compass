@@ -35,6 +35,7 @@ const HomePage: React.FC = () => {
       <SEO 
         title="PipCraft – Free Trading Command Center for Forex, Crypto and Futures Traders"
         description="Discover unique, all-in-one forex, crypto, and futures trading tools: advanced pip calculators, smart risk management, prop firm sizing, journals, and more. Built for ambitious traders."
+        keywords="forex pip calculator for beginners, password strength checker online free, online countdown timer with alarm, online word counter free tool"
         canonical="https://pipcrafts.com/"
       />
       {/* Developer note: If you add images to this page, compress them and ALWAYS provide meaningful alt text for SEO + accessibility. */}

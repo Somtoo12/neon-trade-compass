@@ -12,12 +12,43 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 // Tool grid data
 const toolGrid = [
-  { name: 'Pip Calculator', icon: Calculator, description: 'Fast forex calculations', path: '/forex-calculator' },
-  { name: 'Risk Manager', icon: BarChart2, description: 'Smart position sizing', path: '/risk-management' },
-  { name: 'Max Lot Size', icon: LineChart, description: 'Optimal trade sizing', path: '/max-lot-size' },
-  { name: 'Calendar', icon: Calendar, description: 'Economic events', path: '/economic-calendar' },
-  { name: 'Blueprint', icon: BrainCircuit, description: 'Challenge planning', path: '/challenge-blueprint' },
-  { name: 'Session Clock', icon: Clock, description: 'Market hours', path: '/session-clock' },
+  { 
+    name: 'Pip Calculator', 
+    icon: Calculator, 
+    description: 'Calculate pips in forex trading', 
+    path: '/forex-calculator',
+    tooltip: 'Forex pip calculator for beginners'
+  },
+  { 
+    name: 'Risk Manager', 
+    icon: BarChart2, 
+    description: 'Smart position sizing', 
+    path: '/risk-management' 
+  },
+  { 
+    name: 'Max Lot Size', 
+    icon: LineChart, 
+    description: 'Optimal trade sizing', 
+    path: '/max-lot-size' 
+  },
+  { 
+    name: 'Calendar', 
+    icon: Calendar, 
+    description: 'Economic events', 
+    path: '/economic-calendar' 
+  },
+  { 
+    name: 'Blueprint', 
+    icon: BrainCircuit, 
+    description: 'Challenge planning', 
+    path: '/challenge-blueprint' 
+  },
+  { 
+    name: 'Session Clock', 
+    icon: Clock, 
+    description: 'Market hours', 
+    path: '/session-clock' 
+  },
 ];
 
 const HeroSection: React.FC = () => {
@@ -251,7 +282,10 @@ const HeroSection: React.FC = () => {
                   <span className="sr-only">Go to {tool.name}</span>
                 </Link>
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-neon-purple/5 to-neon-blue/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <tool.icon className="w-6 h-6 md:w-8 md:h-8 mb-2 md:mb-3 text-accent" />
+                <tool.icon 
+                  className="w-6 h-6 md:w-8 md:h-8 mb-2 md:mb-3 text-accent" 
+                  title={tool.tooltip || `${tool.name} - ${tool.description}`}
+                />
                 <h3 className="text-sm md:text-base font-medium mb-1">{tool.name}</h3>
                 <p className="text-xs md:text-sm text-foreground/60">{tool.description}</p>
               </motion.div>

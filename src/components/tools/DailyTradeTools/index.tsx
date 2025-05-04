@@ -12,7 +12,7 @@ const DailyTradeTools: React.FC = () => {
           Plan. Trade. Protect Your Capital.
         </h2>
         <p className="text-xs md:text-sm text-muted-foreground">
-          Daily discipline tools to keep your trading on track
+          Daily discipline tools with countdown timer for trading sessions
         </p>
       </div>
       
@@ -34,7 +34,7 @@ const DailyTradeTools: React.FC = () => {
               <span>⏰ Kill Zones Clock</span>
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-3 md:p-6 pt-2">
+          <CardContent className="p-3 md:p-6 pt-2" title="Online countdown timer with alarm for trading sessions">
             <KillZonesClock />
           </CardContent>
         </Card>

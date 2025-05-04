@@ -68,7 +68,7 @@ const ForexCalculator = () => {
           Forex Pip Value Calculator
         </h2>
         <p className="text-xs md:text-sm text-muted-foreground">
-          Calculate exact pip values for precise position sizing
+          Calculate exact pip values for precise position sizing and learn how to calculate pips in forex trading
         </p>
       </div>
 
@@ -77,6 +77,7 @@ const ForexCalculator = () => {
         <div 
           ref={calculatorRef} 
           className="calculator-container min-h-[400px] flex items-center justify-center overflow-x-auto w-full"
+          title="Forex pip calculator for beginners - Calculate pip value with lot size"
         >
           <div className="text-muted-foreground flex flex-col items-center">
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mb-2"></div>
@@ -89,7 +90,7 @@ const ForexCalculator = () => {
           <h2 className="text-2xl font-bold mb-6">How to Use Our Forex Pip Value Calculator to Improve Your Trading Precision</h2>
           
           <p className="mb-4">
-            When it comes to successful forex trading, understanding your pip value is one of the most important factors. Every pip movement can mean the difference between making a profit or experiencing a loss. That's why we've made it easy for you with our free, intuitive Forex Pip Value Calculator.
+            When it comes to successful forex trading, understanding your pip value is one of the most important factors. Every pip movement can mean the difference between making a profit or experiencing a loss. That's why we've made it easy for you with our free, intuitive Forex Pip Calculator for beginners.
           </p>
 
           <p className="mb-6">
@@ -112,19 +113,19 @@ const ForexCalculator = () => {
             For instance, if you're trading EUR/USD and your pip value is $10 per pip at a standard lot size, every 10-pip movement could equal a $100 profit or loss. Without knowing your pip value in advance, you risk exposing your account to unintended volatility.
           </p>
 
-          <h3 className="text-xl font-bold mb-4">How to Use the PipCraft Pip Value Calculator</h3>
+          <h3 className="text-xl font-bold mb-4">How to Calculate Pips in Forex Trading</h3>
           <p className="mb-4">Our calculator was built with simplicity and speed in mind. Here's how to use it:</p>
 
           <ol className="list-decimal pl-6 mb-6">
             <li className="mb-2">Select Your Currency Pair: Choose the forex pair you are planning to trade, such as EUR/USD, GBP/JPY, or USD/CHF.</li>
-            <li className="mb-2">Enter Your Lot Size: Specify the size of your trade (standard, mini, or micro lots). Even a small difference in lot size can drastically change your pip value.</li>
+            <li className="mb-2">Enter Your Lot Size: Specify the size of your trade (standard, mini, or micro lots). Our pip calculator for micro lots ensures precision even with smaller positions.</li>
             <li className="mb-2">Input Entry and Exit Prices: Although pip value is primarily based on lot size and currency pair, providing entry and exit prices ensures the tool is tailored to your specific trade idea.</li>
             <li>Click Calculate: Instantly receive the pip value result in your account's base currency, allowing you to adjust your risk accordingly before executing the trade.</li>
           </ol>
 
           <p className="mb-6">This simple, fast process ensures that every trade you make is backed by solid numbers, not guesswork.</p>
 
-          <h3 className="text-xl font-bold mb-4">Why Choose PipCraft's Forex Pip Calculator?</h3>
+          <h3 className="text-xl font-bold mb-4">Why Choose PipCraft's Forex Pip Calculator</h3>
           <p className="mb-4">While there are many pip calculators available online, PipCraft's calculator is uniquely optimized for speed, clarity, and user-friendliness. Here's why traders trust it:</p>
 
           <ul className="list-disc pl-6 mb-6">
@@ -138,6 +139,11 @@ const ForexCalculator = () => {
             Many successful traders know that precision in trading starts long before entering a trade. With PipCraft's pip calculator, you gain that precision every time you plan a new position.
           </p>
 
+          <h3 className="text-xl font-bold mb-4">Pip Calculator for Different Currency Pairs</h3>
+          <p className="mb-6">
+            Different currency pairs have different pip values. For example, the pip value for EUR/USD will be different from USD/JPY or GBP/USD. Our calculator automatically adjusts for these differences, making it easy to compare potential profits or losses across different currency pairs.
+          </p>
+
           <h3 className="text-xl font-bold mb-4">Trading Examples Using Pip Value</h3>
           <p className="mb-6">
             Let's say you are trading GBP/USD with a 0.10 lot size (a mini lot). If your calculated pip value is $1 per pip, a 50-pip gain would result in a $50 profit. Similarly, a 20-pip loss would mean a $20 loss.
@@ -145,6 +151,15 @@ const ForexCalculator = () => {
 
           <p className="mb-6">
             Without a pip calculator, you might underestimate or overestimate your exposure, leading to poor risk management. Smart traders always know their numbers first—and that's exactly what our tool helps you achieve.
+          </p>
+
+          <h3 className="text-xl font-bold mb-4">Forex Pip Calculator for Day Trading</h3>
+          <p className="mb-4">
+            Day traders in particular need to quickly calculate pip values as they enter and exit multiple positions throughout the trading session. Our calculator is perfect for day trading scenarios where speed and accuracy are crucial.
+          </p>
+
+          <p className="mb-4">
+            For day traders who use scalping strategies, even small pip movements can add up to significant profits or losses. Our pip calculator for scalping strategy helps you determine exactly how much each pip is worth, allowing you to set precise take-profit and stop-loss levels.
           </p>
 
           <h3 className="text-xl font-bold mb-4">Final Thoughts: Master Your Trading with Precision</h3>
@@ -159,6 +174,24 @@ const ForexCalculator = () => {
           <p>
             Bookmark this page now, and make our Pip Value Calculator your go-to resource for every trade you take!
           </p>
+
+          <div className="mt-8 bg-accent/10 p-4 rounded-lg">
+            <h4 className="text-lg font-semibold mb-2">Frequently Asked Questions</h4>
+            <div className="space-y-4">
+              <div>
+                <h5 className="font-medium">How do I calculate pip value manually?</h5>
+                <p className="text-sm text-muted-foreground">
+                  To calculate pip value manually, you need to know your lot size, account currency, and the currency pair you're trading. For standard USD pairs, a standard lot (100,000 units) has a pip value of $10, a mini lot (10,000 units) equals $1 per pip, and a micro lot (1,000 units) is worth $0.10 per pip.
+                </p>
+              </div>
+              <div>
+                <h5 className="font-medium">Is the pip calculator suitable for forex trading beginners?</h5>
+                <p className="text-sm text-muted-foreground">
+                  Yes, our forex pip calculator for beginners is designed to be intuitive and easy to use, making it perfect for those who are just starting their trading journey. Simply enter your lot size and currency pair to get instant results.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </Card>
     </div>

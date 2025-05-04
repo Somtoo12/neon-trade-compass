@@ -42,7 +42,11 @@ const EverydayTools: React.FC = () => {
               transition={{ delay: index * 0.1 }}
               whileHover={{ scale: 1.02 }}
             >
-              <Link to={tool.path} className="block p-4 md:p-5 h-full">
+              <Link 
+                to={tool.path} 
+                className="block p-4 md:p-5 h-full"
+                title={tool.shortDescription || tool.description}
+              >
                 <div className="flex flex-col h-full">
                   <div className="bg-secondary/50 p-3 rounded-lg w-fit mb-3">
                     <tool.icon className="h-5 w-5 text-primary" />

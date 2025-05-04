@@ -28,8 +28,8 @@ export const utilityToolsData: UtilityTool[] = [
   {
     id: 'countdown-timer',
     name: 'Countdown Timer',
-    description: 'Set a target date and time to see a live countdown',
-    shortDescription: 'Set a date/time for live countdown',
+    description: 'Online countdown timer with alarm for important events',
+    shortDescription: 'Online countdown timer with sound alert',
     path: '/countdown-timer',
     category: 'Utilities',
     icon: Clock
@@ -37,7 +37,7 @@ export const utilityToolsData: UtilityTool[] = [
   {
     id: 'character-counter',
     name: 'Character Counter',
-    description: 'Count characters, words, and paragraphs in your text in real-time',
+    description: 'Online word counter free tool for text analysis',
     shortDescription: 'Count characters, words & paragraphs',
     path: '/character-counter',
     category: 'Utilities',
@@ -73,8 +73,8 @@ export const utilityToolsData: UtilityTool[] = [
   {
     id: 'password-strength-checker',
     name: 'Password Strength Checker',
-    description: 'Check how strong your password is based on length, complexity, and security factors',
-    shortDescription: 'Analyze password security strength',
+    description: 'Password strength checker online free for security analysis',
+    shortDescription: 'Check password strength tool with recommendations',
     path: '/password-strength-checker',
     category: 'Utilities',
     icon: ShieldCheck
@@ -99,9 +99,9 @@ export const utilityToolsData: UtilityTool[] = [
   },
   {
     id: 'grade-calculator',
-    name: 'Grade Calculator',
-    description: 'Calculate weighted grade averages and determine your letter grade easily',
-    shortDescription: 'Calculate weighted grades & GPA',
+    name: 'GPA Calculator',
+    description: 'GPA calculator for Nigerian universities and international institutions',
+    shortDescription: 'Calculate GPA with credit units input',
     path: '/grade-calculator',
     category: 'Utilities',
     icon: Award
