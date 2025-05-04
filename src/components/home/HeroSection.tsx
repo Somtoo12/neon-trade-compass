@@ -282,10 +282,13 @@ const HeroSection: React.FC = () => {
                   <span className="sr-only">Go to {tool.name}</span>
                 </Link>
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-neon-purple/5 to-neon-blue/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                
+                {/* Replace the title prop with aria-label for accessibility */}
                 <tool.icon 
-                  className="w-6 h-6 md:w-8 md:h-8 mb-2 md:mb-3 text-accent" 
-                  title={tool.tooltip || `${tool.name} - ${tool.description}`}
+                  className="w-6 h-6 md:w-8 md:h-8 mb-2 md:mb-3 text-accent"
+                  aria-label={tool.tooltip || `${tool.name} - ${tool.description}`}
                 />
+                
                 <h3 className="text-sm md:text-base font-medium mb-1">{tool.name}</h3>
                 <p className="text-xs md:text-sm text-foreground/60">{tool.description}</p>
               </motion.div>
