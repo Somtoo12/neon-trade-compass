@@ -55,12 +55,14 @@ const EmailCapture: React.FC = () => {
   };
 
   return (
-    <section className="w-full py-16 px-4 md:px-6">
+    <section id="email-capture" className="w-full py-16 px-4 md:px-6">
       <div className="max-w-4xl mx-auto">
         <motion.div
           className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-accent/20 to-background border border-accent/20 p-8 md:p-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
         >
           {/* Background grid effect */}
           <div className="absolute inset-0 opacity-10" style={{

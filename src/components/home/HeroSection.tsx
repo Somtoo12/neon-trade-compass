@@ -73,6 +73,13 @@ const HeroSection: React.FC = () => {
     window.prompt(`Use ${key}+D to bookmark this site in your browser`, document.title);
   };
   
+  const scrollToEmailSection = () => {
+    const emailSection = document.getElementById('email-capture');
+    if (emailSection) {
+      emailSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+  
   return (
     <div className="relative min-h-[90vh] flex items-center justify-center px-4 md:px-6 overflow-hidden bg-background">
       <div className="w-full max-w-7xl mx-auto relative z-10 pt-24 md:pt-36">
@@ -125,16 +132,15 @@ const HeroSection: React.FC = () => {
               </Button>
             </Link>
             
-            <Link to="/focus-mode" className="w-full sm:w-auto">
-              <Button
-                variant="outline"
-                size="lg"
-                className="w-full sm:w-auto border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm min-h-[44px]"
-              >
-                <BellRing className="mr-2" />
-                Get Notified on New Drops
-              </Button>
-            </Link>
+            <Button
+              variant="outline"
+              size="lg"
+              className="w-full sm:w-auto border-accent/50 hover:border-accent bg-background/50 backdrop-blur-sm min-h-[44px]"
+              onClick={scrollToEmailSection}
+            >
+              <BellRing className="mr-2" />
+              Get Notified on New Drops
+            </Button>
 
             <TooltipProvider delayDuration={300}>
               <Tooltip>
