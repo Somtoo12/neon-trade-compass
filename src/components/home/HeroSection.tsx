@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Search, Calculator, BellRing, Star } from 'lucide-react';
 import { BarChart2, LineChart, Calendar, Clock } from 'lucide-react';
-import { BrainCircuit, Smartphone, Tool, BookOpen, Gamepad, ChevronRight } from 'lucide-react';
+import { BrainCircuit, Smartphone, BookOpen, Gamepad, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -219,7 +218,7 @@ const HeroSection: React.FC = () => {
                   }}
                 >
                   <div className="p-3 md:p-4 rounded-xl bg-background/30 backdrop-blur-sm border border-accent/20 shadow-lg">
-                    <Icon className="w-6 h-6 md:w-8 md:h-8 text-accent" aria-label="Tool icon" />
+                    <Icon className="w-6 h-6 md:w-8 md:h-8 text-accent" aria-label={`Tool icon ${index + 1}`} />
                   </div>
                 </motion.div>
               ))}
