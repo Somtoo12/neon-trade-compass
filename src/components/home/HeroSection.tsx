@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -74,7 +75,7 @@ const HeroSection: React.FC = () => {
   
   return (
     <div className="relative min-h-[90vh] flex items-center justify-center px-4 md:px-6 overflow-hidden bg-background">
-      <div className="w-full max-w-7xl mx-auto relative z-10 pt-16 md:pt-20">
+      <div className="w-full max-w-7xl mx-auto relative z-10 pt-24 md:pt-36">
         <div className="absolute inset-0 opacity-10" style={{
           backgroundImage: `linear-gradient(to right, var(--neon-purple) 1px, transparent 1px),
             linear-gradient(to bottom, var(--neon-purple) 1px, transparent 1px)`,
