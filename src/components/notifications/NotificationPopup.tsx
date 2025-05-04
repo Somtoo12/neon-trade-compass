@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Bell } from 'lucide-react';
+import { X, Bell, CheckCircle, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,6 @@ import { useTheme } from '@/hooks/use-theme';
 
 const NotificationPopup: React.FC = () => {
   const [email, setEmail] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const { toast } = useToast();
   const { theme } = useTheme();
@@ -20,7 +19,8 @@ const NotificationPopup: React.FC = () => {
     showPrompt, 
     dismissPrompt, 
     submitEmail, 
-    isSubscribed 
+    isSubscribed,
+    isSubmitting
   } = useNotificationPrompt();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,8 +37,6 @@ const NotificationPopup: React.FC = () => {
       return;
     }
     
-    setIsSubmitting(true);
-    
     try {
       await submitEmail(email);
       setIsSuccess(true);
@@ -52,13 +50,8 @@ const NotificationPopup: React.FC = () => {
         setIsSuccess(false);
       }, 2000);
     } catch (error) {
-      toast({
-        title: "Something went wrong",
-        description: "Unable to submit email. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
+      // Error will be handled by the hook with toast
+      console.error("Error submitting email:", error);
     }
   };
 
@@ -104,8 +97,17 @@ const NotificationPopup: React.FC = () => {
                       disabled={isSubmitting}
                       className="flex items-center gap-2"
                     >
-                      <Bell size={16} />
-                      Notify Me
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 size={16} className="animate-spin" />
+                          Submitting...
+                        </>
+                      ) : (
+                        <>
+                          <Bell size={16} />
+                          Notify Me
+                        </>
+                      )}
                     </Button>
                   </div>
                   <div className="flex justify-center pt-2">
@@ -114,6 +116,7 @@ const NotificationPopup: React.FC = () => {
                       variant="ghost" 
                       onClick={dismissPrompt}
                       className="text-muted-foreground hover:text-foreground"
+                      disabled={isSubmitting}
                     >
                       <X size={16} className="mr-2" /> Not Now
                     </Button>
@@ -122,7 +125,7 @@ const NotificationPopup: React.FC = () => {
               ) : (
                 <div className="flex flex-col items-center justify-center py-6 space-y-4">
                   <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Bell className="text-primary h-6 w-6" />
+                    <CheckCircle className="text-primary h-6 w-6" />
                   </div>
                   <p className="text-center font-medium">Thank you for subscribing!</p>
                 </div>
