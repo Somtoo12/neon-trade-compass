@@ -3,8 +3,9 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { BellRing, CheckCircle, AlertCircle } from 'lucide-react';
+import { BellRing, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from "@/integrations/supabase/client";
 
 const EmailCapture: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -28,9 +29,54 @@ const EmailCapture: React.FC = () => {
     setLoading(true);
     
     try {
-      // Note: Assume this is connected to Supabase already as per requirements
-      // This would normally make an API call to your backend
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network request
+      // Generate simple fingerprint for duplicate detection
+      const fingerprint = btoa(`${navigator.userAgent}-${window.screen.width}-${window.screen.height}`);
+      
+      // Try to get client IP (this may not work in all environments)
+      let ipAddress = undefined;
+      try {
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        if (ipResponse.ok) {
+          const ipData = await ipResponse.json();
+          ipAddress = ipData.ip;
+        }
+      } catch (error) {
+        console.log('Could not fetch IP address, continuing without it');
+      }
+      
+      // Insert email into Supabase
+      const { data, error } = await supabase
+        .from('early_access_emails')
+        .insert([
+          { 
+            email,
+            fingerprint,
+            ip_address: ipAddress,
+            user_agent: navigator.userAgent
+          }
+        ]);
+      
+      if (error) {
+        console.error("Supabase error:", error);
+        
+        // Check if it's a duplicate email error (code 23505 is PostgreSQL's unique constraint violation)
+        if (error.code === '23505') {
+          toast({
+            title: "You're already subscribed!",
+            description: "This email is already on our notification list.",
+          });
+          // We still consider this a success
+          setSubscribed(true);
+          setEmail('');
+          return;
+        }
+        
+        throw new Error(error.message);
+      }
+      
+      // Save to local storage for client-side reference
+      localStorage.setItem('notificationSubscribed', 'true');
+      localStorage.setItem('notificationEmail', email);
       
       // Show success notification
       toast({
@@ -42,7 +88,7 @@ const EmailCapture: React.FC = () => {
       setSubscribed(true);
       setEmail('');
       
-    } catch (error) {
+    } catch (error: any) {
       console.error("Subscription error:", error);
       toast({
         title: "Subscription failed",
@@ -91,6 +137,7 @@ const EmailCapture: React.FC = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     className="min-w-[240px] bg-background/50"
                     required
+                    disabled={loading}
                   />
                   <Button 
                     type="submit" 
@@ -98,7 +145,10 @@ const EmailCapture: React.FC = () => {
                     className="bg-accent hover:bg-accent/90"
                   >
                     {loading ? (
-                      <>Loading...</>
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span>Saving...</span>
+                      </div>
                     ) : (
                       <>
                         <BellRing className="mr-2 h-4 w-4" />
@@ -108,7 +158,7 @@ const EmailCapture: React.FC = () => {
                   </Button>
                 </form>
               ) : (
-                <div className="flex items-center gap-2 bg-neon-green/10 text-neon-green px-4 py-2 rounded-md">
+                <div className="flex items-center gap-2 bg-green-500/10 text-green-500 px-4 py-2 rounded-md">
                   <CheckCircle className="h-5 w-5" />
                   <span>You're on the list!</span>
                 </div>
