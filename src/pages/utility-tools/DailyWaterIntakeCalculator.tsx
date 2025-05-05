@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
@@ -84,24 +83,24 @@ const DailyWaterIntakeCalculator: React.FC = () => {
   };
 
   const waterIntakeBlogContent = (
-    <>
-      <h2 id="daily-hydration-guide">Daily Hydration Guide: Understanding Your Water Needs</h2>
+    <div className="space-y-8">
+      <h2 id="daily-hydration-guide" className="text-2xl font-semibold mt-8">Daily Hydration Guide: Understanding Your Water Needs</h2>
       
-      <p>
+      <p className="text-muted-foreground text-lg leading-relaxed">
         Proper hydration is one of the most fundamental yet overlooked aspects of health and wellness. 
         The human body is approximately 60% water, and maintaining optimal hydration levels is essential 
         for virtually every bodily function. Our Daily Water Intake Calculator helps you determine exactly 
         how much water your unique body needs each day for peak performance and health.
       </p>
       
-      <h3 id="importance-of-proper-hydration">The Importance of Proper Hydration</h3>
+      <h3 id="importance-of-proper-hydration" className="text-xl font-semibold mt-8">The Importance of Proper Hydration</h3>
       
       <p>
         Water isn't just a thirst quencher—it's a critical component of your body's operating system. 
         Adequate <strong>daily water consumption</strong> supports:
       </p>
       
-      <ul>
+      <ul className="list-disc pl-6 space-y-3 my-6">
         <li>
           <strong>Cognitive Function</strong>: Even mild dehydration can impair concentration, memory, and mood. 
           Proper hydration helps maintain mental clarity and focus throughout the day.
@@ -124,13 +123,13 @@ const DailyWaterIntakeCalculator: React.FC = () => {
         </li>
       </ul>
       
-      <h3 id="signs-of-dehydration">Signs You're Not Drinking Enough Water</h3>
+      <h3 id="signs-of-dehydration" className="text-xl font-semibold mt-8">Signs You're Not Drinking Enough Water</h3>
       
       <p>
         Many people walk around mildly dehydrated without even realizing it. Some common signs of <strong>inadequate water intake</strong> include:
       </p>
       
-      <ul>
+      <ul className="list-disc pl-6 space-y-3 my-6">
         <li>Dark yellow urine (light straw-colored urine indicates good hydration)</li>
         <li>Feeling thirsty (note that by the time you feel thirst, you're already mildly dehydrated)</li>
         <li>Dry mouth, lips, and skin</li>
@@ -141,7 +140,7 @@ const DailyWaterIntakeCalculator: React.FC = () => {
         <li>Constipation</li>
       </ul>
       
-      <h3 id="factors-affecting-water-needs">Factors That Affect Your Daily Water Needs</h3>
+      <h3 id="factors-affecting-water-needs" className="text-xl font-semibold mt-8">Factors That Affect Your Daily Water Needs</h3>
       
       <p>
         The old advice to "drink eight 8-ounce glasses of water daily" (known as the 8×8 rule) is a 
@@ -149,7 +148,7 @@ const DailyWaterIntakeCalculator: React.FC = () => {
         hydration calculator</strong> considers several key factors that influence your specific water requirements:
       </p>
       
-      <ol>
+      <ol className="list-decimal pl-6 space-y-3 my-6">
         <li>
           <strong>Body Weight</strong>: Larger bodies contain more water and generally require more fluid 
           intake. Our calculator uses your weight as a primary factor in determining your base hydration needs.
@@ -177,13 +176,13 @@ const DailyWaterIntakeCalculator: React.FC = () => {
         </li>
       </ol>
       
-      <h3 id="how-to-use-calculator">How to Use the Daily Water Intake Calculator</h3>
+      <h3 id="how-to-use-calculator" className="text-xl font-semibold mt-8">How to Use the Daily Water Intake Calculator</h3>
       
       <p>
         Our <strong>water consumption calculator</strong> makes it easy to determine your personal hydration needs:
       </p>
       
-      <ol>
+      <ol className="list-decimal pl-6 space-y-3 my-6">
         <li>
           <strong>Enter your age</strong>: Input your age in years. The calculator adjusts recommendations slightly 
           for different age groups.
@@ -207,13 +206,13 @@ const DailyWaterIntakeCalculator: React.FC = () => {
         characteristics and lifestyle.
       </p>
       
-      <h3 id="understanding-results">Understanding Your Results</h3>
+      <h3 id="understanding-results" className="text-xl font-semibold mt-8">Understanding Your Results</h3>
       
       <p>
         The calculator provides your recommended daily water intake in two common measurements:
       </p>
       
-      <ul>
+      <ul className="list-disc pl-6 space-y-3 my-6">
         <li>
           <strong>Liters</strong>: The metric measurement commonly used for water bottles and scientific measurements.
         </li>
@@ -227,14 +226,14 @@ const DailyWaterIntakeCalculator: React.FC = () => {
         20% of your daily water intake typically comes from food, particularly fruits and vegetables with high water content.
       </p>
       
-      <h3 id="practical-tips">Practical Tips for Staying Properly Hydrated</h3>
+      <h3 id="practical-tips" className="text-xl font-semibold mt-8">Practical Tips for Staying Properly Hydrated</h3>
       
       <p>
         Knowing your daily water target is one thing—actually consuming that amount consistently is another. Here are some 
         practical strategies to help you meet your <strong>optimal daily water intake</strong>:
       </p>
       
-      <ul>
+      <ul className="list-disc pl-6 space-y-3 my-6">
         <li>
           <strong>Start your day with water</strong>: Drink a glass of water first thing in the morning to rehydrate after sleep.
         </li>
@@ -262,7 +261,7 @@ const DailyWaterIntakeCalculator: React.FC = () => {
         </li>
       </ul>
       
-      <h3 id="hydration-myths">Common Hydration Myths Debunked</h3>
+      <h3 id="hydration-myths" className="text-xl font-semibold mt-8">Common Hydration Myths Debunked</h3>
       
       <p>
         There's a lot of misinformation about hydration. Let's address some common myths:
@@ -293,13 +292,13 @@ const DailyWaterIntakeCalculator: React.FC = () => {
         This is most common in endurance athletes who drink excessive amounts without replacing electrolytes.
       </p>
       
-      <h3 id="special-circumstances">Special Hydration Circumstances</h3>
+      <h3 id="special-circumstances" className="text-xl font-semibold mt-8">Special Hydration Circumstances</h3>
       
       <p>
         Certain situations require adjustments to your normal hydration routine:
       </p>
       
-      <ul>
+      <ul className="list-disc pl-6 space-y-3 my-6">
         <li>
           <strong>Exercise</strong>: For workouts lasting less than an hour, water is usually sufficient. For longer or more 
           intense sessions, consider sports drinks with electrolytes.
@@ -322,13 +321,13 @@ const DailyWaterIntakeCalculator: React.FC = () => {
         </li>
       </ul>
       
-      <h3 id="related-tools">Related Health Tools at PipCraft</h3>
+      <h3 id="related-tools" className="text-xl font-semibold mt-8">Related Health Tools at PipCraft</h3>
       
       <p>
         For a comprehensive approach to health and wellness, consider using these related tools:
       </p>
       
-      <ul>
+      <ul className="list-disc pl-6 space-y-3 my-6">
         <li>
           <Link to="/grade-calculator" className="text-primary hover:underline">GPA Calculator</Link> - 
           Track your academic progress while staying hydrated for optimal cognitive performance
@@ -347,7 +346,7 @@ const DailyWaterIntakeCalculator: React.FC = () => {
         </li>
       </ul>
       
-      <h3 id="conclusion">Conclusion: Hydration for Optimal Health</h3>
+      <h3 id="conclusion" className="text-xl font-semibold mt-8">Conclusion: Hydration for Optimal Health</h3>
       
       <p>
         Proper hydration is a cornerstone of good health that affects virtually every system in your body. Our 
@@ -367,7 +366,7 @@ const DailyWaterIntakeCalculator: React.FC = () => {
         toward overall wellness.
       </p>
       
-      <h3 id="faqs">Frequently Asked Questions About Water Intake</h3>
+      <h3 id="faqs" className="text-xl font-semibold mt-8">Frequently Asked Questions About Water Intake</h3>
       
       <h4>How do I know if I'm drinking enough water?</h4>
       <p>
@@ -403,7 +402,7 @@ const DailyWaterIntakeCalculator: React.FC = () => {
         Bottled water is convenient but has environmental drawbacks due to plastic waste. If you're concerned about tap water 
         quality, consider using a water filter rather than relying on bottled water.
       </p>
-    </>
+    </div>
   );
 
   return (
@@ -413,24 +412,24 @@ const DailyWaterIntakeCalculator: React.FC = () => {
         description="Calculate your personalized daily water intake based on age, weight, and activity level with our free water intake calculator. Stay optimally hydrated for better health and wellness."
       />
       
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-12 max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="space-y-6"
+          className="space-y-10"
         >
           <div className="text-center">
-            <h1 className="text-3xl font-bold mb-4">Daily Water Intake Calculator</h1>
-            <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">Daily Water Intake Calculator</h1>
+            <p className="text-muted-foreground text-lg mb-12 max-w-2xl mx-auto">
               Calculate your recommended daily water intake based on your age, weight, and activity level.
             </p>
           </div>
 
-          <Card className="border border-border/50">
-            <CardContent className="pt-6 space-y-4">
+          <Card className="border border-border/50 shadow-lg">
+            <CardContent className="pt-8 pb-8 space-y-6">
               <div>
-                <label htmlFor="age" className="block text-sm font-medium mb-1">
+                <label htmlFor="age" className="block text-md font-medium mb-2">
                   Age:
                 </label>
                 <Input
@@ -441,11 +440,12 @@ const DailyWaterIntakeCalculator: React.FC = () => {
                   value={age}
                   onChange={(e) => setAge(e.target.value)}
                   placeholder="Enter your age"
+                  className="text-lg"
                 />
               </div>
 
               <div>
-                <label htmlFor="weight" className="block text-sm font-medium mb-1">
+                <label htmlFor="weight" className="block text-md font-medium mb-2">
                   Weight:
                 </label>
                 <div className="flex gap-2">
@@ -457,7 +457,7 @@ const DailyWaterIntakeCalculator: React.FC = () => {
                     value={weight}
                     onChange={(e) => setWeight(e.target.value)}
                     placeholder="Enter your weight"
-                    className="flex-1"
+                    className="flex-1 text-lg"
                   />
                   <Select 
                     value={weightUnit} 
@@ -475,14 +475,14 @@ const DailyWaterIntakeCalculator: React.FC = () => {
               </div>
 
               <div>
-                <label htmlFor="activity" className="block text-sm font-medium mb-1">
+                <label htmlFor="activity" className="block text-md font-medium mb-2">
                   Activity Level:
                 </label>
                 <Select 
                   value={activityLevel} 
                   onValueChange={setActivityLevel}
                 >
-                  <SelectTrigger id="activity" className="w-full">
+                  <SelectTrigger id="activity" className="w-full text-lg">
                     <SelectValue placeholder="Select activity level" />
                   </SelectTrigger>
                   <SelectContent>
@@ -494,23 +494,27 @@ const DailyWaterIntakeCalculator: React.FC = () => {
                 </Select>
               </div>
 
-              <Button className="w-full" onClick={calculateWaterIntake}>
+              <Button 
+                className="w-full text-lg py-6" 
+                size="lg" 
+                onClick={calculateWaterIntake}
+              >
                 Calculate Water Intake
               </Button>
 
               {error && <p className="text-red-500 text-sm">{error}</p>}
 
               {result && (
-                <div className="mt-6 p-4 bg-secondary/30 rounded-md">
-                  <h3 className="text-sm font-medium mb-4">Your Recommended Daily Water Intake:</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="flex flex-col items-center">
-                      <div className="text-4xl font-semibold text-primary mb-2">{result.liters}</div>
-                      <p className="text-sm text-muted-foreground">Liters</p>
+                <div className="mt-8 p-6 bg-secondary/20 rounded-lg border border-border/40">
+                  <h3 className="text-lg font-medium mb-5 text-center">Your Recommended Daily Water Intake:</h3>
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="flex flex-col items-center p-4 bg-background/50 rounded-md">
+                      <div className="text-5xl font-semibold text-primary mb-3">{result.liters}</div>
+                      <p className="text-muted-foreground">Liters</p>
                     </div>
-                    <div className="flex flex-col items-center">
-                      <div className="text-4xl font-semibold text-primary mb-2">{result.oz}</div>
-                      <p className="text-sm text-muted-foreground">Fluid Ounces</p>
+                    <div className="flex flex-col items-center p-4 bg-background/50 rounded-md">
+                      <div className="text-5xl font-semibold text-primary mb-3">{result.oz}</div>
+                      <p className="text-muted-foreground">Fluid Ounces</p>
                     </div>
                   </div>
                 </div>
@@ -518,8 +522,8 @@ const DailyWaterIntakeCalculator: React.FC = () => {
             </CardContent>
           </Card>
 
-          <div className="prose prose-sm dark:prose-invert max-w-none">
-            <h2 className="text-xl font-semibold mb-4">About Daily Water Intake Calculator</h2>
+          <div className="prose prose-lg dark:prose-invert max-w-none bg-secondary/10 p-8 rounded-lg">
+            <h2 className="text-2xl font-semibold mb-4">About Daily Water Intake Calculator</h2>
             <p>
               The Daily Water Intake Calculator is a useful tool for determining how much water your body needs 
               to stay properly hydrated. While the general recommendation of eight 8-ounce glasses (about 2 liters) 
@@ -545,8 +549,8 @@ const DailyWaterIntakeCalculator: React.FC = () => {
               joint lubrication, infection prevention, organ function, and delivering nutrients to cells. By using this 
               calculator regularly and adjusting for changing circumstances like weather or illness, you can ensure 
               you're getting the right amount of water for your unique needs. For more health-related tools, try our 
-              <Link to="/bmi-calculator" className="text-primary hover:underline">BMI Calculator</Link> or explore our complete 
-              <Link to="/tools" className="text-primary hover:underline">suite of utility tools</Link>.
+              <Link to="/bmi-calculator" className="text-primary hover:underline"> BMI Calculator</Link> or explore our complete 
+              <Link to="/tools" className="text-primary hover:underline"> suite of utility tools</Link>.
             </p>
           </div>
           

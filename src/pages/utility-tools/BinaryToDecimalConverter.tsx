@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
@@ -11,6 +10,7 @@ import AppLayout from '@/components/layout/AppLayout';
 import SEO from '@/components/shared/SEO';
 import BlogPost from '@/components/shared/BlogPost';
 import { Link } from 'react-router-dom';
+import { Separator } from '@/components/ui/separator';
 
 const BinaryToDecimalConverter: React.FC = () => {
   const [binary, setBinary] = useState<string>('');
@@ -76,16 +76,16 @@ const BinaryToDecimalConverter: React.FC = () => {
   };
 
   const binaryToDecimalBlogContent = (
-    <>
-      <h2 id="understanding-binary-conversion">Understanding Binary to Decimal Conversion: A Complete Guide</h2>
+    <div className="space-y-8">
+      <h2 id="understanding-binary-conversion" className="text-2xl font-semibold mt-8">Understanding Binary to Decimal Conversion: A Complete Guide</h2>
       
-      <p>
+      <p className="text-muted-foreground text-lg leading-relaxed">
         Binary to decimal conversion is a fundamental skill in computer science and digital electronics. 
         Whether you're a programming student, IT professional, or digital electronics enthusiast, understanding 
         how to convert between number systems is essential for working with computers at a fundamental level.
       </p>
       
-      <h3 id="what-is-binary">What is Binary and Why Does it Matter?</h3>
+      <h3 id="what-is-binary" className="text-xl font-semibold mt-8">What is Binary and Why Does it Matter?</h3>
       
       <p>
         Binary (base-2) is the language computers speak at their core. Unlike our everyday decimal system that uses 
@@ -99,7 +99,7 @@ const BinaryToDecimalConverter: React.FC = () => {
         high voltage or low voltage. These two states map perfectly to the binary digits 1 and 0.
       </p>
       
-      <h3 id="binary-to-decimal-conversion-explained">Binary to Decimal Conversion Explained</h3>
+      <h3 id="binary-to-decimal-conversion-explained" className="text-xl font-semibold mt-8">Binary to Decimal Conversion Explained</h3>
       
       <p>
         Converting from binary to decimal involves understanding place values. In our familiar decimal system, each 
@@ -110,7 +110,7 @@ const BinaryToDecimalConverter: React.FC = () => {
         Starting from the rightmost digit (least significant bit):
       </p>
       
-      <ul>
+      <ul className="list-disc pl-6 space-y-3 my-6">
         <li>First position: 2⁰ = 1</li>
         <li>Second position: 2¹ = 2</li>
         <li>Third position: 2² = 4</li>
@@ -123,27 +123,29 @@ const BinaryToDecimalConverter: React.FC = () => {
         To convert a binary number to decimal, multiply each digit by its corresponding place value and sum the results.
       </p>
       
-      <h4>Example: Converting 10110₂ to Decimal</h4>
-      
-      <p>
-        Let's break down the conversion of binary 10110 to decimal:
-      </p>
-      
-      <ul>
-        <li>1 × 2⁴ = 1 × 16 = 16</li>
-        <li>0 × 2³ = 0 × 8 = 0</li>
-        <li>1 × 2² = 1 × 4 = 4</li>
-        <li>1 × 2¹ = 1 × 2 = 2</li>
-        <li>0 × 2⁰ = 0 × 1 = 0</li>
-      </ul>
-      
-      <p>
-        Sum: 16 + 0 + 4 + 2 + 0 = 22
-      </p>
-      
-      <p>
-        Therefore, 10110₂ = 22₁₀
-      </p>
+      <div className="bg-secondary/20 p-6 rounded-lg my-8 border border-border/40">
+        <h4 className="text-lg font-medium mb-3">Example: Converting 10110₂ to Decimal</h4>
+        
+        <p>
+          Let's break down the conversion of binary 10110 to decimal:
+        </p>
+        
+        <ul className="list-none space-y-1 my-4 font-mono">
+          <li>1 × 2⁴ = 1 × 16 = 16</li>
+          <li>0 × 2³ = 0 × 8 = 0</li>
+          <li>1 × 2² = 1 × 4 = 4</li>
+          <li>1 × 2¹ = 1 × 2 = 2</li>
+          <li>0 × 2⁰ = 0 × 1 = 0</li>
+        </ul>
+        
+        <p>
+          Sum: 16 + 0 + 4 + 2 + 0 = 22
+        </p>
+        
+        <p className="font-semibold mt-2">
+          Therefore, 10110₂ = 22₁₀
+        </p>
+      </div>
       
       <h3 id="decimal-to-binary-conversion">Decimal to Binary Conversion</h3>
       
@@ -368,7 +370,7 @@ const BinaryToDecimalConverter: React.FC = () => {
         Binary is used in digital communications, electronic displays, digital signal processing, and any system that processes discrete 
         data. Even the Morse code (dots and dashes) represents a type of binary encoding.
       </p>
-    </>
+    </div>
   );
 
   return (
@@ -378,31 +380,31 @@ const BinaryToDecimalConverter: React.FC = () => {
         description="Convert between binary and decimal numbers instantly with our free bi-directional converter. Perfect for programmers, students, and anyone working with different number systems."
       />
       
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-12 max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="space-y-6"
+          className="space-y-10"
         >
           <div className="text-center">
-            <h1 className="text-3xl font-bold mb-4">Binary to Decimal Converter</h1>
-            <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">Binary to Decimal Converter</h1>
+            <p className="text-muted-foreground text-lg mb-12 max-w-2xl mx-auto">
               Convert between binary (base-2) and decimal (base-10) number systems quickly and easily.
             </p>
           </div>
 
-          <Card className="border border-border/50">
-            <CardContent className="pt-6">
-              <Tabs defaultValue="binary-to-decimal" onValueChange={handleTabChange}>
-                <TabsList className="grid w-full grid-cols-2 mb-4">
-                  <TabsTrigger value="binary-to-decimal">Binary to Decimal</TabsTrigger>
-                  <TabsTrigger value="decimal-to-binary">Decimal to Binary</TabsTrigger>
+          <Card className="border border-border/50 shadow-lg">
+            <CardContent className="pt-8 pb-8">
+              <Tabs defaultValue="binary-to-decimal" onValueChange={handleTabChange} className="space-y-6">
+                <TabsList className="grid w-full grid-cols-2 mb-6">
+                  <TabsTrigger value="binary-to-decimal" className="text-md py-3">Binary to Decimal</TabsTrigger>
+                  <TabsTrigger value="decimal-to-binary" className="text-md py-3">Decimal to Binary</TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="binary-to-decimal" className="space-y-4">
+                <TabsContent value="binary-to-decimal" className="space-y-6 pt-4">
                   <div>
-                    <label htmlFor="binary-input" className="block text-sm font-medium mb-1">
+                    <label htmlFor="binary-input" className="block text-md font-medium mb-2">
                       Enter Binary Number:
                     </label>
                     <div className="flex gap-2">
@@ -412,23 +414,23 @@ const BinaryToDecimalConverter: React.FC = () => {
                         value={binary}
                         onChange={(e) => setBinary(e.target.value)}
                         placeholder="e.g. 10110"
-                        className="flex-1"
+                        className="flex-1 text-lg"
                       />
-                      <Button onClick={convertBinaryToDecimal}>Convert</Button>
+                      <Button onClick={convertBinaryToDecimal} className="px-6">Convert</Button>
                     </div>
                   </div>
                   
                   {decimal && !error && (
-                    <div className="p-4 bg-secondary/30 rounded-md">
-                      <h3 className="text-sm font-medium mb-1">Decimal Result:</h3>
-                      <p className="text-lg font-medium">{decimal}</p>
+                    <div className="p-6 bg-secondary/20 rounded-lg border border-border/40">
+                      <h3 className="text-md font-medium mb-2">Decimal Result:</h3>
+                      <p className="text-2xl font-mono font-semibold text-primary">{decimal}</p>
                     </div>
                   )}
                 </TabsContent>
                 
-                <TabsContent value="decimal-to-binary" className="space-y-4">
+                <TabsContent value="decimal-to-binary" className="space-y-6 pt-4">
                   <div>
-                    <label htmlFor="decimal-input" className="block text-sm font-medium mb-1">
+                    <label htmlFor="decimal-input" className="block text-md font-medium mb-2">
                       Enter Decimal Number:
                     </label>
                     <div className="flex gap-2">
@@ -438,16 +440,16 @@ const BinaryToDecimalConverter: React.FC = () => {
                         value={decimal}
                         onChange={(e) => setDecimal(e.target.value)}
                         placeholder="e.g. 42"
-                        className="flex-1"
+                        className="flex-1 text-lg"
                       />
-                      <Button onClick={convertDecimalToBinary}>Convert</Button>
+                      <Button onClick={convertDecimalToBinary} className="px-6">Convert</Button>
                     </div>
                   </div>
                   
                   {binary && !error && (
-                    <div className="p-4 bg-secondary/30 rounded-md">
-                      <h3 className="text-sm font-medium mb-1">Binary Result:</h3>
-                      <p className="text-lg font-medium">{binary}</p>
+                    <div className="p-6 bg-secondary/20 rounded-lg border border-border/40">
+                      <h3 className="text-md font-medium mb-2">Binary Result:</h3>
+                      <p className="text-2xl font-mono font-semibold text-primary">{binary}</p>
                     </div>
                   )}
                 </TabsContent>
@@ -459,8 +461,8 @@ const BinaryToDecimalConverter: React.FC = () => {
             </CardContent>
           </Card>
 
-          <div className="prose prose-sm dark:prose-invert max-w-none">
-            <h2 className="text-xl font-semibold mb-4">About Binary to Decimal Converter</h2>
+          <div className="prose prose-lg dark:prose-invert max-w-none bg-secondary/10 p-8 rounded-lg">
+            <h2 className="text-2xl font-semibold mb-4">About Binary to Decimal Converter</h2>
             <p>
               The Binary to Decimal Converter is an essential tool for anyone working with different number systems. 
               Binary (base-2) is the fundamental language of computers, using only two digits: 0 and 1. 
