@@ -14,6 +14,7 @@ import ChallengeBlueprint from '@/components/tools/ChallengeBlueprint';
 import EconomicCalendar from './EconomicCalendar';
 import { useNavigate } from 'react-router-dom';
 import SEO from '@/components/shared/SEO';
+import useToolBlogPost from '@/hooks/useToolBlogPost';
 
 interface IndexProps {
   activeSection: string;
@@ -21,6 +22,7 @@ interface IndexProps {
 
 const Index: React.FC<IndexProps> = ({ activeSection }) => {
   const navigate = useNavigate();
+  const blogPostSection = useToolBlogPost(activeSection);
   
   const setActiveSection = (section: string) => {
     navigate(`/${section}`);
@@ -143,6 +145,7 @@ const Index: React.FC<IndexProps> = ({ activeSection }) => {
       />
       <div className="container mx-auto max-w-6xl px-2 sm:px-4">
         {renderSection()}
+        {blogPostSection}
       </div>
     </AppLayout>
   );
