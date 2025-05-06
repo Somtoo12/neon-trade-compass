@@ -738,23 +738,22 @@ const generateWaterIntakeContent = (relatedTools: (Tool | UtilityTool)[]): React
   );
 };
 
-// Function for generic content generation when a specific template isn't available
-const generateDefaultContent = (tool: Tool | UtilityTool, relatedTools: (Tool | UtilityTool)[]): React.ReactNode => {
-  return (
-    <div className="space-y-8">
-      <h2 id="understanding-tool" className="text-2xl font-semibold mt-8">Understanding {tool.name}: A Complete Guide</h2>
-      
-      <p className="text-muted-foreground text-lg leading-relaxed">
-        Welcome to our comprehensive guide on the {tool.name}. This powerful tool is designed to help you 
-        {tool.description.toLowerCase()}. Whether you're new to this concept or looking to deepen your understanding,
-        this guide will walk you through everything you need to know.
-      </p>
-      
-      <h3 id="what-is-tool" className="text-xl font-semibold mt-8">What is {tool.name} and Why Does it Matter?</h3>
-      
-      <p>
-        The {tool.name} is a specialized utility designed to help users {tool.description.toLowerCase()}.
-        This tool is essential for anyone looking to improve efficiency, accuracy, and productivity in their work.
-      </p>
-      
-      <h3 id="how-to-use" className="text-xl font
+// Placeholder functions for other tools
+const generateCountdownTimerContent = (relatedTools: (Tool | UtilityTool)[]): React.ReactNode => {
+  return generateDefaultContent(toolsData.find(t => t.id === 'countdown-timer') || 
+    utilityToolsData.find(t => t.id === 'countdown-timer') || 
+    { id: 'countdown-timer', name: 'Countdown Timer', description: '', path: '', category: '', icon: null }, 
+    relatedTools);
+};
+
+const generateCharacterCounterContent = (relatedTools: (Tool | UtilityTool)[]): React.ReactNode => {
+  return generateDefaultContent(toolsData.find(t => t.id === 'character-counter') || 
+    utilityToolsData.find(t => t.id === 'character-counter') || 
+    { id: 'character-counter', name: 'Character Counter', description: '', path: '', category: '', icon: null }, 
+    relatedTools);
+};
+
+const generateTipCalculatorContent = (relatedTools: (Tool | UtilityTool)[]): React.ReactNode => {
+  return generateDefaultContent(toolsData.find(t => t.id === 'tip-calculator') || 
+    utilityToolsData.find(t => t.id === 'tip-calculator') || 
+    { id: '
