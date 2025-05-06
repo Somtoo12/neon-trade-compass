@@ -1,10 +1,9 @@
 
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { generateToolBlogContent } from '@/utils/blogContentGenerators';
 import { utilityToolsData } from '@/data/utilityToolsData';
 import { toolsData } from '@/data/toolsData';
-import { Droplet, Binary, Calculator as CalcIcon } from 'lucide-react';
-import * as Icons from 'lucide-react';
+import { Droplet } from 'lucide-react';
 
 export const useBlogContent = (toolId: string) => {
   // Convert kebab-case to camelCase for icon lookup
@@ -25,7 +24,7 @@ export const useBlogContent = (toolId: string) => {
     // Find the tool to get its icon
     const tool = [...utilityToolsData, ...toolsData].find(t => t.id === toolId);
     
-    if (!tool) return <Droplet />;
+    if (!tool) return <Droplet className="h-6 w-6 text-primary" />;
     
     // Convert the tool's icon component to a React element
     const IconComponent = tool.icon;
