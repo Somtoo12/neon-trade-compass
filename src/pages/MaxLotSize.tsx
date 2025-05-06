@@ -1,7 +1,9 @@
+
 import React from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import EnhancedMaxLotSizeCalculator from '@/components/calculators/EnhancedMaxLotSizeCalculator';
 import SEO from '@/components/shared/SEO';
+import BlogPostSection from '@/components/shared/BlogPostSection';
 
 const MaxLotSize = () => {
   return (
@@ -13,6 +15,7 @@ const MaxLotSize = () => {
       <AppLayout activeSection="max-lot-size" setActiveSection={() => {}}>
         <div className="container mx-auto max-w-6xl px-2 sm:px-4">
           <EnhancedMaxLotSizeCalculator />
+          <BlogPostSection toolId="max-lot-size" />
         </div>
       </AppLayout>
     </>

@@ -6,11 +6,12 @@ import { Droplet } from 'lucide-react';
 interface BlogPostProps {
   title: string;
   content: React.ReactNode;
+  className?: string;
 }
 
-const BlogPost: React.FC<BlogPostProps> = ({ title, content }) => {
+const BlogPost: React.FC<BlogPostProps> = ({ title, content, className = '' }) => {
   return (
-    <div className="mt-16 md:mt-24 border-t border-border/50 pt-12 md:pt-16">
+    <div className={`mt-16 md:mt-24 border-t border-border/50 pt-12 md:pt-16 ${className}`}>
       <div className="flex items-center space-x-2 mb-8">
         <div className="rounded-full bg-primary/10 p-2">
           <Droplet className="h-5 w-5 text-primary" />
