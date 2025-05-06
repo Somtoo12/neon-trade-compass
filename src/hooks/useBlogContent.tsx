@@ -16,7 +16,7 @@ import { Droplet } from 'lucide-react';
 export function useBlogContent(toolId: string) {
   // Generate the title based on the tool name
   const getToolName = () => {
-    const allTools = [...utilityToolsData, ...toolsData];
+    const allTools = [...toolsData, ...utilityToolsData];
     const tool = allTools.find(t => t.id === toolId);
     
     if (!tool) return "Tool Guide";

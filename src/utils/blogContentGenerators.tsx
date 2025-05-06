@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Droplet } from 'lucide-react';
@@ -8,8 +9,7 @@ import { utilityToolsData } from '@/data/utilityToolsData';
 
 // Function to generate a tool icon as a React element
 export const getToolIcon = (toolId: string): React.ReactNode => {
-  const allTools = [...utilityToolsData, ...toolsData];
-  const tool = allTools.find(t => t.id === toolId);
+  const tool = [...utilityToolsData, ...toolsData].find(t => t.id === toolId);
   
   if (!tool) return <Droplet />;
   
@@ -179,8 +179,17 @@ export const generateDefaultContent = (tool: Tool | UtilityTool | undefined) => 
   );
 };
 
-// Tool-specific content generators with SEO-optimized articles
+// Tool-specific content generators
 export const generateForexCalculatorContent = () => {
+  const tool = toolsData.find(t => t.id === 'forex-calculator') || {
+    id: 'forex-calculator',
+    name: 'Forex Calculator',
+    description: 'Calculate pip values, position sizes, and profit/loss for forex trades',
+    path: '/forex-calculator',
+    category: 'Calculators',
+    icon: Droplet
+  };
+
   return (
     <>
       <h1>Forex Pip Calculator: Master Position Sizing & Risk Management</h1>
@@ -341,11 +350,24 @@ export const generateForexCalculatorContent = () => {
       <p>
         Remember that consistency in risk management often distinguishes successful traders from unsuccessful ones. Make the PipCraft Forex Calculator an integral part of your pre-trade routine, and you'll develop the discipline and precision needed to navigate the forex markets effectively.
       </p>
+      
+      <p>
+        Start using the Forex Pip Calculator today and experience the confidence that comes from trading with precise calculations and well-defined risk parameters.
+      </p>
     </>
   );
 };
 
 export const generateMaxLotSizeContent = () => {
+  const tool = toolsData.find(t => t.id === 'max-lot-size') || {
+    id: 'max-lot-size',
+    name: 'Max Lot Size Calculator',
+    description: 'Find the optimal lot size based on your risk parameters',
+    path: '/max-lot-size',
+    category: 'Risk Management',
+    icon: Droplet
+  };
+
   return (
     <>
       <h1>Max Lot Size Calculator: Optimize Your Trading Positions</h1>
@@ -524,11 +546,24 @@ export const generateMaxLotSizeContent = () => {
       <p>
         Remember that effective position sizing is about finding the right balance—not too large to endanger your account, not too small to make your time investment worthwhile. With the PipCraft Max Lot Size Calculator, you can find that optimal balance for every trade.
       </p>
+      
+      <p>
+        Start using the Max Lot Size Calculator today to transform your approach to risk management and position sizing for more disciplined, systematic trading.
+      </p>
     </>
   );
 };
 
 export const generateRiskManagementContent = () => {
+  const tool = toolsData.find(t => t.id === 'risk-management') || {
+    id: 'risk-management',
+    name: 'Risk Management',
+    description: 'Tools for managing trading risk and position sizing',
+    path: '/risk-management',
+    category: 'Risk Management',
+    icon: Droplet
+  };
+
   return (
     <>
       <h1>Risk Management Tools: Trade Smart, Protect Your Capital</h1>
@@ -703,4 +738,410 @@ export const generateRiskManagementContent = () => {
       </p>
       
       <p>
-        Remember that consistent risk management is the foundation upon which profitable trading systems are
+        Remember that consistent risk management is the foundation upon which profitable trading systems are built. Start implementing these risk management principles today, and you'll see the benefits in your trading performance over time.
+      </p>
+    </>
+  );
+};
+
+export const generateTradeJournalContent = () => {
+  const tool = toolsData.find(t => t.id === 'trade-journal') || {
+    id: 'trade-journal',
+    name: 'Trade Journal',
+    description: 'Log and analyze your trading history',
+    path: '/trade-journal',
+    category: 'Risk Management',
+    icon: Droplet
+  };
+
+  return (
+    <>
+      <h1>Trade Journal: Track, Analyze and Improve Your Trading Performance</h1>
+      
+      <p>
+        The Trade Journal is an essential tool for serious traders who understand that systematic tracking and analysis of trading activities is key to long-term success. Whether you're a beginner looking to identify patterns in your trading or an experienced trader optimizing your strategy, our comprehensive trading journal provides the insights you need to evolve and grow.
+      </p>
+      
+      <p>
+        In this complete guide, we'll explore how to effectively use the PipCraft Trade Journal, understand the metrics that matter most, and implement a data-driven approach to improving your trading performance.
+      </p>
+      
+      <h2>Why Every Trader Needs a Trading Journal</h2>
+      <p>
+        Maintaining a trade journal is one of the most powerful yet underutilized practices in trading. Here's why it's essential:
+      </p>
+      
+      <ul>
+        <li><strong>Performance Tracking:</strong> Objectively measure your trading performance beyond just profits and losses</li>
+        <li><strong>Pattern Recognition:</strong> Identify recurring patterns in your winning and losing trades</li>
+        <li><strong>Accountability:</strong> Create personal accountability for following your trading plan</li>
+        <li><strong>Psychological Insights:</strong> Understand your emotional responses to different market conditions</li>
+        <li><strong>Strategy Refinement:</strong> Gather data to refine and optimize your trading strategies</li>
+      </ul>
+      
+      <h2>Key Features of the PipCraft Trade Journal</h2>
+      <p>
+        Our Trade Journal offers several advanced features designed to help you maximize your trading potential:
+      </p>
+      
+      <ul>
+        <li><strong>Comprehensive Trade Logging:</strong> Record all aspects of your trades including entry/exit points, position sizes, and rationales</li>
+        <li><strong>Performance Analytics:</strong> View detailed statistics and metrics about your trading performance</li>
+        <li><strong>Visual Reporting:</strong> See your performance visualized through charts and graphs</li>
+        <li><strong>Trade Tagging:</strong> Categorize trades by strategy, market conditions, or other custom categories</li>
+        <li><strong>Journal Notes:</strong> Document your thoughts, emotions, and observations for each trade</li>
+        <li><strong>Image Attachments:</strong> Upload chart screenshots to document your analysis</li>
+      </ul>
+      
+      <h2>Getting Started with Your Trading Journal</h2>
+      <p>
+        Follow these steps to begin effectively journaling your trades:
+      </p>
+      
+      <h3>Step 1: Set Up Your Profile</h3>
+      <p>
+        Begin by entering your basic trading parameters, such as account size, target risk per trade, and preferred markets. This information provides context for your journal entries and performance metrics.
+      </p>
+      
+      <h3>Step 2: Log Your First Trade</h3>
+      <p>
+        After completing a trade, record all relevant details while they're fresh in your mind:
+      </p>
+      <ul>
+        <li>Instrument traded (e.g., EUR/USD, BTC/USD)</li>
+        <li>Entry and exit prices</li>
+        <li>Position size and risk amount</li>
+        <li>Trade direction (long/short)</li>
+        <li>Entry and exit dates/times</li>
+        <li>Strategy or setup used</li>
+        <li>Pre-trade analysis and rationale</li>
+      </ul>
+      
+      <h3>Step 3: Document Your Thought Process</h3>
+      <p>
+        Use the journal notes section to record your mindset and analysis:
+      </p>
+      <ul>
+        <li>What did you see that triggered this trade?</li>
+        <li>How did you feel before, during, and after the trade?</li>
+        <li>Were there any deviations from your trading plan?</li>
+        <li>What could you have done differently?</li>
+      </ul>
+      
+      <h3>Step 4: Review Your Performance Regularly</h3>
+      <p>
+        Schedule weekly and monthly reviews of your trading performance. Look for patterns in your successful trades and identify recurring issues in your losing trades.
+      </p>
+      
+      <h2>Advanced Trade Journaling Techniques</h2>
+      <p>
+        Once you've mastered the basics of trade journaling, consider these advanced techniques:
+      </p>
+      
+      <h3>Strategy Performance Comparison</h3>
+      <p>
+        Use tags to categorize trades by strategy, then compare the performance metrics of different strategies to identify your strengths and focus your efforts on your most profitable approaches.
+      </p>
+      
+      <h3>Market Condition Analysis</h3>
+      <p>
+        Tag trades with market conditions such as trending, ranging, volatile, or quiet. This helps you understand which environments are most favorable for your trading style.
+      </p>
+      
+      <h3>Psychological Pattern Recognition</h3>
+      <p>
+        Document your emotional state before entering trades and analyze whether certain emotions correlate with better or worse performance. This awareness can help you manage trading psychology more effectively.
+      </p>
+      
+      <h3>Trade Review Scoring System</h3>
+      <p>
+        Develop a scoring system for your trades based on criteria like plan adherence, entry quality, exit management, and risk control—not just profitability. This helps evaluate the quality of your trading process separate from outcomes.
+      </p>
+      
+      <h2>Integrating the Trade Journal with Your Trading Workflow</h2>
+      <p>
+        For maximum effectiveness, incorporate the Trade Journal into your broader trading process:
+      </p>
+      
+      <h3>Pre-Trade Planning</h3>
+      <p>
+        Before entering a trade, use the <Link to="/risk-management" className="text-primary hover:underline">Risk Management</Link> tool to calculate your position size and document your planned entry, stop loss, and take profit levels in the journal.
+      </p>
+      
+      <h3>Post-Trade Analysis</h3>
+      <p>
+        After closing a position, immediately log the details while the experience is fresh. Use the <Link to="/max-lot-size" className="text-primary hover:underline">Max Lot Size Calculator</Link> to verify whether your position sizing was optimal.
+      </p>
+      
+      <h3>Weekend Reviews</h3>
+      <p>
+        Dedicate time each weekend to review the week's trades, update your journal with additional insights, and plan for the coming week based on observed patterns.
+      </p>
+      
+      <h2>Frequently Asked Questions about Trading Journals</h2>
+      
+      <h3>How much detail should I include in my trade journal?</h3>
+      <p>
+        The level of detail depends on your experience and needs. Beginners should document everything thoroughly to identify patterns and issues. Experienced traders might focus on specific metrics or unusual circumstances. The key is consistency in whatever you choose to track.
+      </p>
+      
+      <h3>How often should I review my trading journal?</h3>
+      <p>
+        Most professional traders perform daily, weekly, and monthly reviews. Daily reviews are brief and focus on the day's trades. Weekly reviews look for short-term patterns, while monthly reviews focus on broader trends and strategy adjustments.
+      </p>
+      
+      <h3>Should I journal trades from demo accounts?</h3>
+      <p>
+        Yes, journaling demo trades is valuable, especially for new strategies or when learning. However, be aware that psychological factors differ between demo and live trading, so note this distinction in your journal.
+      </p>
+      
+      <h3>Can journaling really improve my trading results?</h3>
+      <p>
+        Absolutely. Studies consistently show that traders who maintain detailed journals and regularly review their performance experience better long-term results than those who don't. The key is using the journal as a learning tool, not just a record-keeping device.
+      </p>
+      
+      <h2>Complementary Tools for Complete Trading Analysis</h2>
+      <p>
+        For a comprehensive approach to trading improvement, pair the Trade Journal with these other PipCraft tools:
+      </p>
+      
+      <ul>
+        <li><Link to="/forex-calculator" className="text-primary hover:underline">Forex Calculator</Link> - Ensure accurate position sizing for your journaled trades</li>
+        <li><Link to="/risk-management" className="text-primary hover:underline">Risk Management Dashboard</Link> - Align your risk parameters with your journal insights</li>
+        <li><Link to="/challenge-blueprint" className="text-primary hover:underline">Challenge Blueprint</Link> - Plan and track prop firm challenge progress alongside your journal</li>
+        <li><Link to="/economic-calendar" className="text-primary hover:underline">Economic Calendar</Link> - Note major events that impacted your trades</li>
+      </ul>
+      
+      <h2>Final Thoughts: The Path to Trading Mastery Through Journaling</h2>
+      <p>
+        The Trade Journal is more than just a record-keeping tool—it's your personal trading coach and performance analyst. By diligently documenting and reviewing your trades, you create a feedback loop that leads to continuous improvement and trading mastery.
+      </p>
+      
+      <p>
+        Remember that successful trading is a journey of constant learning and adaptation. The traders who reach the highest levels of success are those who can honestly evaluate their performance, learn from their mistakes, and systematically improve their approach over time.
+      </p>
+      
+      <p>
+        Start using the PipCraft Trade Journal today, and take the first step toward data-driven trading improvement and long-term profitability.
+      </p>
+    </>
+  );
+};
+
+export const generateChallengeBlueprintContent = () => {
+  const tool = toolsData.find(t => t.id === 'challenge-blueprint') || {
+    id: 'challenge-blueprint',
+    name: 'Challenge Blueprint',
+    description: 'Strategic planner for prop firm trading challenges',
+    path: '/challenge-blueprint',
+    category: 'Risk Management',
+    icon: Droplet
+  };
+
+  return (
+    <>
+      <h1>Challenge Blueprint: Master Prop Firm Challenges with Strategic Planning</h1>
+      
+      <p>
+        The Challenge Blueprint tool is designed specifically for traders preparing to tackle prop firm trading challenges. Whether you're approaching your first prop firm evaluation or you're looking to optimize your strategy after previous attempts, this comprehensive planning tool provides the structured approach you need to maximize your chances of success.
+      </p>
+      
+      <p>
+        In this detailed guide, we'll explore how to effectively use the PipCraft Challenge Blueprint, understand the key metrics in prop challenges, and implement proven strategies for passing even the most demanding evaluations.
+      </p>
+      
+      <h2>Understanding Prop Firm Trading Challenges</h2>
+      <p>
+        Before diving into the Blueprint tool, let's clarify what prop firm challenges entail:
+      </p>
+      
+      <p>
+        Proprietary trading firms (prop firms) offer traders access to large capital accounts after they pass evaluation phases, commonly called "challenges." These challenges typically have specific requirements such as profit targets (e.g., 10% gain), maximum drawdown limits (e.g., 5% daily, 10% total), minimum trading days, and other rules designed to identify disciplined, profitable traders.
+      </p>
+      
+      <h2>Why You Need a Strategic Blueprint for Prop Challenges</h2>
+      <p>
+        Approaching a prop firm challenge without a clear strategy is setting yourself up for failure. Here's why a structured blueprint matters:
+      </p>
+      
+      <ul>
+        <li><strong>Risk Calculation:</strong> Precise understanding of how much you can risk per trade while staying within drawdown limits</li>
+        <li><strong>Profit Pacing:</strong> Methodical approach to reaching profit targets without excessive risk</li>
+        <li><strong>Psychological Control:</strong> Reduced emotional trading through predefined rules and guidelines</li>
+        <li><strong>Rules Compliance:</strong> Clear framework to ensure you meet all challenge requirements</li>
+        <li><strong>Contingency Planning:</strong> Prepared responses for different market scenarios</li>
+      </ul>
+      
+      <h2>Key Features of the PipCraft Challenge Blueprint</h2>
+      <p>
+        Our Challenge Blueprint offers several purpose-built features for prop challenge success:
+      </p>
+      
+      <ul>
+        <li><strong>Challenge Parameter Setup:</strong> Configure your specific prop firm's requirements</li>
+        <li><strong>Risk Calculator:</strong> Determine safe position sizes based on challenge drawdown limits</li>
+        <li><strong>Profit Projector:</strong> Map your path to the profit target with daily/weekly goals</li>
+        <li><strong>Drawdown Simulator:</strong> Visualize how different trading scenarios might impact your maximum drawdown</li>
+        <li><strong>Trade Planning Matrix:</strong> Design a trading approach that maximizes profit while minimizing risk</li>
+        <li><strong>Progress Tracker:</strong> Monitor your challenge performance against key metrics</li>
+      </ul>
+      
+      <h2>Step-by-Step Guide to Using the Challenge Blueprint</h2>
+      <p>
+        Follow these steps to create your personalized challenge strategy:
+      </p>
+      
+      <h3>1. Set Up Your Challenge Parameters</h3>
+      <p>
+        Begin by entering the specific details of your prop firm challenge:
+      </p>
+      <ul>
+        <li>Account size (e.g., $50,000, $100,000)</li>
+        <li>Profit target percentage (typically 8-15%)</li>
+        <li>Maximum drawdown limits (daily and overall)</li>
+        <li>Minimum trading days required</li>
+        <li>Challenge duration (typically 30-45 days)</li>
+        <li>Any special rules (weekend holding, news trading restrictions, etc.)</li>
+      </ul>
+      
+      <h3>2. Define Your Risk Parameters</h3>
+      <p>
+        Based on the challenge requirements, set your risk management approach:
+      </p>
+      <ul>
+        <li>Maximum risk per trade (the Blueprint will suggest conservative limits)</li>
+        <li>Daily risk cap (to avoid breaching daily drawdown limits)</li>
+        <li>Minimum risk-to-reward ratio for trades</li>
+        <li>Maximum number of simultaneous open positions</li>
+      </ul>
+      
+      <h3>3. Create Your Profit Plan</h3>
+      <p>
+        Map out how you'll achieve the profit target within the timeframe:
+      </p>
+      <ul>
+        <li>Daily/weekly profit goals</li>
+        <li>Progressive or conservative profit approach</li>
+        <li>Profit milestones with corresponding risk adjustments</li>
+        <li>Account growth projection based on your expected win rate and risk-to-reward</li>
+      </ul>
+      
+      <h3>4. Review the Blueprint Summary</h3>
+      <p>
+        Analyze the comprehensive strategy overview, including:
+      </p>
+      <ul>
+        <li>Maximum position size recommendations</li>
+        <li>Daily profit targets</li>
+        <li>Risk limits per trade</li>
+        <li>Projected challenge completion timeline</li>
+        <li>Contingency plans for drawdown scenarios</li>
+      </ul>
+      
+      <h2>Advanced Challenge Blueprint Strategies</h2>
+      <p>
+        Once you understand the basics, consider these advanced strategies to optimize your challenge performance:
+      </p>
+      
+      <h3>The Conservative Start Approach</h3>
+      <p>
+        Many successful challenge traders begin with smaller position sizes (25-50% of their calculated maximum) for the first 20-30% of the challenge. This reduces the risk of early failure and provides time to feel out market conditions before increasing size as confidence builds.
+      </p>
+      
+      <h3>The Milestone Method</h3>
+      <p>
+        Set profit milestones (e.g., 3%, 6%, 9% for a 10% target) with predetermined risk reductions at each milestone. For example, once you're halfway to your profit target, you might reduce your per-trade risk by 30% to protect your progress.
+      </p>
+      
+      <h3>The Session-Based Strategy</h3>
+      <p>
+        Identify which market sessions (Asian, London, New York) have historically been most profitable for your trading style, then concentrate your challenge trading during these hours. Use the <Link to="/session-clock" className="text-primary hover:underline">Session Clock</Link> to track optimal trading windows.
+      </p>
+      
+      <h3>The Hidden Drawdown Protection</h3>
+      <p>
+        Set personal drawdown limits that are 20-30% tighter than the official challenge rules. This buffer protects against unexpected volatility and reduces stress as you approach the actual limits.
+      </p>
+      
+      <h2>Common Challenge Mistakes to Avoid</h2>
+      <p>
+        Even with a solid blueprint, traders often fall into these traps:
+      </p>
+      
+      <ul>
+        <li><strong>Overtrading:</strong> Trading too frequently out of impatience or pressure to hit profit targets</li>
+        <li><strong>Risk Ramp-Up:</strong> Increasing risk dramatically after early successes, only to face larger losses</li>
+        <li><strong>Target Fixation:</strong> Becoming obsessively focused on the profit target rather than following the process</li>
+        <li><strong>Rules Violations:</strong> Overlooking specific firm rules like lot size restrictions or session trading limits</li>
+        <li><strong>Calendar Neglect:</strong> Failing to plan for high-impact economic events that could create volatility</li>
+      </ul>
+      
+      <h2>Integrating the Challenge Blueprint with Your Trading</h2>
+      <p>
+        For maximum effectiveness, incorporate the Blueprint into your broader trading process:
+      </p>
+      
+      <h3>Pre-Challenge Preparation</h3>
+      <p>
+        Before starting the challenge, use the <Link to="/trade-journal" className="text-primary hover:underline">Trade Journal</Link> to practice your strategy in a demo environment, documenting results and refining your approach based on outcomes.
+      </p>
+      
+      <h3>Daily Challenge Routine</h3>
+      <p>
+        Begin each trading day by reviewing your Blueprint parameters, checking the <Link to="/economic-calendar" className="text-primary hover:underline">Economic Calendar</Link> for potential market-moving events, and using the <Link to="/risk-management" className="text-primary hover:underline">Risk Management</Link> tools to calculate your position sizes.
+      </p>
+      
+      <h3>Post-Challenge Analysis</h3>
+      <p>
+        After completing the challenge (successful or not), analyze your performance against the Blueprint to identify areas for improvement in future attempts.
+      </p>
+      
+      <h2>Frequently Asked Questions about Prop Challenges</h2>
+      
+      <h3>Should I change my trading strategy for a prop challenge?</h3>
+      <p>
+        You should adapt your risk management to fit challenge parameters, but not completely change your trading strategy. The best approach is to use the same strategy that's proven profitable for you, but with adjusted position sizing and potentially more selective entry criteria.
+      </p>
+      
+      <h3>How important is the profit target versus the drawdown limit?</h3>
+      <p>
+        While both are critical, most experienced challenge takers prioritize staying within drawdown limits over rushing to reach profit targets. Many challenges are failed due to exceeding drawdowns rather than missing profit targets.
+      </p>
+      
+      <h3>Should I trade every day during a challenge?</h3>
+      <p>
+        Only if your challenge requires it. Otherwise, it's often better to be selective and only trade when high-probability setups appear. Quality trades matter more than quantity during challenges.
+      </p>
+      
+      <h3>What if I'm close to my profit target near the end of the challenge?</h3>
+      <p>
+        This requires careful risk calculation. The Blueprint can help you determine whether to maintain your regular approach or slightly reduce risk to protect your progress while still pursuing the remaining profit needed.
+      </p>
+      
+      <h2>Complementary Tools for Challenge Success</h2>
+      <p>
+        For comprehensive challenge preparation, pair the Blueprint with these other PipCraft tools:
+      </p>
+      
+      <ul>
+        <li><Link to="/max-lot-size" className="text-primary hover:underline">Max Lot Size Calculator</Link> - Ensure you're within challenge position size limits</li>
+        <li><Link to="/forex-calculator" className="text-primary hover:underline">Forex Calculator</Link> - Calculate precise pip values for your challenge trades</li>
+        <li><Link to="/trade-journal" className="text-primary hover:underline">Trade Journal</Link> - Track challenge performance and identify areas for improvement</li>
+        <li><Link to="/session-clock" className="text-primary hover:underline">Session Clock</Link> - Align your trading with optimal market hours</li>
+      </ul>
+      
+      <h2>Final Thoughts: Turning Challenge Success into a Career</h2>
+      <p>
+        The Challenge Blueprint is more than just a tool for passing prop firm evaluations—it's a framework for developing the disciplined, strategic approach needed for long-term trading success. The same principles that help you pass challenges will serve you well when trading funded accounts.
+      </p>
+      
+      <p>
+        Remember that prop challenges are designed to identify traders with consistent processes, strong risk management, and emotional discipline. By using the Challenge Blueprint to develop these qualities, you're not just increasing your chances of challenge success—you're building the foundation for a sustainable trading career.
+      </p>
+      
+      <p>
+        Start using the PipCraft Challenge Blueprint today to transform your approach to prop firm evaluations and take a significant step toward professional trading opportunities.
+      </p>
+    </>
+  );
+};
