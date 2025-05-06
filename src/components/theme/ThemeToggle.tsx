@@ -15,7 +15,7 @@ const ThemeToggle = () => {
         p-2 rounded-full
         ${theme === 'dark' 
           ? 'bg-secondary hover:bg-secondary/80 text-primary' 
-          : 'bg-white hover:bg-gray-100 text-gray-800 shadow-md'
+          : 'bg-white hover:bg-gray-100 text-primary shadow-md'
         }
         ${isMobile ? '' : 'fixed top-4 right-4 z-50'}
       `}

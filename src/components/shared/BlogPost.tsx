@@ -12,7 +12,7 @@ interface BlogPostProps {
 
 const BlogPost: React.FC<BlogPostProps> = ({ title, content, className = '' }) => {
   return (
-    <Card className={`mt-16 md:mt-24 border-t border-border/50 pt-12 md:pt-16 px-4 md:px-6 lg:px-8 pb-12 shadow-sm bg-card/50 backdrop-blur-sm ${className}`}>
+    <Card className={`mt-16 md:mt-24 border-t border-border/50 pt-12 md:pt-16 px-4 md:px-6 lg:px-8 pb-12 shadow-md bg-card/80 backdrop-blur-sm ${className}`}>
       <div className="flex items-center gap-3 mb-8">
         <div className="rounded-full bg-primary/10 p-2.5">
           <Droplet className="h-5 w-5 text-primary" />

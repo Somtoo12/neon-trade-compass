@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
 
 @tailwind base;
@@ -34,28 +35,28 @@
   
   :root.light-mode {
     --background: 0 0% 98%; /* Soft white background */
-    --foreground: 240 10% 3.9%; /* Dark text for contrast */
-    --card: 0 0% 95%; /* Lighter gray for cards */
-    --card-foreground: 240 10% 3.9%;
+    --foreground: 222 47% 11%; /* Rich dark blue text for better contrast */
+    --card: 0 0% 100%; /* Pure white cards */
+    --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 261 43% 69%; /* Soft purple primary */
+    --popover-foreground: 222 47% 11%;
+    --primary: 261 83% 58%; /* Vibrant purple primary */
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 4.8% 90%; /* Very light gray */
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95%; /* Almost white */
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 261 43% 69%; /* Soft purple accent */
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
+    --secondary: 214 32% 91%; /* Soft blue-gray */
+    --secondary-foreground: 222 47% 11%;
+    --muted: 214 32% 91%;
+    --muted-foreground: 215 25% 27%;
+    --accent: 261 83% 58%; /* Match primary for consistency */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 85%; /* Light border */
-    --input: 240 5.9% 85%;
-    --ring: 261 43% 69%; /* Soft purple ring */
-    --glow-color: rgba(123, 97, 255, 0.4);
-    --neon-green: #00cc8e;
-    --neon-blue: #0099cc;
-    --neon-purple: #6b50e0;
+    --border: 216 34% 89%; /* Subtle blue-tinted border */
+    --input: 216 34% 89%;
+    --ring: 261 83% 58%;
+    --glow-color: rgba(98, 58, 217, 0.25); /* Softer glow for light mode */
+    --neon-green: #10b981; /* More subdued but modern green */
+    --neon-blue: #3b82f6; /* Modern blue */
+    --neon-purple: #8b5cf6; /* Modern purple */
   }
 
   * {
@@ -125,6 +126,19 @@
   .pt-safe {
     padding-top: env(safe-area-inset-top, 20px);
   }
+
+  /* Light theme specific styles */
+  :root.light-mode button, 
+  :root.light-mode .card, 
+  :root.light-mode .input, 
+  :root.light-mode .select {
+    @apply shadow-sm;
+  }
+
+  :root.light-mode .neo-card {
+    background: linear-gradient(to bottom right, #ffffff, #f5f7fa);
+    @apply shadow-md;
+  }
 }
 
 @layer components {
@@ -135,17 +149,34 @@
   .glassmorphism {
     @apply bg-black/10 backdrop-blur-md border border-white/10 rounded-xl;
   }
+
+  /* Light mode cards */
+  :root.light-mode .glassmorphism {
+    @apply bg-white/70 border border-white/50;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+  }
   
   .neon-glow {
     @apply animate-pulse-glow;
   }
+
+  /* Light mode specific neon borders */
+  :root.light-mode .neon-border {
+    @apply border border-primary/30 shadow-[0_0_8px_rgba(98,58,217,0.2)];
+  }
   
+  /* Dark mode neon borders */
   .neon-border {
     @apply border border-neon-purple shadow-[0_0_10px_rgba(123,97,255,0.4)];
   }
   
   .input-glow:focus {
     @apply ring-2 ring-neon-purple shadow-[0_0_15px_rgba(123,97,255,0.3)];
+  }
+
+  /* Special styling for light mode inputs */
+  :root.light-mode .input-glow:focus {
+    @apply ring-2 ring-primary/60 shadow-[0_0_10px_rgba(98,58,217,0.15)];
   }
 
   /* Mobile optimized components */
@@ -182,7 +213,20 @@
     background-size: 200% 200%;
   }
 
-  /* New glow borders for featured cards */
+  /* Light mode glow borders */
+  :root.light-mode .border-gradient-0 {
+    border-image: linear-gradient(to right, #10b981, #3b82f6) 1;
+  }
+  
+  :root.light-mode .border-gradient-1 {
+    border-image: linear-gradient(to right, #3b82f6, #8b5cf6) 1;
+  }
+  
+  :root.light-mode .border-gradient-2 {
+    border-image: linear-gradient(to right, #8b5cf6, #10b981) 1;
+  }
+
+  /* Dark mode glow borders */
   .border-gradient-0 {
     border-image: linear-gradient(to right, var(--neon-green), var(--neon-blue)) 1;
   }
@@ -209,6 +253,12 @@
     .mobile-nav-bottom {
       padding-bottom: env(safe-area-inset-bottom);
     }
+  }
+
+  /* Card styles for light mode */
+  :root.light-mode .card-gradient {
+    background: linear-gradient(to bottom right, #ffffff, #f5f7fa);
+    @apply shadow-md border border-white/50;
   }
 }
 
@@ -305,4 +355,14 @@
   .prose h3 {
     @apply text-lg;
   }
+}
+
+/* Light theme improvements for BlogPost component */
+:root.light-mode .prose blockquote {
+  background-color: rgba(139, 92, 246, 0.05);
+  @apply rounded-r-lg border-l-4 border-primary;
+}
+
+:root.light-mode .prose a {
+  @apply text-primary font-medium;
 }
