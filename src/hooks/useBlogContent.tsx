@@ -8,14 +8,16 @@ import {
   generateTradeJournalContent,
   generateChallengeBlueprintContent
 } from '@/utils/blogContentGenerators';
-import { toolsData, utilityToolsData } from '@/data/toolsData';
+import { toolsData } from '@/data/toolsData';
+import { utilityToolsData } from '@/data/utilityToolsData';
 import { Droplet } from 'lucide-react';
 
 // Hook to get the appropriate blog content for a tool
 export function useBlogContent(toolId: string) {
   // Generate the title based on the tool name
   const getToolName = () => {
-    const tool = [...utilityToolsData, ...toolsData].find(t => t.id === toolId);
+    const allTools = [...utilityToolsData, ...toolsData];
+    const tool = allTools.find(t => t.id === toolId);
     
     if (!tool) return "Tool Guide";
     
@@ -36,7 +38,8 @@ export function useBlogContent(toolId: string) {
       case 'challenge-blueprint':
         return generateChallengeBlueprintContent();
       default:
-        const tool = [...toolsData, ...utilityToolsData].find(t => t.id === toolId);
+        const allTools = [...toolsData, ...utilityToolsData];
+        const tool = allTools.find(t => t.id === toolId);
         return generateDefaultContent(tool);
     }
   };
