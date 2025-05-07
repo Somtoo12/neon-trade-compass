@@ -6,7 +6,7 @@ import {
   Compass, GamepadIcon, CalendarDays, ClipboardCheck, ChevronLeft, 
   ChevronRight, QrCode, Timer, FileText, Sliders, Calendar, Dice6,
   ShieldCheck, ListOrdered, Binary, Award, Palette, Droplet, RotateCw,
-  User, ArrowUpDown, Keyboard, Key, ShieldLock
+  User, ArrowUpDown, Keyboard, Key, Shield
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -45,7 +45,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: 'crypto-calculator', label: 'Crypto Calculator', icon: <LineChart className="h-5 w-5" />, path: '/crypto-calculator', category: 'Trading' },
     { id: 'currency-heatmap', label: 'Currency Heatmap', icon: <Gauge className="h-5 w-5" />, path: '/currency-heatmap', category: 'Trading' },
     { id: 'trader-games', label: 'Trader Game Center', icon: <GamepadIcon className="h-5 w-5" />, path: '/trader-games', category: 'Trading' },
-    { id: 'admin', label: 'Admin Control Panel', icon: <ShieldLock className="h-5 w-5" />, path: '/admin', category: 'Admin' },
+    { id: 'admin', label: 'Admin Control Panel', icon: <Shield className="h-5 w-5" />, path: '/admin', category: 'Admin' },
     
     // Utility Tools
     { id: 'qr-code-generator', label: 'QR Code Generator', icon: <QrCode className="h-5 w-5" />, path: '/qr-code-generator', category: 'Utilities' },
