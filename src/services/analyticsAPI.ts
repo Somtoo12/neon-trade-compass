@@ -19,7 +19,9 @@ export interface VisitData {
   utm_campaign: string | null;
   device_type: string | null;
   browser: string | null;
+  browser_version: string | null; // Added this property
   os: string | null;
+  os_version: string | null;
   country: string | null;
   city: string | null;
   region: string | null;
@@ -146,15 +148,6 @@ export const getEventsForVisit = async (visitId: string): Promise<EventData[]> =
 // Get top pages
 export const getTopPages = async (params?: DateRangeParams): Promise<PageViewCount[]> => {
   try {
-    let query = supabase
-      .from('analytics_visits')
-      .select('page_path, count');
-    
-    if (params?.startDate && params?.endDate) {
-      query = query.gte('created_at', params.startDate)
-        .lte('created_at', params.endDate);
-    }
-    
     // Execute as a raw SQL query instead of using groupBy
     const { data, error } = await supabase.rpc('get_top_pages', params ? {
       start_date: params.startDate,
@@ -162,8 +155,14 @@ export const getTopPages = async (params?: DateRangeParams): Promise<PageViewCou
     } : {});
     
     if (error) {
-      // Fallback if RPC not available
-      const { data: fallbackData, error: fallbackError } = await supabase.from('top_pages_view').select('*');
+      console.error('Error fetching top pages with RPC:', error);
+      // Fallback to direct query if RPC fails
+      const { data: fallbackData, error: fallbackError } = await supabase
+        .from('analytics_visits')
+        .select('page_path, count(*)', { count: 'exact', head: false })
+        .order('count', { ascending: false })
+        .limit(10);
+      
       if (fallbackError) throw fallbackError;
       return fallbackData as unknown as PageViewCount[];
     }
@@ -185,8 +184,13 @@ export const getDeviceStats = async (params?: DateRangeParams): Promise<DeviceSt
     } : {});
     
     if (error) {
-      // Fallback if RPC not available
-      const { data: fallbackData, error: fallbackError } = await supabase.from('device_stats_view').select('*');
+      console.error('Error fetching device stats with RPC:', error);
+      // Fallback to direct query if RPC fails
+      const { data: fallbackData, error: fallbackError } = await supabase
+        .from('analytics_visits')
+        .select('device_type, count(*)', { count: 'exact', head: false })
+        .order('count', { ascending: false });
+      
       if (fallbackError) throw fallbackError;
       return fallbackData as unknown as DeviceStat[];
     }
@@ -208,8 +212,13 @@ export const getBrowserStats = async (params?: DateRangeParams): Promise<Browser
     } : {});
     
     if (error) {
-      // Fallback if RPC not available
-      const { data: fallbackData, error: fallbackError } = await supabase.from('browser_stats_view').select('*');
+      console.error('Error fetching browser stats with RPC:', error);
+      // Fallback to direct query if RPC fails
+      const { data: fallbackData, error: fallbackError } = await supabase
+        .from('analytics_visits')
+        .select('browser, count(*)', { count: 'exact', head: false })
+        .order('count', { ascending: false });
+      
       if (fallbackError) throw fallbackError;
       return fallbackData as unknown as BrowserStat[];
     }
@@ -231,8 +240,15 @@ export const getCountryStats = async (params?: DateRangeParams): Promise<Country
     } : {});
     
     if (error) {
-      // Fallback if RPC not available
-      const { data: fallbackData, error: fallbackError } = await supabase.from('country_stats_view').select('*');
+      console.error('Error fetching country stats with RPC:', error);
+      // Fallback to direct query if RPC fails
+      const { data: fallbackData, error: fallbackError } = await supabase
+        .from('analytics_visits')
+        .select('country, count(*)', { count: 'exact', head: false })
+        .not('country', 'is', null)
+        .order('count', { ascending: false })
+        .limit(10);
+      
       if (fallbackError) throw fallbackError;
       return fallbackData as unknown as CountryStat[];
     }
@@ -267,14 +283,27 @@ export const getVisitsByDate = async (
         timeFormat = 'YYYY-MM-DD';
     }
     
-    // Use a more generic approach instead of relying on get_visits_by_date rpc
-    const { data, error } = await supabase.from('analytics_visits')
-      .select('created_at')
-      .order('created_at', { ascending: true });
+    // Use the RPC function for visits by date
+    const { data, error } = await supabase.rpc('get_visits_by_date', {
+      time_format: timeFormat,
+      start_date_param: params?.startDate,
+      end_date_param: params?.endDate
+    });
     
-    if (error) throw error;
+    if (error) {
+      console.error('Error fetching visits by date with RPC:', error);
+      // Use a more generic approach instead of relying on get_visits_by_date rpc
+      const { data: fallbackData, error: fallbackError } = await supabase
+        .from('analytics_visits')
+        .select('created_at')
+        .order('created_at', { ascending: true });
+      
+      if (fallbackError) throw fallbackError;
+      
+      return processVisitsForGraph(fallbackData, interval);
+    }
     
-    return processVisitsForGraph(data, interval);
+    return data;
   } catch (error) {
     console.error('Error fetching visits by date:', error);
     return [];

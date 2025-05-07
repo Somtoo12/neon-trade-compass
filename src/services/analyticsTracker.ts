@@ -121,20 +121,19 @@ export const trackPageView = async (userId?: string) => {
           is_bounce: timeOnPage < 10 // Define bounce as less than 10 seconds
         };
         
-        // Use direct URL instead of supabaseUrl property
+        // Use direct URL for the API endpoint
         const apiEndpoint = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/analytics_visits?id=eq.${visitId}`;
         const apiKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
         
+        const headers = {
+          'Content-Type': 'application/json',
+          'ApiKey': apiKey,
+          'Authorization': `Bearer ${apiKey}`
+        };
+        
         navigator.sendBeacon(
           apiEndpoint,
-          JSON.stringify(exitData),
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'ApiKey': apiKey,
-              'Authorization': `Bearer ${apiKey}`
-            }
-          }
+          new Blob([JSON.stringify(exitData)], { type: 'application/json' })
         );
       }
     });

@@ -127,8 +127,7 @@ export const VisitsTable: React.FC<VisitsTableProps> = ({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1)
-                        .slice(0, 10) // Limit to avoid too many items
+                      {Array.from({ length: Math.min(totalPages, 10) }, (_, i) => i + 1)
                         .map((page) => (
                           <DropdownMenuItem
                             key={page}
@@ -202,7 +201,7 @@ const VisitRow: React.FC<{ visit: VisitData }> = ({ visit }) => {
           {visit.device_type || 'Unknown'}
           {visit.browser && (
             <div className="text-xs text-muted-foreground">
-              {visit.browser}
+              {visit.browser} {visit.browser_version ? `v${visit.browser_version}` : ''}
             </div>
           )}
         </TableCell>

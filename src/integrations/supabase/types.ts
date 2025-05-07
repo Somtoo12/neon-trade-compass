@@ -187,6 +187,45 @@ export type Database = {
           bounce_rate: number
         }[]
       }
+      get_browser_stats: {
+        Args: { start_date?: string; end_date?: string }
+        Returns: {
+          browser: string
+          count: number
+        }[]
+      }
+      get_country_stats: {
+        Args: { start_date?: string; end_date?: string }
+        Returns: {
+          country: string
+          count: number
+        }[]
+      }
+      get_device_stats: {
+        Args: { start_date?: string; end_date?: string }
+        Returns: {
+          device_type: string
+          count: number
+        }[]
+      }
+      get_top_pages: {
+        Args: { start_date?: string; end_date?: string }
+        Returns: {
+          page_path: string
+          count: number
+        }[]
+      }
+      get_visits_by_date: {
+        Args: {
+          time_format?: string
+          start_date_param?: string
+          end_date_param?: string
+        }
+        Returns: {
+          date: string
+          count: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
