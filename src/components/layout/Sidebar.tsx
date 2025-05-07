@@ -1,162 +1,161 @@
-
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { 
-  BarChart, Book, Clock, Gauge, LineChart, PieChart, Scale, Calculator, 
-  Compass, GamepadIcon, CalendarDays, ClipboardCheck, ChevronLeft, 
-  ChevronRight, QrCode, Timer, FileText, Sliders, Calendar, Dice6,
-  ShieldCheck, ListOrdered, Binary, Award, Palette, Droplet, RotateCw,
-  User, ArrowUpDown, Keyboard, Key
+import {
+  Home,
+  LayoutDashboard,
+  Settings,
+  BarChart,
+  Calculator,
+  Gamepad2,
+  Waves,
+  TrendingUp,
+  FileBarGraph,
+  ClipboardList,
+  Activity,
+  Calendar,
+  LucideIcon
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { NavLink } from 'react-router-dom';
+import { useTheme } from '@/hooks/use-theme';
+import { Separator } from '@/components/ui/separator';
+import ThemeToggle from '../theme/ThemeToggle';
 
-interface SidebarProps {
-  activeSection: string;
-  setActiveSection: (section: string) => void;
-  collapsed?: boolean;
-  toggleCollapsed?: () => void;
-}
-
-interface NavItem {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
+interface SidebarLink {
+  title: string;
+  icon: LucideIcon;
   path: string;
-  category?: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ 
-  activeSection, 
-  setActiveSection, 
-  collapsed = false,
-  toggleCollapsed
-}) => {
-  const navItems: NavItem[] = [
-    // Trading Tools
-    { id: 'forex-calculator', label: 'Forex Pip Calculator', icon: <BarChart className="h-5 w-5" />, path: '/forex-calculator', category: 'Trading' },
-    { id: 'risk-management', label: 'Risk Management', icon: <Scale className="h-5 w-5" />, path: '/risk-management', category: 'Trading' },
-    { id: 'max-lot-size', label: 'Max Lot Size', icon: <Calculator className="h-5 w-5" />, path: '/max-lot-size', category: 'Trading' },
-    { id: 'trade-journal', label: 'Trade Journal', icon: <Book className="h-5 w-5" />, path: '/trade-journal', category: 'Trading' },
-    { id: 'challenge-blueprint', label: 'Challenge Blueprint', icon: <ClipboardCheck className="h-5 w-5" />, path: '/challenge-blueprint', category: 'Trading' },
-    { id: 'daily-trade-tools', label: 'Daily Trade Tools', icon: <Compass className="h-5 w-5" />, path: '/daily-trade-tools', category: 'Trading' },
-    { id: 'session-clock', label: 'Session Clock', icon: <Clock className="h-5 w-5" />, path: '/session-clock', category: 'Trading' },
-    { id: 'economic-calendar', label: 'Economic Calendar', icon: <CalendarDays className="h-5 w-5" />, path: '/economic-calendar', category: 'Trading' },
-    { id: 'futures-calculator', label: 'Futures Calculator', icon: <PieChart className="h-5 w-5" />, path: '/futures-calculator', category: 'Trading' },
-    { id: 'crypto-calculator', label: 'Crypto Calculator', icon: <LineChart className="h-5 w-5" />, path: '/crypto-calculator', category: 'Trading' },
-    { id: 'currency-heatmap', label: 'Currency Heatmap', icon: <Gauge className="h-5 w-5" />, path: '/currency-heatmap', category: 'Trading' },
-    { id: 'trader-games', label: 'Trader Game Center', icon: <GamepadIcon className="h-5 w-5" />, path: '/trader-games', category: 'Trading' },
-    
-    // Utility Tools
-    { id: 'qr-code-generator', label: 'QR Code Generator', icon: <QrCode className="h-5 w-5" />, path: '/qr-code-generator', category: 'Utilities' },
-    { id: 'countdown-timer', label: 'Countdown Timer', icon: <Timer className="h-5 w-5" />, path: '/countdown-timer', category: 'Utilities' },
-    { id: 'character-counter', label: 'Character Counter', icon: <FileText className="h-5 w-5" />, path: '/character-counter', category: 'Utilities' },
-    { id: 'tip-calculator', label: 'Tip Calculator', icon: <Calculator className="h-5 w-5" />, path: '/tip-calculator', category: 'Utilities' },
-    { id: 'date-calculator', label: 'Date Calculator', icon: <Calendar className="h-5 w-5" />, path: '/date-calculator', category: 'Utilities' },
-    { id: 'random-generator', label: 'Random Generator', icon: <Dice6 className="h-5 w-5" />, path: '/random-generator', category: 'Utilities' },
-    { id: 'password-strength-checker', label: 'Password Checker', icon: <ShieldCheck className="h-5 w-5" />, path: '/password-strength-checker', category: 'Utilities' },
-    { id: 'number-to-words-converter', label: 'Number to Words', icon: <ListOrdered className="h-5 w-5" />, path: '/number-to-words-converter', category: 'Utilities' },
-    { id: 'binary-to-decimal-converter', label: 'Binary Converter', icon: <Binary className="h-5 w-5" />, path: '/binary-to-decimal-converter', category: 'Utilities' },
-    { id: 'grade-calculator', label: 'Grade Calculator', icon: <Award className="h-5 w-5" />, path: '/grade-calculator', category: 'Utilities' },
-    { id: 'hex-to-rgb-converter', label: 'Color Converter', icon: <Palette className="h-5 w-5" />, path: '/hex-to-rgb-converter', category: 'Utilities' },
-    { id: 'daily-water-intake-calculator', label: 'Water Intake', icon: <Droplet className="h-5 w-5" />, path: '/daily-water-intake-calculator', category: 'Utilities' },
-    { id: 'text-reverser', label: 'Text Reverser', icon: <RotateCw className="h-5 w-5" />, path: '/text-reverser', category: 'Utilities' },
-    { id: 'username-generator', label: 'Username Generator', icon: <User className="h-5 w-5" />, path: '/username-generator', category: 'Utilities' },
-    { id: 'miles-to-km-converter', label: 'Unit Converter', icon: <ArrowUpDown className="h-5 w-5" />, path: '/miles-to-km-converter', category: 'Utilities' },
-    { id: 'typing-speed-tester', label: 'Typing Speed Test', icon: <Keyboard className="h-5 w-5" />, path: '/typing-speed-tester', category: 'Utilities' },
-    { id: 'password-generator', label: 'Password Generator', icon: <Key className="h-5 w-5" />, path: '/password-generator', category: 'Utilities' },
+const Sidebar: React.FC = () => {
+  const { theme } = useTheme();
+
+  const sidebarLinks: SidebarLink[] = [
+    {
+      title: "Home",
+      icon: Home,
+      path: "/",
+    },
+    {
+      title: "Focus Mode",
+      icon: LayoutDashboard,
+      path: "/focus-mode",
+    },
+    {
+      title: "Tools",
+      icon: Settings,
+      path: "/tools",
+    },
+    {
+      title: "Forex Calculator",
+      icon: Calculator,
+      path: "/forex-calculator",
+    },
+    {
+      title: "Crypto Calculator",
+      icon: Waves,
+      path: "/crypto-calculator",
+    },
+    {
+      title: "Futures Calculator",
+      icon: TrendingUp,
+      path: "/futures-calculator",
+    },
+    {
+      title: "Session Clock",
+      icon: Activity,
+      path: "/session-clock",
+    },
+    {
+      title: "Currency Heatmap",
+      icon: FileBarGraph,
+      path: "/currency-heatmap",
+    },
+    {
+      title: "Risk Management",
+      icon: ClipboardList,
+      path: "/risk-management",
+    },
+    {
+      title: "Max Lot Size",
+      icon: LayoutDashboard,
+      path: "/max-lot-size",
+    },
+    {
+      title: "Trade Journal",
+      icon: ClipboardList,
+      path: "/trade-journal",
+    },
+    {
+      title: "Daily Trade Tools",
+      icon: Settings,
+      path: "/daily-trade-tools",
+    },
+    {
+      title: "Challenge Blueprint",
+      icon: Settings,
+      path: "/challenge-blueprint",
+    },
+    {
+      title: "Economic Calendar",
+      icon: Calendar,
+      path: "/economic-calendar",
+    },
+    {
+      title: "Trader Games",
+      icon: Gamepad2,
+      path: "/trader-games",
+    },
+    {
+      title: "Analytics Dashboard",
+      icon: BarChart,
+      path: "/analytics",
+    },
   ];
 
-  const handleNavClick = (section: string) => {
-    setActiveSection(section);
-  };
-
-  // Group items by category
-  const tradingTools = navItems.filter(item => item.category === 'Trading' || !item.category);
-  const utilityTools = navItems.filter(item => item.category === 'Utilities');
-
   return (
-    <div className={`h-screen sticky top-0 glassmorphism overflow-y-auto transition-all duration-300 ${
-      collapsed ? 'w-16' : 'w-64 lg:w-72'
-    } border-r border-border/30`}>
-      <div className="relative">
-        {/* Collapse/Expand Button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute right-2 top-2 rounded-full p-1 h-6 w-6"
-          onClick={toggleCollapsed}
-        >
-          {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
-        </Button>
+    <aside
+      className={`
+        flex flex-col
+        w-full md:w-64
+        h-screen
+        px-4 py-8
+        border-r
+        ${theme === 'dark' ? 'bg-secondary' : 'bg-white shadow-md'}
+        transition-all duration-300 ease-in-out
+        fixed top-0 left-0 z-40
+      `}
+    >
+      <div className="flex items-center justify-between mb-8">
+        <NavLink to="/" className="text-2xl font-bold">
+          PipCraft
+        </NavLink>
+        <ThemeToggle />
       </div>
-      
-      <div className={`mb-8 p-4 ${collapsed ? 'text-center' : ''}`}>
-        <Link to="/" className="block text-center">
-          <h1 className={`text-2xl font-bold font-poppins bg-gradient-to-r from-neon-green via-neon-blue to-neon-purple bg-clip-text text-transparent ${
-            collapsed ? 'text-xl' : ''
-          }`}>
-            {collapsed ? 'PC' : 'PipCraft'}
-          </h1>
-        </Link>
-        {!collapsed && (
-          <div className="text-xs text-center text-muted-foreground mt-1">
-            Smart Tools. No Noise.
-          </div>
-        )}
-      </div>
-      
-      <nav className="px-2">
-        <ul className="space-y-1.5">
-          {/* Trading Tools Section */}
-          {!collapsed && (
-            <li className="px-3 py-2">
-              <h2 className="text-xs font-semibold text-muted-foreground">Trading Tools</h2>
-            </li>
-          )}
-          {tradingTools.map((item) => (
-            <li key={item.id}>
-              <Link
-                to={item.path}
-                onClick={() => handleNavClick(item.id)}
-                className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-300 ${
-                  activeSection === item.id
-                    ? 'bg-accent/20 text-accent neon-border neon-purple-glow'
-                    : 'hover:bg-secondary text-foreground/80 hover:text-foreground'
-                } ${collapsed ? 'justify-center' : ''}`}
-                aria-selected={activeSection === item.id}
-              >
-                {item.icon}
-                {!collapsed && <span className="text-sm">{item.label}</span>}
-              </Link>
-            </li>
-          ))}
 
-          {/* Utility Tools Section */}
-          {!collapsed && utilityTools.length > 0 && (
-            <li className="px-3 py-2 mt-4">
-              <h2 className="text-xs font-semibold text-muted-foreground">Utility Tools</h2>
-            </li>
-          )}
-          {utilityTools.map((item) => (
-            <li key={item.id}>
-              <Link
-                to={item.path}
-                onClick={() => handleNavClick(item.id)}
-                className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-300 ${
-                  activeSection === item.id
-                    ? 'bg-accent/20 text-accent neon-border neon-purple-glow'
-                    : 'hover:bg-secondary text-foreground/80 hover:text-foreground'
-                } ${collapsed ? 'justify-center' : ''}`}
-                aria-selected={activeSection === item.id}
-              >
-                {item.icon}
-                {!collapsed && <span className="text-sm">{item.label}</span>}
-              </Link>
-            </li>
-          ))}
-        </ul>
+      <nav className="flex-1 space-y-1">
+        {sidebarLinks.map((link) => (
+          <NavLink
+            key={link.title}
+            to={link.path}
+            className={({ isActive }) =>
+              `group flex items-center px-3 py-2 text-sm font-medium rounded-md
+              ${isActive
+                ? 'bg-primary text-primary-foreground'
+                : 'hover:bg-accent hover:text-accent-foreground text-foreground/80'
+              }`
+            }
+          >
+            <link.icon className="mr-2 h-4 w-4" />
+            {link.title}
+          </NavLink>
+        ))}
       </nav>
-    </div>
+
+      <Separator className="my-4 opacity-30" />
+
+      <div className="text-center text-xs text-muted-foreground">
+        &copy; {new Date().getFullYear()} PipCraft. All rights reserved.
+      </div>
+    </aside>
   );
 };
 

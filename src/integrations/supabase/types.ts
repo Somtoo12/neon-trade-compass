@@ -9,6 +9,143 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      analytics_events: {
+        Row: {
+          created_at: string
+          element_class: string | null
+          element_id: string | null
+          element_text: string | null
+          event_type: string
+          id: string
+          page_path: string
+          scroll_depth: number | null
+          session_id: string
+          visit_id: string | null
+          x_position: number | null
+          y_position: number | null
+        }
+        Insert: {
+          created_at?: string
+          element_class?: string | null
+          element_id?: string | null
+          element_text?: string | null
+          event_type: string
+          id?: string
+          page_path: string
+          scroll_depth?: number | null
+          session_id: string
+          visit_id?: string | null
+          x_position?: number | null
+          y_position?: number | null
+        }
+        Update: {
+          created_at?: string
+          element_class?: string | null
+          element_id?: string | null
+          element_text?: string | null
+          event_type?: string
+          id?: string
+          page_path?: string
+          scroll_depth?: number | null
+          session_id?: string
+          visit_id?: string | null
+          x_position?: number | null
+          y_position?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_events_visit_id_fkey"
+            columns: ["visit_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_visits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      analytics_visits: {
+        Row: {
+          browser: string | null
+          browser_version: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          device_type: string | null
+          entered_at: string
+          exited_at: string | null
+          id: string
+          is_bounce: boolean | null
+          os: string | null
+          os_version: string | null
+          page_path: string
+          referrer: string | null
+          region: string | null
+          screen_height: number | null
+          screen_width: number | null
+          session_id: string
+          time_on_page: number | null
+          user_id: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          browser?: string | null
+          browser_version?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          device_type?: string | null
+          entered_at?: string
+          exited_at?: string | null
+          id?: string
+          is_bounce?: boolean | null
+          os?: string | null
+          os_version?: string | null
+          page_path: string
+          referrer?: string | null
+          region?: string | null
+          screen_height?: number | null
+          screen_width?: number | null
+          session_id: string
+          time_on_page?: number | null
+          user_id?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          browser?: string | null
+          browser_version?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          device_type?: string | null
+          entered_at?: string
+          exited_at?: string | null
+          id?: string
+          is_bounce?: boolean | null
+          os?: string | null
+          os_version?: string | null
+          page_path?: string
+          referrer?: string | null
+          region?: string | null
+          screen_height?: number | null
+          screen_width?: number | null
+          session_id?: string
+          time_on_page?: number | null
+          user_id?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: []
+      }
       early_access_emails: {
         Row: {
           created_at: string
@@ -41,7 +178,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_analytics_summary: {
+        Args: { start_date?: string; end_date?: string }
+        Returns: {
+          total_visits: number
+          unique_visitors: number
+          avg_time_on_page: number
+          bounce_rate: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
