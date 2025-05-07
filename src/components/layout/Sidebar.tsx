@@ -6,7 +6,7 @@ import {
   Compass, GamepadIcon, CalendarDays, ClipboardCheck, ChevronLeft, 
   ChevronRight, QrCode, Timer, FileText, Sliders, Calendar, Dice6,
   ShieldCheck, ListOrdered, Binary, Award, Palette, Droplet, RotateCw,
-  User, ArrowUpDown, Keyboard, Key, Shield
+  User, ArrowUpDown, Keyboard, Key
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -45,7 +45,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: 'crypto-calculator', label: 'Crypto Calculator', icon: <LineChart className="h-5 w-5" />, path: '/crypto-calculator', category: 'Trading' },
     { id: 'currency-heatmap', label: 'Currency Heatmap', icon: <Gauge className="h-5 w-5" />, path: '/currency-heatmap', category: 'Trading' },
     { id: 'trader-games', label: 'Trader Game Center', icon: <GamepadIcon className="h-5 w-5" />, path: '/trader-games', category: 'Trading' },
-    { id: 'admin', label: 'Admin Control Panel', icon: <Shield className="h-5 w-5" />, path: '/admin', category: 'Admin' },
     
     // Utility Tools
     { id: 'qr-code-generator', label: 'QR Code Generator', icon: <QrCode className="h-5 w-5" />, path: '/qr-code-generator', category: 'Utilities' },
@@ -74,7 +73,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   // Group items by category
   const tradingTools = navItems.filter(item => item.category === 'Trading' || !item.category);
   const utilityTools = navItems.filter(item => item.category === 'Utilities');
-  const adminTools = navItems.filter(item => item.category === 'Admin');
 
   return (
     <div className={`h-screen sticky top-0 glassmorphism overflow-y-auto transition-all duration-300 ${
@@ -109,30 +107,6 @@ const Sidebar: React.FC<SidebarProps> = ({
       
       <nav className="px-2">
         <ul className="space-y-1.5">
-          {/* Admin Section */}
-          {!collapsed && adminTools.length > 0 && (
-            <li className="px-3 py-2">
-              <h2 className="text-xs font-semibold text-muted-foreground">Admin</h2>
-            </li>
-          )}
-          {adminTools.map((item) => (
-            <li key={item.id}>
-              <Link
-                to={item.path}
-                onClick={() => handleNavClick(item.id)}
-                className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-300 ${
-                  activeSection === item.id
-                    ? 'bg-accent/20 text-accent neon-border neon-purple-glow'
-                    : 'hover:bg-secondary text-foreground/80 hover:text-foreground'
-                } ${collapsed ? 'justify-center' : ''}`}
-                aria-selected={activeSection === item.id}
-              >
-                {item.icon}
-                {!collapsed && <span className="text-sm">{item.label}</span>}
-              </Link>
-            </li>
-          ))}
-
           {/* Trading Tools Section */}
           {!collapsed && (
             <li className="px-3 py-2">
