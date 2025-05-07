@@ -33,7 +33,6 @@ const getDeviceInfo = () => {
   
   // Browser detection
   let browser = 'unknown';
-  let browserVersion = 'unknown';
   
   if (userAgent.indexOf('Chrome') > -1) browser = 'Chrome';
   else if (userAgent.indexOf('Safari') > -1) browser = 'Safari';
@@ -66,7 +65,6 @@ const getDeviceInfo = () => {
   return {
     deviceType,
     browser,
-    browserVersion,
     os,
     osVersion,
     screenWidth: window.screen.width,
@@ -123,9 +121,20 @@ export const trackPageView = async (userId?: string) => {
           is_bounce: timeOnPage < 10 // Define bounce as less than 10 seconds
         };
         
+        // Use direct URL instead of supabaseUrl property
+        const apiEndpoint = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/analytics_visits?id=eq.${visitId}`;
+        const apiKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+        
         navigator.sendBeacon(
-          `${supabase.supabaseUrl}/rest/v1/analytics_visits?id=eq.${visitId}`,
-          JSON.stringify(exitData)
+          apiEndpoint,
+          JSON.stringify(exitData),
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'ApiKey': apiKey,
+              'Authorization': `Bearer ${apiKey}`
+            }
+          }
         );
       }
     });
@@ -149,13 +158,15 @@ export const trackPageView = async (userId?: string) => {
     // Track clicks
     document.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
-      const element = target.closest('button, a, .clickable, [role="button"]');
-      
-      if (element) {
-        trackEvent('click', element, {
-          x: e.clientX,
-          y: e.clientY
-        });
+      if (target) {
+        const element = target.closest('button, a, .clickable, [role="button"]') as HTMLElement;
+        
+        if (element) {
+          trackEvent('click', element, {
+            x: e.clientX,
+            y: e.clientY
+          });
+        }
       }
     });
   }

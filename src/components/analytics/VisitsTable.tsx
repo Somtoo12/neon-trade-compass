@@ -139,10 +139,10 @@ export const VisitsTable: React.FC<VisitsTableProps> = ({
                         ))}
                     </DropdownMenuContent>
                   </DropdownMenu>
-                  <span className="text-sm text-muted-foreground">
-                    of {totalPages}
-                  </span>
                 </div>
+                <span className="text-sm text-muted-foreground">
+                  of {totalPages}
+                </span>
                 <Button
                   variant="outline"
                   size="icon"
@@ -202,7 +202,7 @@ const VisitRow: React.FC<{ visit: VisitData }> = ({ visit }) => {
           {visit.device_type || 'Unknown'}
           {visit.browser && (
             <div className="text-xs text-muted-foreground">
-              {visit.browser} {visit.browser_version ? `(${visit.browser_version})` : ''}
+              {visit.browser}
             </div>
           )}
         </TableCell>

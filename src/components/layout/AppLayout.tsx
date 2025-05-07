@@ -9,8 +9,8 @@ import ThemeToggle from '../theme/ThemeToggle';
 
 interface AppLayoutProps {
   children: React.ReactNode;
-  activeSection: string;
-  setActiveSection: (section: string) => void;
+  activeSection?: string;
+  setActiveSection?: (section: string) => void;
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({ 
@@ -31,7 +31,11 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           {/* Back button and mobile navigation */}
           <div className="flex items-center justify-between py-2 px-4 pt-safe">
             <BackButton />
-            <MobileNav activeSection={activeSection} setActiveSection={setActiveSection} />
+            {activeSection && setActiveSection ? (
+              <MobileNav activeSection={activeSection} setActiveSection={setActiveSection} />
+            ) : (
+              <div></div>
+            )}
           </div>
           <main className="flex-1 overflow-y-auto p-4 md:p-6 pt-16">
             {children}
@@ -39,12 +43,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         </div>
       ) : (
         <div className="flex flex-1 overflow-hidden">
-          <Sidebar 
-            activeSection={activeSection} 
-            setActiveSection={setActiveSection} 
-            collapsed={sidebarCollapsed}
-            toggleCollapsed={() => setSidebarCollapsed(!sidebarCollapsed)}
-          />
+          <Sidebar />
           <main className={`flex-1 overflow-y-auto p-4 md:p-6 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-0'}`}>
             <div className="mb-4">
               <BackButton />

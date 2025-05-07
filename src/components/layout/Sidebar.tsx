@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   Home,
@@ -8,7 +9,7 @@ import {
   Gamepad2,
   Waves,
   TrendingUp,
-  FileBarGraph,
+  BarChart2,
   ClipboardList,
   Activity,
   Calendar,
@@ -66,7 +67,7 @@ const Sidebar: React.FC = () => {
     },
     {
       title: "Currency Heatmap",
-      icon: FileBarGraph,
+      icon: BarChart2,
       path: "/currency-heatmap",
     },
     {

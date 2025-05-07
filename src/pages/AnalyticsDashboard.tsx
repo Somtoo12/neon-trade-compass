@@ -20,7 +20,6 @@ import { VisitsChart } from '@/components/analytics/VisitsChart';
 import { TopPagesCard } from '@/components/analytics/TopPagesCard';
 import { DeviceStatsCard, BrowserStatsCard, CountryStatsCard } from '@/components/analytics/StatisticsCards';
 import { VisitsTable } from '@/components/analytics/VisitsTable';
-import { DateRangeFilter, DateRange } from '@/components/analytics/DateRangeFilter';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -31,6 +30,34 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { DownloadIcon, RefreshCw, Lock } from 'lucide-react';
+
+// Import DateRange type and component when they become available
+interface DateRange {
+  from: Date;
+  to: Date;
+}
+
+const DateRangeFilter: React.FC<{
+  value: DateRange;
+  onChange: (range: DateRange) => void;
+}> = ({ value, onChange }) => {
+  // Placeholder component
+  return (
+    <div>
+      <Select defaultValue="30days">
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Select range" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="7days">Last 7 days</SelectItem>
+          <SelectItem value="30days">Last 30 days</SelectItem>
+          <SelectItem value="3months">Last 3 months</SelectItem>
+          <SelectItem value="custom">Custom range</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+};
 
 const AnalyticsDashboard: React.FC = () => {
   const navigate = useNavigate();

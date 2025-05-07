@@ -1,222 +1,123 @@
 
-import React from 'react';
+import * as React from 'react'
+import { addDays, format } from "date-fns"
+import { Calendar as CalendarIcon } from "lucide-react"
+import { DateRange } from "react-day-picker"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { format } from 'date-fns';
-import { Calendar as CalendarIcon, ChevronDown } from 'lucide-react';
-import { cn } from '@/lib/utils';
-
-export type DateRange = {
-  from: Date;
-  to: Date;
-};
-
-export type DateRangeOption = {
-  label: string;
-  value: string;
-  range: DateRange | (() => DateRange);
-};
+} from "@/components/ui/select"
 
 interface DateRangeFilterProps {
   value: DateRange;
   onChange: (range: DateRange) => void;
-  className?: string;
 }
 
 export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
   value,
-  onChange,
-  className,
+  onChange
 }) => {
-  const [isCalendarOpen, setIsCalendarOpen] = React.useState(false);
-
-  // Predefined date ranges
-  const dateRangeOptions: DateRangeOption[] = [
-    {
-      label: 'Today',
-      value: 'today',
-      range: () => {
-        const today = new Date();
-        return {
-          from: today,
-          to: today,
-        };
-      },
-    },
-    {
-      label: 'Yesterday',
-      value: 'yesterday',
-      range: () => {
-        const today = new Date();
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
-        return {
-          from: yesterday,
-          to: yesterday,
-        };
-      },
-    },
-    {
-      label: 'Last 7 days',
-      value: 'last7days',
-      range: () => {
-        const today = new Date();
-        const last7days = new Date(today);
-        last7days.setDate(last7days.getDate() - 6);
-        return {
-          from: last7days,
-          to: today,
-        };
-      },
-    },
-    {
-      label: 'Last 30 days',
-      value: 'last30days',
-      range: () => {
-        const today = new Date();
-        const last30days = new Date(today);
-        last30days.setDate(last30days.getDate() - 29);
-        return {
-          from: last30days,
-          to: today,
-        };
-      },
-    },
-    {
-      label: 'This month',
-      value: 'thisMonth',
-      range: () => {
-        const today = new Date();
-        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        return {
-          from: firstDayOfMonth,
-          to: today,
-        };
-      },
-    },
-    {
-      label: 'Last month',
-      value: 'lastMonth',
-      range: () => {
-        const today = new Date();
-        const firstDayOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-        const lastDayOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
-        return {
-          from: firstDayOfLastMonth,
-          to: lastDayOfLastMonth,
-        };
-      },
-    },
-    {
-      label: 'Custom range',
-      value: 'custom',
-      range: { from: value.from, to: value.to },
-    },
-  ];
-
-  // Find the matching predefined option
-  const getSelectedOption = (): DateRangeOption | undefined => {
-    const from = value.from;
-    const to = value.to;
-
-    return dateRangeOptions.find((option) => {
-      if (option.value === 'custom') return false;
-
-      const range =
-        typeof option.range === 'function' ? option.range() : option.range;
-      
-      return (
-        format(from, 'yyyy-MM-dd') === format(range.from, 'yyyy-MM-dd') &&
-        format(to, 'yyyy-MM-dd') === format(range.to, 'yyyy-MM-dd')
-      );
-    });
-  };
-
-  const selectedOption = getSelectedOption();
-  const selectedValue = selectedOption ? selectedOption.value : 'custom';
-
-  const handleRangeChange = (option: DateRangeOption) => {
-    const range = typeof option.range === 'function' ? option.range() : option.range;
-    onChange(range);
-    if (option.value === 'custom') {
-      setIsCalendarOpen(true);
-    } else {
-      setIsCalendarOpen(false);
+  const [quickSelect, setQuickSelect] = React.useState<string>("custom");
+  
+  const handleQuickSelect = (period: string) => {
+    setQuickSelect(period);
+    
+    const now = new Date();
+    let from: Date;
+    
+    switch (period) {
+      case "today":
+        from = new Date(now);
+        from.setHours(0, 0, 0, 0);
+        break;
+      case "yesterday":
+        from = new Date(now);
+        from.setDate(from.getDate() - 1);
+        from.setHours(0, 0, 0, 0);
+        break;
+      case "7days":
+        from = addDays(now, -7);
+        break;
+      case "30days":
+        from = addDays(now, -30);
+        break;
+      case "90days":
+        from = addDays(now, -90);
+        break;
+      default:
+        return;
     }
+    
+    onChange({ from, to: now });
   };
-
+  
   return (
-    <div className={cn('flex items-center gap-2', className)}>
+    <div className="flex items-center space-x-2">
       <Select
-        value={selectedValue}
-        onValueChange={(value) => {
-          const option = dateRangeOptions.find((o) => o.value === value);
-          if (option) handleRangeChange(option);
-        }}
+        value={quickSelect}
+        onValueChange={handleQuickSelect}
       >
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Select date range" />
+        <SelectTrigger className="w-[130px]">
+          <SelectValue placeholder="Select period" />
         </SelectTrigger>
         <SelectContent>
-          {dateRangeOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
+          <SelectItem value="today">Today</SelectItem>
+          <SelectItem value="yesterday">Yesterday</SelectItem>
+          <SelectItem value="7days">Last 7 days</SelectItem>
+          <SelectItem value="30days">Last 30 days</SelectItem>
+          <SelectItem value="90days">Last 90 days</SelectItem>
+          <SelectItem value="custom">Custom range</SelectItem>
         </SelectContent>
       </Select>
-
-      <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+      
+      <Popover>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
             className={cn(
-              'flex-1 justify-start text-left font-normal',
-              !value && 'text-muted-foreground'
+              "w-[240px] justify-start text-left font-normal",
+              !value && "text-muted-foreground"
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {value.from ? (
+            {value?.from ? (
               value.to ? (
                 <>
-                  {format(value.from, 'LLL dd, y')} -{' '}
-                  {format(value.to, 'LLL dd, y')}
+                  {format(value.from, "MMM d, yyyy")} -{" "}
+                  {format(value.to, "MMM d, yyyy")}
                 </>
               ) : (
-                format(value.from, 'LLL dd, y')
+                format(value.from, "MMM d, yyyy")
               )
             ) : (
-              <span>Pick a date range</span>
+              <span>Pick a date</span>
             )}
-            <ChevronDown className="ml-auto h-4 w-4 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
+            initialFocus
             mode="range"
-            selected={{
-              from: value.from,
-              to: value.to,
-            }}
-            onSelect={(range) => {
-              if (range?.from && range?.to) {
-                onChange(range as DateRange);
+            defaultMonth={value?.from}
+            selected={value}
+            onSelect={(newValue) => {
+              if (newValue?.from !== value?.from || newValue?.to !== value?.to) {
+                setQuickSelect("custom");
+                onChange(newValue || { from: new Date(), to: new Date() });
               }
             }}
             numberOfMonths={2}
-            initialFocus
           />
         </PopoverContent>
       </Popover>

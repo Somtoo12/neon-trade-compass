@@ -148,19 +148,25 @@ export const getTopPages = async (params?: DateRangeParams): Promise<PageViewCou
   try {
     let query = supabase
       .from('analytics_visits')
-      .select('page_path, count(*)')
-      .groupBy('page_path');
+      .select('page_path, count');
     
     if (params?.startDate && params?.endDate) {
       query = query.gte('created_at', params.startDate)
         .lte('created_at', params.endDate);
     }
     
-    const { data, error } = await query
-      .order('count', { ascending: false })
-      .limit(10);
+    // Execute as a raw SQL query instead of using groupBy
+    const { data, error } = await supabase.rpc('get_top_pages', params ? {
+      start_date: params.startDate,
+      end_date: params.endDate
+    } : {});
     
-    if (error) throw error;
+    if (error) {
+      // Fallback if RPC not available
+      const { data: fallbackData, error: fallbackError } = await supabase.from('top_pages_view').select('*');
+      if (fallbackError) throw fallbackError;
+      return fallbackData as unknown as PageViewCount[];
+    }
     
     return data as unknown as PageViewCount[];
   } catch (error) {
@@ -172,20 +178,18 @@ export const getTopPages = async (params?: DateRangeParams): Promise<PageViewCou
 // Get device statistics
 export const getDeviceStats = async (params?: DateRangeParams): Promise<DeviceStat[]> => {
   try {
-    let query = supabase
-      .from('analytics_visits')
-      .select('device_type, count(*)')
-      .groupBy('device_type');
+    // Execute as a raw SQL query instead of using groupBy
+    const { data, error } = await supabase.rpc('get_device_stats', params ? {
+      start_date: params.startDate,
+      end_date: params.endDate
+    } : {});
     
-    if (params?.startDate && params?.endDate) {
-      query = query.gte('created_at', params.startDate)
-        .lte('created_at', params.endDate);
+    if (error) {
+      // Fallback if RPC not available
+      const { data: fallbackData, error: fallbackError } = await supabase.from('device_stats_view').select('*');
+      if (fallbackError) throw fallbackError;
+      return fallbackData as unknown as DeviceStat[];
     }
-    
-    const { data, error } = await query
-      .order('count', { ascending: false });
-    
-    if (error) throw error;
     
     return data as unknown as DeviceStat[];
   } catch (error) {
@@ -197,20 +201,18 @@ export const getDeviceStats = async (params?: DateRangeParams): Promise<DeviceSt
 // Get browser statistics
 export const getBrowserStats = async (params?: DateRangeParams): Promise<BrowserStat[]> => {
   try {
-    let query = supabase
-      .from('analytics_visits')
-      .select('browser, count(*)')
-      .groupBy('browser');
+    // Execute as a raw SQL query instead of using groupBy
+    const { data, error } = await supabase.rpc('get_browser_stats', params ? {
+      start_date: params.startDate,
+      end_date: params.endDate
+    } : {});
     
-    if (params?.startDate && params?.endDate) {
-      query = query.gte('created_at', params.startDate)
-        .lte('created_at', params.endDate);
+    if (error) {
+      // Fallback if RPC not available
+      const { data: fallbackData, error: fallbackError } = await supabase.from('browser_stats_view').select('*');
+      if (fallbackError) throw fallbackError;
+      return fallbackData as unknown as BrowserStat[];
     }
-    
-    const { data, error } = await query
-      .order('count', { ascending: false });
-    
-    if (error) throw error;
     
     return data as unknown as BrowserStat[];
   } catch (error) {
@@ -222,21 +224,18 @@ export const getBrowserStats = async (params?: DateRangeParams): Promise<Browser
 // Get country statistics
 export const getCountryStats = async (params?: DateRangeParams): Promise<CountryStat[]> => {
   try {
-    let query = supabase
-      .from('analytics_visits')
-      .select('country, count(*)')
-      .not('country', 'is', null)
-      .groupBy('country');
+    // Execute as a raw SQL query instead of using groupBy
+    const { data, error } = await supabase.rpc('get_country_stats', params ? {
+      start_date: params.startDate,
+      end_date: params.endDate
+    } : {});
     
-    if (params?.startDate && params?.endDate) {
-      query = query.gte('created_at', params.startDate)
-        .lte('created_at', params.endDate);
+    if (error) {
+      // Fallback if RPC not available
+      const { data: fallbackData, error: fallbackError } = await supabase.from('country_stats_view').select('*');
+      if (fallbackError) throw fallbackError;
+      return fallbackData as unknown as CountryStat[];
     }
-    
-    const { data, error } = await query
-      .order('count', { ascending: false });
-    
-    if (error) throw error;
     
     return data as unknown as CountryStat[];
   } catch (error) {
@@ -268,34 +267,14 @@ export const getVisitsByDate = async (
         timeFormat = 'YYYY-MM-DD';
     }
     
-    let query = supabase.rpc('get_visits_by_date', {
-      time_format: timeFormat
-    });
+    // Use a more generic approach instead of relying on get_visits_by_date rpc
+    const { data, error } = await supabase.from('analytics_visits')
+      .select('created_at')
+      .order('created_at', { ascending: true });
     
-    if (params?.startDate && params?.endDate) {
-      query = supabase.rpc('get_visits_by_date', {
-        time_format: timeFormat,
-        start_date_param: params.startDate,
-        end_date_param: params.endDate
-      });
-    }
+    if (error) throw error;
     
-    const { data, error } = await query;
-    
-    if (error) {
-      // If the function doesn't exist yet, do a fallback client-side grouping
-      // This is not as efficient but works until we add the function
-      const { data: visits, error: visitsError } = await supabase
-        .from('analytics_visits')
-        .select('created_at')
-        .order('created_at', { ascending: true });
-      
-      if (visitsError) throw visitsError;
-      
-      return processVisitsForGraph(visits, interval);
-    }
-    
-    return data || [];
+    return processVisitsForGraph(data, interval);
   } catch (error) {
     console.error('Error fetching visits by date:', error);
     return [];
