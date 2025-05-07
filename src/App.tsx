@@ -23,6 +23,7 @@ import PrivacyPage from "./pages/legal/PrivacyPage";
 import DisclaimerPage from "./pages/legal/DisclaimerPage";
 import ToolsPage from "./pages/ToolsPage";
 import EconomicCalendar from "./pages/EconomicCalendar";
+import AdminPage from "./pages/AdminPage";
 
 // Import utility tool pages
 import QRCodeGenerator from "./pages/utility-tools/QRCodeGenerator";
@@ -72,6 +73,7 @@ const App = () => (
               <Route path="/economic-calendar" element={<Index activeSection="economic-calendar" />} />
               <Route path="/calculators" element={<Calculators />} />
               <Route path="/trader-games" element={<Index activeSection="trader-games" />} />
+              <Route path="/admin" element={<AdminPage />} />
               
               {/* Utility Tool Routes */}
               <Route path="/qr-code-generator" element={<QRCodeGenerator />} />
