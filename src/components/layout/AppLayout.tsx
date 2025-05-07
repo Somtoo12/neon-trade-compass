@@ -47,7 +47,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         </div>
       ) : (
         <div className="flex flex-1 overflow-hidden">
-          <Sidebar />
+          <Sidebar collapsed={sidebarCollapsed} toggleCollapsed={toggleSidebarCollapse} />
           <main className={`flex-1 overflow-y-auto p-4 md:p-6 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-0'}`}>
             <div className="mb-4">
               <BackButton />

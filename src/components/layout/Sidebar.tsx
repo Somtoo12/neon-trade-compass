@@ -1,162 +1,95 @@
 
 import React from 'react';
-import {
-  Home,
-  LayoutDashboard,
+import { Link, useLocation } from 'react-router-dom';
+import { cn } from '@/lib/utils';
+import { useAnalytics } from '@/contexts/AnalyticsContext';
+import { 
+  Home, 
+  Calculator, 
+  Clock, 
+  BarChart2, 
+  ChevronsLeft, 
+  ChevronsRight,
+  Hash,
   Settings,
-  BarChart,
-  Calculator,
-  Gamepad2,
-  Waves,
-  TrendingUp,
-  BarChart2,
-  ClipboardList,
-  Activity,
-  Calendar,
-  LucideIcon
+  BarChart
 } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
-import { useTheme } from '@/hooks/use-theme';
-import { Separator } from '@/components/ui/separator';
-import ThemeToggle from '../theme/ThemeToggle';
 
-interface SidebarLink {
-  title: string;
-  icon: LucideIcon;
-  path: string;
+interface SidebarProps {
+  collapsed: boolean;
+  toggleCollapsed: () => void;
 }
 
-const Sidebar: React.FC = () => {
-  const { theme } = useTheme();
-
-  const sidebarLinks: SidebarLink[] = [
-    {
-      title: "Home",
-      icon: Home,
-      path: "/",
-    },
-    {
-      title: "Focus Mode",
-      icon: LayoutDashboard,
-      path: "/focus-mode",
-    },
-    {
-      title: "Tools",
-      icon: Settings,
-      path: "/tools",
-    },
-    {
-      title: "Forex Calculator",
-      icon: Calculator,
-      path: "/forex-calculator",
-    },
-    {
-      title: "Crypto Calculator",
-      icon: Waves,
-      path: "/crypto-calculator",
-    },
-    {
-      title: "Futures Calculator",
-      icon: TrendingUp,
-      path: "/futures-calculator",
-    },
-    {
-      title: "Session Clock",
-      icon: Activity,
-      path: "/session-clock",
-    },
-    {
-      title: "Currency Heatmap",
-      icon: BarChart2,
-      path: "/currency-heatmap",
-    },
-    {
-      title: "Risk Management",
-      icon: ClipboardList,
-      path: "/risk-management",
-    },
-    {
-      title: "Max Lot Size",
-      icon: LayoutDashboard,
-      path: "/max-lot-size",
-    },
-    {
-      title: "Trade Journal",
-      icon: ClipboardList,
-      path: "/trade-journal",
-    },
-    {
-      title: "Daily Trade Tools",
-      icon: Settings,
-      path: "/daily-trade-tools",
-    },
-    {
-      title: "Challenge Blueprint",
-      icon: Settings,
-      path: "/challenge-blueprint",
-    },
-    {
-      title: "Economic Calendar",
-      icon: Calendar,
-      path: "/economic-calendar",
-    },
-    {
-      title: "Trader Games",
-      icon: Gamepad2,
-      path: "/trader-games",
-    },
-    {
-      title: "Analytics Dashboard",
-      icon: BarChart,
-      path: "/analytics",
-    },
+const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleCollapsed }) => {
+  const location = useLocation();
+  const { isAdmin } = useAnalytics();
+  
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
+  
+  const navItems = [
+    { name: 'Home', path: '/', icon: <Home size={20} /> },
+    { name: 'Calculators', path: '/calculators', icon: <Calculator size={20} /> },
+    { name: 'Session Clock', path: '/session-clock', icon: <Clock size={20} /> },
+    { name: 'Tools', path: '/tools', icon: <Hash size={20} /> },
+    // Only show analytics to admin users
+    ...(isAdmin ? [{ name: 'Analytics', path: '/analytics', icon: <BarChart size={20} /> }] : [])
   ];
-
+  
   return (
-    <aside
-      className={`
-        flex flex-col
-        w-full md:w-64
-        h-screen
-        px-4 py-8
-        border-r
-        ${theme === 'dark' ? 'bg-secondary' : 'bg-white shadow-md'}
-        transition-all duration-300 ease-in-out
-        fixed top-0 left-0 z-40
-      `}
+    <div 
+      className={cn(
+        "border-r border-border h-screen bg-background text-foreground flex flex-col transition-all duration-300",
+        collapsed ? "w-16" : "w-64"
+      )}
     >
-      <div className="flex items-center justify-between mb-8">
-        <NavLink to="/" className="text-2xl font-bold">
-          PipCraft
-        </NavLink>
-        <ThemeToggle />
+      <div className="flex justify-between items-center p-4 border-b border-border">
+        {!collapsed && <h1 className="font-bold text-xl">PipCraft</h1>}
+        <button 
+          onClick={toggleCollapsed}
+          className="p-1 rounded-full hover:bg-muted transition-colors"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {collapsed ? <ChevronsRight size={20} /> : <ChevronsLeft size={20} />}
+        </button>
       </div>
-
-      <nav className="flex-1 space-y-1">
-        {sidebarLinks.map((link) => (
-          <NavLink
-            key={link.title}
-            to={link.path}
-            className={({ isActive }) =>
-              `group flex items-center px-3 py-2 text-sm font-medium rounded-md
-              ${isActive
-                ? 'bg-primary text-primary-foreground'
-                : 'hover:bg-accent hover:text-accent-foreground text-foreground/80'
-              }`
-            }
-          >
-            <link.icon className="mr-2 h-4 w-4" />
-            {link.title}
-          </NavLink>
-        ))}
+      
+      <nav className="flex-1 overflow-y-auto py-4">
+        <ul className="space-y-2 px-2">
+          {navItems.map((item) => (
+            <li key={item.path}>
+              <Link
+                to={item.path}
+                className={cn(
+                  "flex items-center px-3 py-2 rounded-md transition-colors hover:bg-muted",
+                  isActive(item.path) ? "bg-muted font-medium" : "",
+                  collapsed ? "justify-center" : "justify-start"
+                )}
+                title={collapsed ? item.name : ""}
+              >
+                <span className={collapsed ? "mx-0" : "mr-3"}>{item.icon}</span>
+                {!collapsed && <span>{item.name}</span>}
+              </Link>
+            </li>
+          ))}
+        </ul>
       </nav>
-
-      <Separator className="my-4 opacity-30" />
-
-      <div className="text-center text-xs text-muted-foreground">
-        &copy; {new Date().getFullYear()} PipCraft. All rights reserved.
+      
+      <div className="p-4 border-t border-border">
+        <Link
+          to="/settings"
+          className={cn(
+            "flex items-center px-3 py-2 rounded-md transition-colors hover:bg-muted",
+            collapsed ? "justify-center" : "justify-start"
+          )}
+          title={collapsed ? "Settings" : ""}
+        >
+          <span className={collapsed ? "mx-0" : "mr-3"}><Settings size={20} /></span>
+          {!collapsed && <span>Settings</span>}
+        </Link>
       </div>
-    </aside>
+    </div>
   );
 };
 

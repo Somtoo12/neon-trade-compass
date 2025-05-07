@@ -31,15 +31,13 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { DownloadIcon, RefreshCw, Lock } from 'lucide-react';
+import { DateRange } from 'react-day-picker';
 
 const AnalyticsDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { isAdmin } = useAnalytics();
   
-  const [dateRange, setDateRange] = React.useState<{
-    from: Date;
-    to: Date;
-  }>({
+  const [dateRange, setDateRange] = React.useState<DateRange>({
     from: new Date(new Date().setDate(new Date().getDate() - 29)),
     to: new Date(),
   });
@@ -50,8 +48,8 @@ const AnalyticsDashboard: React.FC = () => {
   
   const dateParams = React.useMemo(() => {
     return {
-      startDate: dateRange.from.toISOString(),
-      endDate: dateRange.to.toISOString()
+      startDate: dateRange.from ? dateRange.from.toISOString() : new Date(new Date().setDate(new Date().getDate() - 29)).toISOString(),
+      endDate: dateRange.to ? dateRange.to.toISOString() : new Date().toISOString()
     };
   }, [dateRange]);
   
@@ -179,6 +177,11 @@ const AnalyticsDashboard: React.FC = () => {
     );
   }
   
+  // Create a handler for DateRange that works with the component's API
+  const handleDateRangeChange = (range: DateRange) => {
+    setDateRange(range);
+  };
+  
   return (
     <AppLayout>
       <SEO
@@ -197,7 +200,7 @@ const AnalyticsDashboard: React.FC = () => {
             <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-2">
               <DateRangeFilter
                 value={dateRange}
-                onChange={setDateRange}
+                onChange={handleDateRangeChange}
               />
               
               <Button 
