@@ -6,7 +6,7 @@ import {
   Compass, GamepadIcon, CalendarDays, ClipboardCheck, ChevronLeft, 
   ChevronRight, QrCode, Timer, FileText, Sliders, Calendar, Dice6,
   ShieldCheck, ListOrdered, Binary, Award, Palette, Droplet, RotateCw,
-  User, ArrowUpDown, Keyboard, Key
+  User, ArrowUpDown, Keyboard, Key, Shield
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
